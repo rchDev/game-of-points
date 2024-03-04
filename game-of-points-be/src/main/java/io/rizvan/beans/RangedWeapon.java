@@ -4,11 +4,11 @@ public class RangedWeapon {
     private int id;
     private String name;
     private int damage;
-    private float speedModifier;
+    private double speedModifier;
     private int ammo;
-    private float range;
+    private double range;
 
-    public RangedWeapon(int id, String name, int damage, float speedModifier, int ammo, float range) {
+    public RangedWeapon(int id, String name, int damage, double speedModifier, int ammo, double range) {
         this.id = id;
         this.name = name;
         this.damage = damage;
@@ -41,11 +41,11 @@ public class RangedWeapon {
         this.damage = damage;
     }
 
-    public float getSpeedModifier() {
+    public double getSpeedModifier() {
         return speedModifier;
     }
 
-    public void setSpeedModifier(float speedModifier) {
+    public void setSpeedModifier(double speedModifier) {
         this.speedModifier = speedModifier;
     }
 
@@ -57,11 +57,11 @@ public class RangedWeapon {
         this.ammo = ammo;
     }
 
-    public float getRange() {
+    public double getRange() {
         return range;
     }
 
-    public void setRange(float range) {
+    public void setRange(double range) {
         this.range = range;
     }
 }

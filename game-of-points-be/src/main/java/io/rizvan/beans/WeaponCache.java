@@ -7,7 +7,7 @@ import java.util.List;
 
 @ApplicationScoped
 public class WeaponCache {
-    private ConcurrentHashSet<RangedWeapon> weapons = new ConcurrentHashSet<>();
+    private final ConcurrentHashSet<RangedWeapon> weapons = new ConcurrentHashSet<>();
 
     public WeaponCache() {
         this.weapons.add(new RangedWeapon(0, "Sniper", 3, 0.85f, 2, 40));
