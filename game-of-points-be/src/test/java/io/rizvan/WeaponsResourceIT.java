@@ -3,6 +3,6 @@ package io.rizvan;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-class ExampleResourceIT extends ExampleResourceTest {
+class WeaponsResourceIT extends WeaponsResourceTest {
     // Execute the same tests but in packaged mode.
 }

@@ -46,7 +46,7 @@ async function sendWeaponId(weaponId) {
 }
 
 function establishWebSocketConnection() {
-  const ws = new WebSocket("ws://localhost:5001/game");
+  const ws = new WebSocket("ws://localhost:5005/game");
 
   ws.onopen = () => {
     console.log("WebSocket connection established");
