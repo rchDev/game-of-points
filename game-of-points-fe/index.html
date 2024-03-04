@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Game Of Points</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="game-container">
+            <header>
+                <h1 class="game-title">Game Of Points</h1>
+            </header>
+            <div class="score-board">
+                <span class="player-score">Player 0 </span>
+                <span> - </span>
+                <span class="ai-score"> 5 AI</span>
+            </div>
+            <div class="game-canvas" id="game-canvas">
+                <!-- Canvas controlled by p5.js will be inserted here -->
+            </div>
+            <div class="stat-board">
+                <table>
+                    <caption>
+                        Player Stats
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th>Stat</th>
+                            <th>Real</th>
+                            <th>Perceived</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>HP</td>
+                            <td>3</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>DMG</td>
+                            <td>2</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>AMMO</td>
+                            <td>2</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>SPD</td>
+                            <td>1.15</td>
+                            <td>1.35</td>
+                        </tr>
+                        <tr>
+                            <td>REACH</td>
+                            <td>20</td>
+                            <td>25</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script src="main.js" type="module"></script>
+    </body>
+</html>

@@ -1,0 +1,75 @@
+html,
+body {
+    width: 100%;
+    height: 100%; /* Make sure html and body cover the full height of the window */
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center elements horizontally */
+}
+
+.game-container {
+    width: 100%;
+    max-width: 1400px; /* Adjust the max width as needed */
+    flex-grow: 1; /* Allow the container to grow and fill the available space */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center elements horizontally */
+}
+
+.game-title {
+    font-size: 2em;
+    margin: 0.5em 0;
+}
+
+.score-board {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0.5em 0em;
+    background-color: #f8f8f8;
+    border-bottom: 2px solid #ddd;
+}
+
+.score-board > span {
+    margin: 0 1em;
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+.game-canvas {
+    width: 100%; /* Ensure the canvas fills the container width */
+    height: 400px; /* Adjust as needed */
+    background-color: #eaeaea; /* Placeholder until p5.js canvas is loaded */
+    margin: 1em 0; /* Add some margin around the canvas */
+}
+
+.stat-board {
+    width: 100%;
+    margin: 1em 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto; /* Center table in the available space */
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+}
+
+th,
+td {
+    padding: 0.5em;
+    text-align: left;
+}
+
+caption {
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
