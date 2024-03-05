@@ -1,4 +1,4 @@
-package io.rizvan;
+package io.rizvan.resources;
 
 import io.rizvan.beans.RangedWeapon;
 import io.rizvan.beans.WeaponCache;
@@ -18,7 +18,7 @@ public class WeaponsResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<RangedWeapon> hello() {
+    public List<RangedWeapon> getWeaponList() {
         return weaponCache.getWeapons();
     }
 }

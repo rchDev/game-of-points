@@ -4,8 +4,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const weapons = await fetchWeapons();
     const selectedWeaponId = await selectRandomWeapon(weapons);
-    await sendWeaponId(selectedWeaponId);
-    establishWebSocketConnection();
+    const {
+      sessionId,
+      gameState: { player, agent },
+    } = await getGameState(selectedWeaponId);
+    console.log("Session ID:", sessionId);
+    console.log("player:", player);
+    console.log("agent:", agent);
+    establishWebSocketConnection(sessionId);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -31,22 +37,26 @@ async function selectRandomWeapon(weapons) {
   return weapons[randomIndex].id;
 }
 
-async function sendWeaponId(weaponId) {
-  const response = await fetch("http://localhost:8080/weapons", {
+async function getGameState(weaponId) {
+  const response = await fetch("http://localhost:8080/games", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ weapon_id: weaponId }),
+    body: JSON.stringify({ weaponId: weaponId }),
   });
+
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
+
   console.log("Weapon selected successfully");
+
+  return response.json();
 }
 
-function establishWebSocketConnection() {
-  const ws = new WebSocket("ws://localhost:5005/game");
+function establishWebSocketConnection(sessionId) {
+  const ws = new WebSocket(`ws://localhost:8080/games/${sessionId}`);
 
   ws.onopen = () => {
     console.log("WebSocket connection established");

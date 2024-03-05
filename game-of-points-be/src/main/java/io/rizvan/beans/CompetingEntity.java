@@ -1,10 +1,11 @@
 package io.rizvan.beans;
 
 public class CompetingEntity extends GameEntity {
-    private RangedWeapon weapon;
+    private final RangedWeapon weapon;
 
-    public CompetingEntity(int hitPoints, double x, double y, double speed, double points) {
+    public CompetingEntity(int hitPoints, double x, double y, double speed, int points, RangedWeapon weapon) {
         super(hitPoints, x, y, speed, points);
+        this.weapon = weapon;
     }
 
     public double getReach() {

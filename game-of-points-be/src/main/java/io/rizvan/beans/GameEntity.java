@@ -5,9 +5,9 @@ public abstract class GameEntity {
     protected double x;
     protected double y;
     protected double speed;
-    protected double points;
+    protected int points;
 
-    public GameEntity(int hitPoints, double x, double y, double speed, double points) {
+    public GameEntity(int hitPoints, double x, double y, double speed, int points) {
         this.hitPoints = hitPoints;
         this.x = x;
         this.y = y;
@@ -47,11 +47,11 @@ public abstract class GameEntity {
         this.speed = speed;
     }
 
-    public double getPoints() {
+    public int getPoints() {
         return points;
     }
 
-    public void setPoints(double points) {
+    public void setPoints(int points) {
         this.points = points;
     }
 }

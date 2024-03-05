@@ -1,6 +1,9 @@
 package io.rizvan;
 
+import io.rizvan.beans.Player;
+import io.rizvan.beans.SessionStorage;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.websocket.EncodeException;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
@@ -14,27 +17,29 @@ import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
-@ServerEndpoint("/game")
+@ServerEndpoint("/games/{sessionId}")
 @ApplicationScoped
 public class StartWebSocket {
+    @Inject
+    SessionStorage storage;
 
     @OnOpen
-    public void onOpen(Session session) {
+    public void onOpen(Session session, @PathParam("sessionId") String sessionId) {
         System.out.println("onOpen> ");
     }
 
     @OnClose
-    public void onClose(Session session) {
+    public void onClose(Session session, @PathParam("sessionId") String sessionId) {
         System.out.println("onClose> ");
     }
 
     @OnError
-    public void onError(Session session, Throwable throwable) {
+    public void onError(Session session, @PathParam("sessionId") String sessionId, Throwable throwable) {
         System.out.println("onError> " + ": " + throwable);
     }
 
     @OnMessage
-    public void onMessage(String message) {
-        System.out.println("onMessage> "  + ": " + message);
+    public void onMessage(String message, @PathParam("sessionId") String sessionId) {
+        System.out.println("onMessage> " + ": " + message);
     }
 }
