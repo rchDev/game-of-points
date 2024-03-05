@@ -1,4 +1,4 @@
-package io.rizvan.beans.requests;
+package io.rizvan.beans.dtos.requests;
 
 public class PlayerCreationRequest {
     private int weaponId;

@@ -1,4 +1,4 @@
-package io.rizvan.beans;
+package io.rizvan.beans.actors;
 
 public abstract class GameEntity {
     protected int hitPoints;

@@ -1,6 +1,6 @@
 package io.rizvan.beans.facts;
 
-import io.rizvan.beans.CompetingEntity;
+import io.rizvan.beans.actors.CompetingEntity;
 
 public class ShotFact implements Fact {
     @Override

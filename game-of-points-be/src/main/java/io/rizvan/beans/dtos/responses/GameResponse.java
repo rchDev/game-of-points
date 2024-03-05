@@ -1,4 +1,4 @@
-package io.rizvan.beans.responses;
+package io.rizvan.beans.dtos.responses;
 
 import io.rizvan.beans.GameState;
 

@@ -1,4 +1,6 @@
-package io.rizvan.beans;
+package io.rizvan.beans.actors;
+
+import io.rizvan.beans.RangedWeapon;
 
 public class CompetingEntity extends GameEntity {
     private final RangedWeapon weapon;

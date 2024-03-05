@@ -1,5 +1,8 @@
 package io.rizvan.beans;
 
+import io.rizvan.beans.actors.Agent;
+import io.rizvan.beans.actors.Player;
+
 public class GameState {
     private Player player;
     private Agent agent;

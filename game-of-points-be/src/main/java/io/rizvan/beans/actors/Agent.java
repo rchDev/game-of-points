@@ -1,4 +1,7 @@
-package io.rizvan.beans;
+package io.rizvan.beans.actors;
+
+import io.rizvan.beans.PlayerInfo;
+import io.rizvan.beans.RangedWeapon;
 
 public class Agent extends CompetingEntity {
     private PlayerInfo playerInfo;

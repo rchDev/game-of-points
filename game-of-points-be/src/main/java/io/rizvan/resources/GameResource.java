@@ -1,8 +1,10 @@
 package io.rizvan.resources;
 
 import io.rizvan.beans.*;
-import io.rizvan.beans.requests.PlayerCreationRequest;
-import io.rizvan.beans.responses.GameResponse;
+import io.rizvan.beans.actors.Agent;
+import io.rizvan.beans.actors.Player;
+import io.rizvan.beans.dtos.requests.PlayerCreationRequest;
+import io.rizvan.beans.dtos.responses.GameResponse;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
