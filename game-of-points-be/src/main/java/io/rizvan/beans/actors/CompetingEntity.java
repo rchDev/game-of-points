@@ -5,8 +5,8 @@ import io.rizvan.beans.RangedWeapon;
 public class CompetingEntity extends GameEntity {
     private final RangedWeapon weapon;
 
-    public CompetingEntity(int hitPoints, double x, double y, double speed, int points, RangedWeapon weapon) {
-        super(hitPoints, x, y, speed, points);
+    public CompetingEntity(int hitPoints, double x, double y, double width, double height, double speed, int points, RangedWeapon weapon) {
+        super(hitPoints, x, y, width, height, speed, points);
         this.weapon = weapon;
     }
 
@@ -23,6 +23,6 @@ public class CompetingEntity extends GameEntity {
     }
 
     public void dealDamage(GameEntity entity) {
-        return ;
+        return;
     }
 }

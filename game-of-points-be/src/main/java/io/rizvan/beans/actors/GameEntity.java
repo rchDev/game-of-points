@@ -1,5 +1,7 @@
 package io.rizvan.beans.actors;
 
+import io.rizvan.beans.HitBox;
+
 public abstract class GameEntity {
     protected int hitPoints;
     protected double x;
@@ -7,12 +9,15 @@ public abstract class GameEntity {
     protected double speed;
     protected int points;
 
-    public GameEntity(int hitPoints, double x, double y, double speed, int points) {
+    protected HitBox hitBox;
+
+    public GameEntity(int hitPoints, double x, double y, double width, double height, double speed, int points) {
         this.hitPoints = hitPoints;
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.points = points;
+        this.hitBox = new HitBox(x, y, width, height);
     }
 
     public int getHitPoints() {
@@ -53,5 +58,13 @@ public abstract class GameEntity {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public HitBox getHitBox() {
+        return hitBox;
+    }
+
+    public void setHitBox(HitBox hitBox) {
+        this.hitBox = hitBox;
     }
 }

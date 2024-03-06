@@ -25,6 +25,8 @@ public class GameResource {
         int hp = 3;
         int x = 350;
         int y = 50;
+        double width = 50;
+        double height = 50;
         double speed = 1.0;
         int startingPoints = 0;
 
@@ -34,7 +36,7 @@ public class GameResource {
                 .findFirst()
                 .orElse(weapons.get(0));
 
-        var player = new Player(hp, x, y, speed, startingPoints, weapon);
+        var player = new Player(hp, x, y, width, height, speed, startingPoints, weapon);
         var agent = Agent.Type.SOLDIER.get();
 
         var gameState = new GameState(player, agent);
