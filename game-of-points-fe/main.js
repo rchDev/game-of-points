@@ -1,21 +1,4 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  // Start the countdown timer
-  await countdownTimer(10); // 10 seconds countdown
-  try {
-    const weapons = await fetchWeapons();
-    const selectedWeaponId = await selectRandomWeapon(weapons);
-    const {
-      sessionId,
-      gameState: { player, agent },
-    } = await getGameState(selectedWeaponId);
-    console.log("Session ID:", sessionId);
-    console.log("player:", player);
-    console.log("agent:", agent);
-    establishWebSocketConnection(sessionId);
-  } catch (error) {
-    console.error("An error occurred:", error);
-  }
-});
+import p5 from "p5";
 
 async function countdownTimer(duration) {
   for (let seconds = duration; seconds > 0; seconds--) {
@@ -55,7 +38,7 @@ async function getGameState(weaponId) {
   return response.json();
 }
 
-function establishWebSocketConnection(sessionId) {
+function connectToGameSession(sessionId) {
   const ws = new WebSocket(`ws://localhost:8080/games/${sessionId}`);
 
   ws.onopen = () => {
@@ -73,4 +56,56 @@ function establishWebSocketConnection(sessionId) {
   ws.onclose = () => {
     console.log("WebSocket connection closed");
   };
+
+  return ws;
 }
+
+const scetch = (p) => {
+  p.preload = async () => {
+    p.gameStateLoaded = false;
+    await countdownTimer(0);
+    const weapons = await fetchWeapons();
+    const selectedWeaponId = await selectRandomWeapon(weapons);
+    const { sessionId, gameState } = await getGameState(selectedWeaponId);
+    p.ws = connectToGameSession(sessionId);
+    p.player = gameState.player;
+    p.agent = gameState.agent;
+    p.gameStateLoaded = true;
+  };
+
+  p.setup = () => {
+    const { offsetWidth: width, offsetHeight: height } =
+      document.getElementById("game-canvas");
+
+    let canvas = p.createCanvas(width, height);
+    canvas.parent("game-canvas");
+    p.fill(255, 0, 0);
+  };
+
+  p.draw = async () => {
+    if (!p.gameStateLoaded) {
+      return;
+    }
+
+    p.ellipse(
+      p.player.x,
+      p.player.y,
+      p.player.hitBox.width,
+      p.player.hitBox.height,
+    );
+    p.ellipse(
+      p.agent.x + 50,
+      p.agent.y + 50,
+      p.agent.hitBox.width,
+      p.agent.hitBox.height,
+    );
+  };
+
+  p.windowResized = () => {
+    const { offsetWidth: width, offsetHeight: height } =
+      document.getElementById("game-canvas");
+    p.resizeCanvas(width, height);
+  };
+};
+
+new p5(scetch);

@@ -41,7 +41,7 @@ body {
 
 .game-canvas {
     width: 100%; /* Ensure the canvas fills the container width */
-    height: 400px; /* Adjust as needed */
+    height: 1000px; /* Adjust as needed */
     background-color: #eaeaea; /* Placeholder until p5.js canvas is loaded */
     margin: 1em 0; /* Add some margin around the canvas */
 }
