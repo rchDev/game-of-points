@@ -1,8 +1,11 @@
 package io.rizvan;
 
 import io.rizvan.beans.SessionStorage;
+import io.rizvan.beans.facts.PlayerMovedFact;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnMessage;
@@ -18,6 +21,8 @@ import static java.util.Objects.requireNonNull;
 public class StartWebSocket {
     @Inject
     SessionStorage storage;
+
+    private Jsonb jsonb = JsonbBuilder.create();
 
     @OnOpen
     public void onOpen(Session session, @PathParam("sessionId") String sessionId) {
@@ -36,6 +41,7 @@ public class StartWebSocket {
 
     @OnMessage
     public void onMessage(String message, @PathParam("sessionId") String sessionId) {
-        System.out.println("onMessage> " + ": " + message);
+        var moveFact = jsonb.fromJson(message, PlayerMovedFact.class);
+        System.out.println(moveFact);
     }
 }

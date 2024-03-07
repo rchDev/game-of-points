@@ -60,7 +60,7 @@ function connectToGameSession(sessionId) {
   return ws;
 }
 
-const scetch = (p) => {
+const sketch = (p) => {
   p.preload = async () => {
     p.gameStateLoaded = false;
     await countdownTimer(0);
@@ -74,31 +74,99 @@ const scetch = (p) => {
   };
 
   p.setup = () => {
+    // p.noCursor();
     const { offsetWidth: width, offsetHeight: height } =
       document.getElementById("game-canvas");
 
     let canvas = p.createCanvas(width, height);
     canvas.parent("game-canvas");
+    canvas.mouseMoved(handleMouseMove);
     p.fill(255, 0, 0);
   };
 
-  p.draw = async () => {
-    if (!p.gameStateLoaded) {
-      return;
-    }
+  const handleMouseMove = () => {
+    const timestamp = Date.now();
 
+    p.ws.send(
+      JSON.stringify({
+        type: "move",
+        playerX: p.player.x,
+        playerY: p.player.y,
+        mouseX: p.mouseX,
+        mouseY: p.mouseY,
+        timestamp: timestamp,
+      }),
+    );
+  };
+
+  let lastUpdateTime = Date.now();
+
+  function update(deltaTime) {
+    // Calculate the vector from player to mouse
+    let targetX = p.mouseX;
+    let targetY = p.mouseY;
+    let dx = targetX - p.player.x;
+    let dy = targetY - p.player.y;
+
+    // Calculate distance from player to mouse
+    let distance = Math.sqrt(dx * dx + dy * dy);
+
+    // Player will move only if the mouse is outside the player's circle radius
+    if (distance > p.player.hitBox.width / 2) {
+      // Normalize the direction vector
+      let normalizedDx = dx / distance;
+      let normalizedDy = dy / distance;
+
+      // Update player's position towards the mouse at constant speed
+      let updatedX =
+        p.player.x + normalizedDx * p.player.speed * 200 * deltaTime;
+
+      let updatedY =
+        p.player.y + normalizedDy * p.player.speed * 200 * deltaTime;
+
+      p.player.x = p.constrain(
+        updatedX,
+        p.player.hitBox.width / 2,
+        p.width - p.player.hitBox.width / 2,
+      );
+      p.player.y = p.constrain(
+        updatedY,
+        p.player.hitBox.height / 2,
+        p.height - p.player.hitBox.height / 2,
+      );
+    }
+  }
+
+  function render() {
+    p.clear();
     p.ellipse(
       p.player.x,
       p.player.y,
       p.player.hitBox.width,
       p.player.hitBox.height,
     );
+
     p.ellipse(
       p.agent.x + 50,
       p.agent.y + 50,
       p.agent.hitBox.width,
       p.agent.hitBox.height,
     );
+  }
+
+  p.draw = async () => {
+    const now = Date.now();
+    const deltaTime = (now - lastUpdateTime) / 1000.0;
+
+    if (!p.gameStateLoaded) {
+      return;
+    }
+
+    update(deltaTime);
+    render();
+
+    // Consider recalculating Date.now()
+    lastUpdateTime = now;
   };
 
   p.windowResized = () => {
@@ -108,4 +176,4 @@ const scetch = (p) => {
   };
 };
 
-new p5(scetch);
+new p5(sketch);
