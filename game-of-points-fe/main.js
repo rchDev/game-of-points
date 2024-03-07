@@ -80,13 +80,10 @@ const sketch = (p) => {
 
     let canvas = p.createCanvas(width, height);
     canvas.parent("game-canvas");
-    canvas.mouseMoved(handleMouseMove);
     p.fill(255, 0, 0);
   };
 
-  const handleMouseMove = () => {
-    const timestamp = Date.now();
-
+  const sendMovementUpdate = (timestamp) => {
     p.ws.send(
       JSON.stringify({
         type: "move",
@@ -101,7 +98,7 @@ const sketch = (p) => {
 
   let lastUpdateTime = Date.now();
 
-  function update(deltaTime) {
+  function update(timestamp, deltaTime) {
     // Calculate the vector from player to mouse
     let targetX = p.mouseX;
     let targetY = p.mouseY;
@@ -124,6 +121,9 @@ const sketch = (p) => {
       let updatedY =
         p.player.y + normalizedDy * p.player.speed * 200 * deltaTime;
 
+      const prevPlayerX = p.player.x;
+      const prevPlayerY = p.player.y;
+
       p.player.x = p.constrain(
         updatedX,
         p.player.hitBox.width / 2,
@@ -134,6 +134,10 @@ const sketch = (p) => {
         p.player.hitBox.height / 2,
         p.height - p.player.hitBox.height / 2,
       );
+
+      if (prevPlayerX !== p.player.x || prevPlayerY !== p.player.y) {
+        sendMovementUpdate(timestamp);
+      }
     }
   }
 
@@ -162,7 +166,7 @@ const sketch = (p) => {
       return;
     }
 
-    update(deltaTime);
+    update(now, deltaTime);
     render();
 
     // Consider recalculating Date.now()
