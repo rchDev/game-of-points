@@ -1,11 +1,23 @@
 package io.rizvan.beans.facts;
 
-public class PlayerMovedFact {
+import io.rizvan.beans.actors.CompetingEntity;
+
+public class PlayerMovesFact extends Fact {
     private double mouseX;
     private double mouseY;
     private double playerX;
     private double playerY;
-    private long timestamp;
+
+    @Override
+    public String toString() {
+        return "PlayerMovedFact{" +
+                "mouseX=" + mouseX +
+                ", mouseY=" + mouseY +
+                ", playerX=" + playerX +
+                ", playerY=" + playerY +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 
     public double getMouseX() {
         return mouseX;
@@ -39,22 +51,8 @@ public class PlayerMovedFact {
         this.playerY = playerY;
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
     @Override
-    public String toString() {
-        return "PlayerMoveFact{" +
-                "mouseX=" + mouseX +
-                ", mouseY=" + mouseY +
-                ", playerX=" + playerX +
-                ", playerY=" + playerY +
-                ", timestamp=" + timestamp +
-                '}';
+    public boolean check(CompetingEntity entity1, CompetingEntity entity2) {
+        return true;
     }
 }

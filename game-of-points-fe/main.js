@@ -83,7 +83,7 @@ const sketch = (p) => {
     p.fill(255, 0, 0);
   };
 
-  const sendMovementUpdate = (timestamp) => {
+  const sendMovementUpdate = (timestamp, deltaTime) => {
     p.ws.send(
       JSON.stringify({
         type: "move",
@@ -92,6 +92,7 @@ const sketch = (p) => {
         mouseX: p.mouseX,
         mouseY: p.mouseY,
         timestamp: timestamp,
+        detaTime: deltaTime,
       }),
     );
   };
@@ -135,8 +136,10 @@ const sketch = (p) => {
         p.height - p.player.hitBox.height / 2,
       );
 
+      console.log("time diff ms:", deltaTime);
+
       if (prevPlayerX !== p.player.x || prevPlayerY !== p.player.y) {
-        sendMovementUpdate(timestamp);
+        sendMovementUpdate(timestamp, deltaTime);
       }
     }
   }
