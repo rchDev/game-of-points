@@ -2,7 +2,7 @@ import p5 from "p5";
 
 async function countdownTimer(duration) {
   for (let seconds = duration; seconds > 0; seconds--) {
-    console.log(seconds);
+    console.log("game starts in:", seconds);
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 }
@@ -135,8 +135,6 @@ const sketch = (p) => {
         p.player.hitBox.height / 2,
         p.height - p.player.hitBox.height / 2,
       );
-
-      console.log("time diff ms:", deltaTime);
 
       if (prevPlayerX !== p.player.x || prevPlayerY !== p.player.y) {
         sendMovementUpdate(timestamp, deltaTime);

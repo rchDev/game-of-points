@@ -5,6 +5,7 @@ import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.actors.Player;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameState {
     private Player player;
@@ -13,7 +14,7 @@ public class GameState {
     private static final int RESOURCE_SIZE = 10;
     private static final int POINTS_PER_RESOURCE = 10;
 
-    private List<ResourcePoint> resources;
+    private List<ResourcePoint> resources = new CopyOnWriteArrayList<>();
 
     public GameState(Player player, Agent agent) {
         this.player = player;
