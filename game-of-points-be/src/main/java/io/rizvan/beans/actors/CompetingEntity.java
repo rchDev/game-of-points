@@ -4,10 +4,16 @@ import io.rizvan.beans.RangedWeapon;
 
 public class CompetingEntity extends GameEntity {
     private final RangedWeapon weapon;
+    private int hitPoints;
+    private double speed;
+    private int points;
 
     public CompetingEntity(int hitPoints, double x, double y, double width, double height, double speed, int points, RangedWeapon weapon) {
-        super(hitPoints, x, y, width, height, speed, points);
+        super(x, y, width, height);
         this.weapon = weapon;
+        this.hitPoints = hitPoints;
+        this.speed = speed;
+        this.points = points;
     }
 
     public double getReach() {
@@ -24,5 +30,25 @@ public class CompetingEntity extends GameEntity {
 
     public void dealDamage(GameEntity entity) {
         return;
+    }
+
+    public int getHitPoints() {
+        return hitPoints;
+    }
+
+    public void setHitPoints(int hitPoints) {
+        this.hitPoints = hitPoints;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

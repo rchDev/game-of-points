@@ -42,7 +42,7 @@ public class GameResource {
         var gameState = new GameState(player, agent);
         var sessionId = generateSessionId();
 
-        storage.addGame(generateSessionId(), gameState);
+        storage.addGameState(generateSessionId(), gameState);
 
         return new GameResponse(gameState, sessionId);
     }

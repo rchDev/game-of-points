@@ -16,6 +16,7 @@ public class FactDeserializer {
         return switch (factType.getType()) {
             case "shoot" -> jsonb.fromJson(json, PlayerShootsFact.class);
             case "move" -> jsonb.fromJson(json, PlayerMovesFact.class);
+            case "collection" -> jsonb.fromJson(json, ResourceCollectionFact.class);
             default -> throw new IllegalArgumentException("Unknown Fact type: " + factType.getType());
         };
     }

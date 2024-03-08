@@ -1,6 +1,8 @@
 package io.rizvan;
 
+import io.quarkus.vertx.ConsumeEvent;
 import io.rizvan.beans.FactStorage;
+import io.rizvan.beans.GameState;
 import io.rizvan.beans.SessionStorage;
 import io.rizvan.beans.facts.FactDeserializer;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,7 +19,7 @@ import jakarta.websocket.server.ServerEndpoint;
 @ApplicationScoped
 public class StartWebSocket {
     @Inject
-    SessionStorage storage;
+    SessionStorage sessionStorage;
     @Inject
     FactStorage factStorage;
 
@@ -26,12 +28,13 @@ public class StartWebSocket {
 
     @OnOpen
     public void onOpen(Session session, @PathParam("sessionId") String sessionId) {
-        System.out.println("onOpen> ");
+        sessionStorage.addSession(sessionId, session);
     }
 
     @OnClose
     public void onClose(Session session, @PathParam("sessionId") String sessionId) {
-        System.out.println("onClose> ");
+        sessionStorage.removeSession(sessionId);
+        sessionStorage.removeGameState(sessionId);
     }
 
     @OnError
@@ -42,7 +45,19 @@ public class StartWebSocket {
     @OnMessage
     public void onMessage(String message, @PathParam("sessionId") String sessionId) {
         var fact = factDeserializer.deserialize(message);
-        System.out.println(fact);
-        factStorage.add(fact);
+        factStorage.add(sessionId, fact);
+    }
+
+    @ConsumeEvent("game.update")
+    public void broadcast(String gameStateJson) {
+        for (Session session : sessionStorage.getSessions()) {
+            if (session.isOpen()) {
+                try {
+                    session.getAsyncRemote().sendText(gameStateJson);
+                } catch (Exception e) {
+                    System.err.println("Failed to send message: " + e.getMessage());
+                }
+            }
+        }
     }
 }
