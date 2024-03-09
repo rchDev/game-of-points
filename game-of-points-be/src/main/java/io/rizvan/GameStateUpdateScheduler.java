@@ -1,15 +1,12 @@
 package io.rizvan;
 
-import io.quarkus.runtime.StartupEvent;
 import io.quarkus.vertx.ConsumeEvent;
 import io.rizvan.beans.FactStorage;
-import io.rizvan.beans.GameState;
 import io.rizvan.beans.SessionStorage;
 import io.rizvan.utils.RandomNumberGenerator;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
