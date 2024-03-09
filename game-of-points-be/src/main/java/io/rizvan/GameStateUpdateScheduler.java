@@ -27,7 +27,20 @@ public class GameStateUpdateScheduler {
     public void updateGameState(String sessionId) {
         if (sessionStorage.getSessionIds().isEmpty()) return;
 
-        // ALL GAME LOGIC GOES HERE
+        for (var id : sessionStorage.getSessionIds()) {
+            var gameState = sessionStorage.getGameState(id);
+            if (gameState == null) continue;
+
+            var movementFacts = factStorage.getPlayerMovementFacts(id);
+            if (movementFacts == null || movementFacts.isEmpty()) continue;
+
+            var latestMovement = movementFacts.get(movementFacts.size() - 1);
+
+            gameState.getPlayer().setX(latestMovement.getPlayerX());
+            gameState.getPlayer().setY(latestMovement.getPlayerY());
+
+            factStorage.clearPlayerMovementFacts(id);
+        }
 
         for (var id : sessionStorage.getSessionIds()) {
             eventBus.publish("game.update", id);
