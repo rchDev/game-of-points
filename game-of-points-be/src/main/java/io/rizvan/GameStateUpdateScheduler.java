@@ -26,10 +26,6 @@ public class GameStateUpdateScheduler {
     @Inject
     Vertx vertx;
 
-//    void onServerStart(@Observes StartupEvent ev) {
-//        updateGameState();
-//    }
-
     @ConsumeEvent("game.created")
     public void updateGameState(String sessionId) {
         if (sessionStorage.getSessionIds().isEmpty()) return;

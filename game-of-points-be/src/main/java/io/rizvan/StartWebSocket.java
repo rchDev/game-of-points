@@ -2,13 +2,11 @@ package io.rizvan;
 
 import io.quarkus.vertx.ConsumeEvent;
 import io.rizvan.beans.FactStorage;
-import io.rizvan.beans.GameState;
 import io.rizvan.beans.SessionStorage;
 import io.rizvan.beans.facts.FactDeserializer;
 import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.Json;
 import jakarta.json.bind.Jsonb;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
