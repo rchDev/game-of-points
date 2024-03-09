@@ -3,9 +3,8 @@ package io.rizvan.resources;
 import io.rizvan.beans.*;
 import io.rizvan.beans.actors.Agent;
 import io.rizvan.beans.actors.Player;
-import io.rizvan.beans.dtos.requests.PlayerCreationRequest;
+import io.rizvan.beans.dtos.requests.GameCreationRequest;
 import io.rizvan.beans.dtos.responses.GameResponse;
-import io.vertx.core.eventbus.EventBus;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -21,7 +20,7 @@ public class GameResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public GameResponse createGame(PlayerCreationRequest request) {
+    public GameResponse createGame(GameCreationRequest request) {
         int hp = 3;
         int x = 350;
         int y = 50;
@@ -39,7 +38,7 @@ public class GameResource {
         var player = new Player(hp, x, y, width, height, speed, startingPoints, weapon);
         var agent = Agent.Type.SOLDIER.get();
 
-        var gameState = new GameState(player, agent);
+        var gameState = new GameState(player, agent, request.getWindowWidth(), request.getWindowHeight());
         var sessionId = generateSessionId();
 
         storage.addGameState(sessionId, gameState);

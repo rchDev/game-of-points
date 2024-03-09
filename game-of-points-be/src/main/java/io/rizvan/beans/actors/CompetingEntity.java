@@ -51,4 +51,8 @@ public class CompetingEntity extends GameEntity {
     public void setPoints(int points) {
         this.points = points;
     }
+
+    public void addPoints(int points) {
+        this.points += points;
+    }
 }

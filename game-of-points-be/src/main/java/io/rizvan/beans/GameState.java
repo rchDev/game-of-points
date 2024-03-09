@@ -10,15 +10,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class GameState {
     private Player player;
     private Agent agent;
+    private Zone zone;
 
-    private static final int RESOURCE_SIZE = 10;
-    private static final int POINTS_PER_RESOURCE = 10;
+    public static final int RESOURCE_SIZE = 20;
+    public static final int POINTS_PER_RESOURCE = 10;
 
     private List<ResourcePoint> resources = new CopyOnWriteArrayList<>();
 
-    public GameState(Player player, Agent agent) {
+    public GameState(Player player, Agent agent, int zoneWidth, int zoneHeight) {
         this.player = player;
         this.agent = agent;
+        this.zone = new Zone(zoneWidth, zoneHeight);
     }
 
     public Player getPlayer() {
@@ -35,6 +37,19 @@ public class GameState {
 
     public void setAgent(Agent agent) {
         this.agent = agent;
+    }
+
+    public Zone getZone() {
+        return zone;
+    }
+
+    public void setZone(int width, int height) {
+        this.zone.setWidth(width);
+        this.zone.setHeight(height);
+    }
+
+    public void setZone(Zone zone) {
+        this.zone = zone;
     }
 
     public void addResource(double x, double y) {

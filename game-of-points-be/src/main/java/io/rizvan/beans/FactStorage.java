@@ -60,4 +60,12 @@ public class FactStorage {
 
         facts.clear();
     }
+
+    public void clearCollectionFacts(String sessionId) {
+        var facts = collectionFacts.get(sessionId);
+
+        if (facts == null) return;
+
+        facts.clear();
+    }
 }
