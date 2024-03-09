@@ -1,7 +1,10 @@
 package io.rizvan;
 
 import io.quarkus.runtime.StartupEvent;
+import io.quarkus.vertx.ConsumeEvent;
 import io.rizvan.beans.FactStorage;
+import io.rizvan.beans.GameState;
+import io.rizvan.beans.SessionStorage;
 import io.rizvan.utils.RandomNumberGenerator;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
@@ -17,31 +20,51 @@ public class GameStateUpdateScheduler {
     @Inject
     FactStorage factStorage;
     @Inject
+    SessionStorage sessionStorage;
+    @Inject
     EventBus eventBus;
     @Inject
     Vertx vertx;
 
-    void onServerStart(@Observes StartupEvent ev) {
-        updateGameState();
-        scheduleNextRPCreation();
+//    void onServerStart(@Observes StartupEvent ev) {
+//        updateGameState();
+//    }
+
+    @ConsumeEvent("game.created")
+    public void updateGameState(String sessionId) {
+        if (sessionStorage.getSessionIds().isEmpty()) return;
+
+        // ALL GAME LOGIC GOES HERE
+
+        for (var id : sessionStorage.getSessionIds()) {
+            eventBus.publish("game.update", id);
+        }
+        scheduleNextGameStateUpdate(sessionId);
     }
 
-    private void updateGameState() {
-        eventBus.publish("game.update", "game state updated");
-        scheduleNextGameStateUpdate();
+    private void scheduleNextGameStateUpdate(String sessionId) {
+        vertx.setTimer(100, id -> updateGameState(sessionId));
     }
 
-    private void scheduleNextGameStateUpdate() {
-        vertx.setTimer(100, id -> updateGameState());
+    private void createNewResourcePoint(String sessionId) {
+        if (sessionStorage.getSession(sessionId) == null) return;
+
+        var x = rng.getInteger(10, 1300);
+        var y = rng.getInteger(10, 800);
+
+        var gameState = sessionStorage.getGameState(sessionId);
+        gameState.addResource(x, y);
+        scheduleNextRPCreation(sessionId);
     }
 
-    private void createNewResourcePoint(long timeTaken) {
-        System.out.println("!!!NEW RESOURCE POINT ADDED!!! after time:" + timeTaken);
-        scheduleNextRPCreation();
+    @ConsumeEvent("game.created")
+    public void scheduleRPCreation(String sessionId) {
+        int time = rng.getInteger(2, 5);
+        vertx.setTimer(time * 1000L, id -> createNewResourcePoint(sessionId));
     }
 
-    private void scheduleNextRPCreation() {
-        int time = rng.getIntInRangeIncludes(2, 5);
-        vertx.setTimer(time * 1000L, id -> createNewResourcePoint(time));
+    private void scheduleNextRPCreation(String sessionId) {
+        int time = rng.getInteger(2, 5);
+        vertx.setTimer(time * 1000L, id -> createNewResourcePoint(sessionId));
     }
 }

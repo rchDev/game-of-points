@@ -8,7 +8,7 @@ import java.util.Random;
 public class RandomNumberGenerator {
     private final Random random = new Random();
 
-    public int getIntInRangeIncludes(int start, int end) {
+    public int getInteger(int start, int end) {
         if (end <= 0) {
             throw new IllegalArgumentException("[end] must be > 0");
         }

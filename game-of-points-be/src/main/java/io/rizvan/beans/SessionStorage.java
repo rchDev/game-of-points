@@ -42,4 +42,8 @@ public class SessionStorage {
     public CopyOnWriteArrayList<Session> getSessions() {
         return new CopyOnWriteArrayList<>(sessions.values());
     }
+
+    public CopyOnWriteArrayList<String> getSessionIds() {
+        return new CopyOnWriteArrayList<>(sessions.keySet());
+    }
 }

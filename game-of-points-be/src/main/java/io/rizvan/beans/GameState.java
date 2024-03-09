@@ -41,6 +41,10 @@ public class GameState {
         resources.add(new ResourcePoint(x, y, RESOURCE_SIZE, RESOURCE_SIZE, POINTS_PER_RESOURCE));
     }
 
+    public List<ResourcePoint> getResources() {
+        return resources;
+    }
+
     public void collectResource(double x, double y, CompetingEntity entity) {
         //TODO: implement this stuff
     }

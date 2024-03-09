@@ -5,6 +5,7 @@ import io.rizvan.beans.actors.Agent;
 import io.rizvan.beans.actors.Player;
 import io.rizvan.beans.dtos.requests.PlayerCreationRequest;
 import io.rizvan.beans.dtos.responses.GameResponse;
+import io.vertx.core.eventbus.EventBus;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -15,7 +16,6 @@ import jakarta.ws.rs.core.MediaType;
 public class GameResource {
     @Inject
     WeaponCache weaponCache;
-
     @Inject
     SessionStorage storage;
 
@@ -42,7 +42,7 @@ public class GameResource {
         var gameState = new GameState(player, agent);
         var sessionId = generateSessionId();
 
-        storage.addGameState(generateSessionId(), gameState);
+        storage.addGameState(sessionId, gameState);
 
         return new GameResponse(gameState, sessionId);
     }
