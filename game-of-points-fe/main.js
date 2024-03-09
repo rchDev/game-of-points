@@ -45,10 +45,6 @@ function connectToGameSession(sessionId) {
     console.log("WebSocket connection established");
   };
 
-  ws.onmessage = (message) => {
-    console.log("Received message:", message.data);
-  };
-
   ws.onerror = (error) => {
     console.error("WebSocket error:", error);
   };
@@ -60,16 +56,24 @@ function connectToGameSession(sessionId) {
   return ws;
 }
 
+const weapons = await fetchWeapons();
+const selectedWeaponId = await selectRandomWeapon(weapons);
+let { sessionId, gameState } = await getGameState(selectedWeaponId);
+console.log("initial gameState:", gameState);
+
+document.querySelector(".ai-score").innerText = `${gameState.agent.points}: AI`;
+document.querySelector(".player-score").innerText =
+  `Player: ${gameState.player.points}`;
+
 const sketch = (p) => {
   p.preload = async () => {
-    p.gameStateLoaded = false;
     await countdownTimer(0);
-    const weapons = await fetchWeapons();
-    const selectedWeaponId = await selectRandomWeapon(weapons);
-    const { sessionId, gameState } = await getGameState(selectedWeaponId);
+    p.gameStateLoaded = false;
     p.ws = connectToGameSession(sessionId);
-    p.player = gameState.player;
-    p.agent = gameState.agent;
+    p.gameState = gameState;
+    p.ws.onmessage = (message) => {
+      p.gameState = JSON.parse(message.data);
+    };
     p.gameStateLoaded = true;
   };
 
@@ -84,11 +88,12 @@ const sketch = (p) => {
   };
 
   const sendMovementUpdate = (timestamp, deltaTime) => {
+    const { player } = p.gameState;
     p.ws.send(
       JSON.stringify({
         type: "move",
-        playerX: p.player.x,
-        playerY: p.player.y,
+        playerX: player.x,
+        playerY: player.y,
         mouseX: p.mouseX,
         mouseY: p.mouseY,
         timestamp: timestamp,
@@ -100,63 +105,74 @@ const sketch = (p) => {
   let lastUpdateTime = Date.now();
 
   function update(timestamp, deltaTime) {
+    let { player } = p.gameState;
     // Calculate the vector from player to mouse
     let targetX = p.mouseX;
     let targetY = p.mouseY;
-    let dx = targetX - p.player.x;
-    let dy = targetY - p.player.y;
+    let dx = targetX - player.x;
+    let dy = targetY - player.y;
 
     // Calculate distance from player to mouse
     let distance = Math.sqrt(dx * dx + dy * dy);
 
     // Player will move only if the mouse is outside the player's circle radius
-    if (distance > p.player.hitBox.width / 2) {
+    if (distance > player.hitBox.width / 2) {
       // Normalize the direction vector
       let normalizedDx = dx / distance;
       let normalizedDy = dy / distance;
 
       // Update player's position towards the mouse at constant speed
-      let updatedX =
-        p.player.x + normalizedDx * p.player.speed * 200 * deltaTime;
+      let updatedX = player.x + normalizedDx * player.speed * 200 * deltaTime;
 
-      let updatedY =
-        p.player.y + normalizedDy * p.player.speed * 200 * deltaTime;
+      let updatedY = player.y + normalizedDy * player.speed * 200 * deltaTime;
 
-      const prevPlayerX = p.player.x;
-      const prevPlayerY = p.player.y;
+      const prevPlayerX = player.x;
+      const prevPlayerY = player.y;
 
-      p.player.x = p.constrain(
+      player.x = p.constrain(
         updatedX,
-        p.player.hitBox.width / 2,
-        p.width - p.player.hitBox.width / 2,
+        player.hitBox.width / 2,
+        p.width - player.hitBox.width / 2,
       );
-      p.player.y = p.constrain(
+      player.y = p.constrain(
         updatedY,
-        p.player.hitBox.height / 2,
-        p.height - p.player.hitBox.height / 2,
+        player.hitBox.height / 2,
+        p.height - player.hitBox.height / 2,
       );
 
-      if (prevPlayerX !== p.player.x || prevPlayerY !== p.player.y) {
+      if (prevPlayerX !== player.x || prevPlayerY !== player.y) {
         sendMovementUpdate(timestamp, deltaTime);
       }
     }
   }
 
   function render() {
-    p.clear();
-    p.ellipse(
-      p.player.x,
-      p.player.y,
-      p.player.hitBox.width,
-      p.player.hitBox.height,
-    );
+    const { player, agent, resources } = p.gameState;
 
-    p.ellipse(
-      p.agent.x + 50,
-      p.agent.y + 50,
-      p.agent.hitBox.width,
-      p.agent.hitBox.height,
-    );
+    p.clear();
+
+    if (player) {
+      p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
+    }
+
+    if (agent) {
+      p.ellipse(
+        agent.x + 50,
+        agent.y + 50,
+        agent.hitBox.width,
+        agent.hitBox.height,
+      );
+    }
+
+    if (resources) {
+      resources.forEach((resourse) => {
+        p.stroke("purple");
+        p.strokeWeight(20);
+        p.point(resourse.x, resourse.y);
+        p.stroke("black");
+        p.strokeWeight(1);
+      });
+    }
   }
 
   p.draw = async () => {
@@ -170,7 +186,6 @@ const sketch = (p) => {
     update(now, deltaTime);
     render();
 
-    // Consider recalculating Date.now()
     lastUpdateTime = now;
   };
 
