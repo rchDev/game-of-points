@@ -20,13 +20,13 @@ async function selectRandomWeapon(weapons) {
   return weapons[randomIndex].id;
 }
 
-async function getGameState(weaponId) {
+async function getGameState(weaponId, windowWidth, windowHeight) {
   const response = await fetch("http://localhost:8080/games", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ weaponId: weaponId }),
+    body: JSON.stringify({ weaponId, windowWidth, windowHeight }),
   });
 
   if (!response.ok) {
@@ -56,24 +56,40 @@ function connectToGameSession(sessionId) {
   return ws;
 }
 
-const weapons = await fetchWeapons();
-const selectedWeaponId = await selectRandomWeapon(weapons);
-let { sessionId, gameState } = await getGameState(selectedWeaponId);
-console.log("initial gameState:", gameState);
+function setStats(gameState) {
+  if (!gameState) return;
 
-document.querySelector(".ai-score").innerText = `${gameState.agent.points}: AI`;
-document.querySelector(".player-score").innerText =
-  `Player: ${gameState.player.points}`;
+  document.querySelector(".ai-score").innerText =
+    `${gameState.agent.points}: AI`;
+  document.querySelector(".player-score").innerText =
+    `Player: ${gameState.player.points}`;
+}
 
 const sketch = (p) => {
   p.preload = async () => {
-    await countdownTimer(0);
     p.gameStateLoaded = false;
+
+    await countdownTimer(0);
+    const weapons = await fetchWeapons();
+    const selectedWeaponId = await selectRandomWeapon(weapons);
+
+    const { offsetWidth: width, offsetHeight: height } =
+      document.getElementById("game-canvas");
+
+    let { sessionId, gameState } = await getGameState(
+      selectedWeaponId,
+      width,
+      height,
+    );
+
+    setStats(gameState);
+
     p.ws = connectToGameSession(sessionId);
-    p.gameState = gameState;
     p.ws.onmessage = (message) => {
       p.gameState = JSON.parse(message.data);
     };
+
+    p.gameState = gameState;
     p.gameStateLoaded = true;
   };
 
@@ -167,7 +183,7 @@ const sketch = (p) => {
     if (resources) {
       resources.forEach((resourse) => {
         p.stroke("purple");
-        p.strokeWeight(20);
+        p.strokeWeight(resourse.hitBox.width);
         p.point(resourse.x, resourse.y);
         p.stroke("black");
         p.strokeWeight(1);
