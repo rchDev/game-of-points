@@ -227,6 +227,7 @@ const sketch = (p) => {
 
     if (player) {
       p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
+      drawAimLine(player);
     }
 
     if (agent) {
@@ -242,6 +243,26 @@ const sketch = (p) => {
         p.strokeWeight(1);
       });
     }
+  }
+
+  function drawAimLine(entity) {
+    // Calculate angle between player position and mouse position
+    let angle = p.atan2(p.mouseY - entity.y, p.mouseX - entity.x);
+
+    // Calculate the start point of the line based on the player's edge
+    let startX = entity.x + p.cos(angle) * entity.hitBox.width;
+    let startY = entity.y + p.sin(angle) * entity.hitBox.height;
+
+    // Calculate the end point of the line based on the player's reach
+    let endX = entity.x + p.cos(angle) * entity.reach;
+    let endY = entity.y + p.sin(angle) * entity.reach;
+
+    // Draw the line
+    p.stroke("red");
+    p.strokeWeight(4);
+    p.line(startX, startY, endX, endY);
+    p.strokeWeight(1);
+    p.stroke("black");
   }
 
   // Draw loop
