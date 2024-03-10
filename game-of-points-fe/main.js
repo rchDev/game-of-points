@@ -65,14 +65,18 @@ function setStats(gameState) {
     `Player: ${gameState.player.points}`;
 }
 
-const isMoving = {
-  up: false,
-  down: false,
-  left: false,
-  right: false,
-};
-
 const sketch = (p) => {
+  const isMoving = {
+    up: false,
+    down: false,
+    left: false,
+    right: false,
+  };
+  let lastSentMousePosition = { x: -1, y: -1 };
+  const mousePositionSendThreshold = 10; // px
+  const mousePositionSendInterval = 100; // ms
+  let mousePositionSendTimer;
+
   p.preload = async () => {
     p.gameStateLoaded = false;
 
@@ -108,6 +112,42 @@ const sketch = (p) => {
     let canvas = p.createCanvas(width, height);
     canvas.parent("game-canvas");
     p.fill(255, 0, 0);
+
+    mousePositionSendTimer = setInterval(
+      sendMousePositionUpdate,
+      mousePositionSendInterval,
+    );
+  };
+
+  const sendMousePositionUpdate = () => {
+    if (
+      p.mouseX !== lastSentMousePosition.x ||
+      p.mouseY !== lastSentMousePosition.y
+    ) {
+      const mousePosition = { x: p.mouseX, y: p.mouseY };
+
+      // Update last sent position
+      lastSentMousePosition = mousePosition;
+
+      if (!p.ws) return;
+
+      p.ws.send(
+        JSON.stringify({ type: "aim", mouseX: p.mouseX, mouseY: p.mouseY }),
+      );
+    }
+  };
+
+  p.mouseMoved = () => {
+    if (
+      p.dist(
+        p.mouseX,
+        p.mouseY,
+        lastSentMousePosition.x,
+        lastSentMousePosition.y,
+      ) > mousePositionSendThreshold
+    ) {
+      sendMousePositionUpdate();
+    }
   };
 
   const sendMovementUpdate = (keycode, isPressed, timeAtButtonPress) => {
@@ -170,16 +210,12 @@ const sketch = (p) => {
   p.keyPressed = () => {
     const timestamp = Date.now();
     updateMovement(p.keyCode, true);
-    console.log("key pressed", p.keyCode);
-    console.log("isMoving", isMoving);
     // sendMovementUpdate(keycode, true, timestamp);
   };
 
   p.keyReleased = () => {
     const timestamp = Date.now();
     updateMovement(p.keyCode, false);
-    console.log("key released", p.keyCode);
-    console.log("isMoving", isMoving);
     // sendMovementUpdate(keycode, false, timestamp);
   };
 
@@ -223,6 +259,10 @@ const sketch = (p) => {
     const { offsetWidth: width, offsetHeight: height } =
       document.getElementById("game-canvas");
     p.resizeCanvas(width, height);
+  };
+
+  p.sketchEnded = () => {
+    clearInterval(mousePositionSendTimer);
   };
 };
 
