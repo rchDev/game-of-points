@@ -3,10 +3,10 @@ package io.rizvan.beans;
 public class HitBox {
     private double x;
     private double y;
-    private double width;
-    private double height;
+    private int width;
+    private int height;
 
-    public HitBox(double x, double y, double width, double height) {
+    public HitBox(double x, double y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -29,19 +29,19 @@ public class HitBox {
         this.y = y;
     }
 
-    public double getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public void setWidth(double width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
-    public double getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(double height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 }

@@ -5,6 +5,7 @@ import io.rizvan.beans.actors.Agent;
 import io.rizvan.beans.actors.Player;
 import io.rizvan.beans.dtos.requests.GameCreationRequest;
 import io.rizvan.beans.dtos.responses.GameResponse;
+import io.rizvan.utils.RandomNumberGenerator;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -17,28 +18,22 @@ public class GameResource {
     WeaponCache weaponCache;
     @Inject
     SessionStorage storage;
+    @Inject
+    RandomNumberGenerator rng;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public GameResponse createGame(GameCreationRequest request) {
-        int hp = 3;
-        int x = 350;
-        int y = 50;
-        double width = 50;
-        double height = 50;
-        double speed = 1.0;
-        int startingPoints = 0;
-
         var weapons = weaponCache.getWeapons();
         var weapon = weapons.stream()
                 .filter(w -> w.getId() == request.getWeaponId())
                 .findFirst()
                 .orElse(weapons.get(0));
 
-        var player = new Player(hp, x, y, width, height, speed, startingPoints, weapon);
-        var agent = Agent.Type.SOLDIER.get();
+        var player = Player.fromWeapon(weapon);
+        var agent = Agent.getRandom();
 
-        var gameState = new GameState(player, agent, request.getWindowWidth(), request.getWindowHeight());
+        var gameState = new GameState(player, agent, request.getWindowWidth(), request.getWindowHeight(), rng);
         var sessionId = generateSessionId();
 
         storage.addGameState(sessionId, gameState);

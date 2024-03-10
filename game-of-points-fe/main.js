@@ -172,12 +172,7 @@ const sketch = (p) => {
     }
 
     if (agent) {
-      p.ellipse(
-        agent.x + 50,
-        agent.y + 50,
-        agent.hitBox.width,
-        agent.hitBox.height,
-      );
+      p.ellipse(agent.x, agent.y, agent.hitBox.width, agent.hitBox.height);
     }
 
     if (resources) {

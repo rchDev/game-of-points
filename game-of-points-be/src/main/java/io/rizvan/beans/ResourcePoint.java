@@ -6,7 +6,7 @@ public class ResourcePoint extends GameEntity {
     private final HitBox hitbox;
     private int points;
 
-    public ResourcePoint(double x, double y, double width, double height, int points) {
+    public ResourcePoint(double x, double y, int width, int height, int points) {
         super(x, y, width, height);
         this.points = points;
         this.hitbox = new HitBox(x, y, width, height);

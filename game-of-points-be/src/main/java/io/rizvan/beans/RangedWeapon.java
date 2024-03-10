@@ -17,6 +17,22 @@ public class RangedWeapon {
         }
     }
 
+    public enum Name {
+        SNIPER("Sniper"),
+        CARBINE("Carbine"),
+        SUB_MACHINE("Sub-machine"),
+        PISTOL("Pistol");
+
+        private String name;
+        Name(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
     private int id;
     private String name;
     private int damage;

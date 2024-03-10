@@ -7,7 +7,7 @@ public abstract class GameEntity {
     protected double y;
     protected HitBox hitBox;
 
-    public GameEntity(double x, double y, double width, double height) {
+    public GameEntity(double x, double y, int width, int height) {
         this.x = x;
         this.y = y;
         this.hitBox = new HitBox(x, y, width, height);

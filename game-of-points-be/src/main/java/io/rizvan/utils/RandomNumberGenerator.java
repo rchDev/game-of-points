@@ -21,6 +21,6 @@ public class RandomNumberGenerator {
             throw new IllegalArgumentException("[end] must be >= [start]");
         }
 
-        return start + random.nextInt(end - 1);
+        return random.nextInt(end - start + 1) + start;
     }
 }

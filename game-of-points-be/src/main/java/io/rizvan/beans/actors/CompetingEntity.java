@@ -8,7 +8,7 @@ public class CompetingEntity extends GameEntity {
     private double speed;
     private int points;
 
-    public CompetingEntity(int hitPoints, double x, double y, double width, double height, double speed, int points, RangedWeapon weapon) {
+    public CompetingEntity(int hitPoints, double x, double y, int width, int height, double speed, int points, RangedWeapon weapon) {
         super(x, y, width, height);
         this.weapon = weapon;
         this.hitPoints = hitPoints;
