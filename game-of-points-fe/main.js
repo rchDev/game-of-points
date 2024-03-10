@@ -65,6 +65,13 @@ function setStats(gameState) {
     `Player: ${gameState.player.points}`;
 }
 
+const isMoving = {
+  up: false,
+  down: false,
+  left: false,
+  right: false,
+};
+
 const sketch = (p) => {
   p.preload = async () => {
     p.gameStateLoaded = false;
@@ -86,7 +93,7 @@ const sketch = (p) => {
 
     p.ws = connectToGameSession(sessionId);
     p.ws.onmessage = (message) => {
-      p.gameState = JSON.parse(message.data);
+      // p.gameState = JSON.parse(message.data);
     };
 
     p.gameState = gameState;
@@ -103,65 +110,80 @@ const sketch = (p) => {
     p.fill(255, 0, 0);
   };
 
-  const sendMovementUpdate = (timestamp, deltaTime) => {
+  const sendMovementUpdate = (keycode, isPressed, timeAtButtonPress) => {
     const { player } = p.gameState;
     p.ws.send(
       JSON.stringify({
         type: "move",
+        keycode,
+        isPressed,
         playerX: player.x,
         playerY: player.y,
-        mouseX: p.mouseX,
-        mouseY: p.mouseY,
-        timestamp: timestamp,
-        detaTime: deltaTime,
+        clientTimestamp: timeAtButtonPress,
       }),
     );
   };
 
-  let lastUpdateTime = Date.now();
+  function getMovementVector(isMoving, player) {
+    const movementVector = { x: 0, y: 0 };
 
-  function update(timestamp, deltaTime) {
-    let { player } = p.gameState;
-    // Calculate the vector from player to mouse
-    let targetX = p.mouseX;
-    let targetY = p.mouseY;
-    let dx = targetX - player.x;
-    let dy = targetY - player.y;
+    if (isMoving.up) movementVector.y -= player.speed;
+    if (isMoving.down) movementVector.y += player.speed;
+    if (isMoving.left) movementVector.x -= player.speed;
+    if (isMoving.right) movementVector.x += player.speed;
 
-    // Calculate distance from player to mouse
-    let distance = Math.sqrt(dx * dx + dy * dy);
+    return movementVector;
+  }
 
-    // Player will move only if the mouse is outside the player's circle radius
-    if (distance > player.hitBox.width / 2) {
-      // Normalize the direction vector
-      let normalizedDx = dx / distance;
-      let normalizedDy = dy / distance;
+  function handleMovement(deltaTime) {
+    const { player } = p.gameState;
+    let movementVector = getMovementVector(isMoving, player);
 
-      // Update player's position towards the mouse at constant speed
-      let updatedX = player.x + normalizedDx * player.speed * 200 * deltaTime;
+    if (movementVector.x !== 0 && movementVector.y !== 0) {
+      movementVector.x /= Math.sqrt(2);
+      movementVector.y /= Math.sqrt(2);
+    }
 
-      let updatedY = player.y + normalizedDy * player.speed * 200 * deltaTime;
+    player.x += (movementVector.x * deltaTime) / 5;
+    player.y += (movementVector.y * deltaTime) / 5;
+  }
 
-      const prevPlayerX = player.x;
-      const prevPlayerY = player.y;
-
-      player.x = p.constrain(
-        updatedX,
-        player.hitBox.width / 2,
-        p.width - player.hitBox.width / 2,
-      );
-      player.y = p.constrain(
-        updatedY,
-        player.hitBox.height / 2,
-        p.height - player.hitBox.height / 2,
-      );
-
-      if (prevPlayerX !== player.x || prevPlayerY !== player.y) {
-        sendMovementUpdate(timestamp, deltaTime);
-      }
+  function updateMovement(keyCode, isPressed) {
+    switch (keyCode) {
+      case 87: // W
+        isMoving.up = isPressed;
+        break;
+      case 83: // S
+        isMoving.down = isPressed;
+        break;
+      case 65: // A
+        isMoving.left = isPressed;
+        break;
+      case 68: // D
+        isMoving.right = isPressed;
+        break;
+      default: // Do nothing
+        break;
     }
   }
 
+  p.keyPressed = () => {
+    const timestamp = Date.now();
+    updateMovement(p.keyCode, true);
+    console.log("key pressed", p.keyCode);
+    console.log("isMoving", isMoving);
+    // sendMovementUpdate(keycode, true, timestamp);
+  };
+
+  p.keyReleased = () => {
+    const timestamp = Date.now();
+    updateMovement(p.keyCode, false);
+    console.log("key released", p.keyCode);
+    console.log("isMoving", isMoving);
+    // sendMovementUpdate(keycode, false, timestamp);
+  };
+
+  // Rendering logic
   function render() {
     const { player, agent, resources } = p.gameState;
 
@@ -186,20 +208,17 @@ const sketch = (p) => {
     }
   }
 
+  // Draw loop
   p.draw = async () => {
-    const now = Date.now();
-    const deltaTime = (now - lastUpdateTime) / 1000.0;
-
     if (!p.gameStateLoaded) {
       return;
     }
 
-    update(now, deltaTime);
+    handleMovement(p.deltaTime);
     render();
-
-    lastUpdateTime = now;
   };
 
+  // Resize canvas
   p.windowResized = () => {
     const { offsetWidth: width, offsetHeight: height } =
       document.getElementById("game-canvas");
