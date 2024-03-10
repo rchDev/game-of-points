@@ -8,11 +8,13 @@ public class CompetingEntity extends GameEntity {
     private double speed;
     private int points;
 
+    public static final double BASE_SPEED = 0.4;
+
     public CompetingEntity(int hitPoints, double x, double y, int width, int height, double speed, int points, RangedWeapon weapon) {
         super(x, y, width, height);
         this.weapon = weapon;
         this.hitPoints = hitPoints;
-        this.speed = speed;
+        this.speed = speed * BASE_SPEED;
         this.points = points;
     }
 

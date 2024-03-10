@@ -184,8 +184,8 @@ const sketch = (p) => {
       movementVector.y /= Math.sqrt(2);
     }
 
-    player.x += (movementVector.x * deltaTime) / 5;
-    player.y += (movementVector.y * deltaTime) / 5;
+    player.x += movementVector.x * deltaTime;
+    player.y += movementVector.y * deltaTime;
   }
 
   function updateMovement(keyCode, isPressed) {
