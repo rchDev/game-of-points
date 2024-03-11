@@ -42,7 +42,7 @@ public class FactStorage {
                 }
                 movementFacts.get(sessionId).add((PlayerMovesFact) fact);
                 break;
-            case "collection":
+            case "collect":
                 if (!collectionFacts.containsKey(sessionId)) {
                     collectionFacts.put(sessionId, new CopyOnWriteArrayList<>());
                 }
