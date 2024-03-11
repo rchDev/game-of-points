@@ -10,7 +10,7 @@ public abstract class GameEntity {
     public GameEntity(double x, double y, int width, int height) {
         this.x = x;
         this.y = y;
-        this.hitBox = new HitBox(x, y, width, height);
+        this.hitBox = new HitBox(width, height);
     }
 
     public double getX() {

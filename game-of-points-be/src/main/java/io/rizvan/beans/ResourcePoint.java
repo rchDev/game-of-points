@@ -9,7 +9,7 @@ public class ResourcePoint extends GameEntity {
     public ResourcePoint(double x, double y, int width, int height, int points) {
         super(x, y, width, height);
         this.points = points;
-        this.hitbox = new HitBox(x, y, width, height);
+        this.hitbox = new HitBox(width, height);
     }
 
     public HitBox getHitbox() {

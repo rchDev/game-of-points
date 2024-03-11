@@ -81,8 +81,6 @@ public class GameState {
         var x = rng.getInteger(minX, maxX);
         var y = rng.getInteger(minY, maxY);
 
-        System.out.println("width: " + zone.getWidth() + " height: " + zone.getHeight() + " minX: " + minX + " maxX: " + maxX + " selectedX: " + x + " minY: " + minY + " maxY: " + maxY + " selectedY: " + y);
-
         entity.setX(x);
         entity.setY(y);
     }
