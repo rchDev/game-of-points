@@ -1,4 +1,5 @@
 import p5 from "p5";
+import { cloneDeep } from "lodash";
 
 async function countdownTimer(duration) {
   for (let seconds = duration; seconds > 0; seconds--) {
@@ -20,7 +21,7 @@ async function selectRandomWeapon(weapons) {
   return weapons[randomIndex].id;
 }
 
-async function getGameState(weaponId, windowWidth, windowHeight) {
+async function getInitialGameState(weaponId, windowWidth, windowHeight) {
   const response = await fetch("http://localhost:8080/games", {
     method: "POST",
     headers: {
@@ -72,10 +73,46 @@ const sketch = (p) => {
     left: false,
     right: false,
   };
+
   let lastSentMousePosition = { x: -1, y: -1 };
   const mousePositionSendThreshold = 10; // px
   const mousePositionSendInterval = 100; // ms
   let mousePositionSendTimer;
+  let predictions = [];
+
+  const sendUpdateToServer = (type, details) => {
+    if (!p.ws) return;
+
+    const clientTimestamp = Date.now();
+
+    predictions.push({ type, details, clientTimestamp });
+
+    p.ws.send(JSON.stringify({ type, details, clientTimestamp }));
+  };
+
+  const reconcileWithServerState = (gameState) => {
+    console.log("Received game state update:", gameState);
+
+    // predictions = predictions.filter(
+    //   (action) => action.timeStamp > gameState.lastProcessedTimestamp,
+    // );
+
+    const tempGameState = cloneDeep(gameState);
+
+    predictions.forEach((action) => {
+      applyPrediction(tempGameState, action);
+    });
+
+    p.gameState = tempGameState;
+  };
+
+  const applyPrediction = (gameState, action) => {
+    switch (action.type) {
+      case "move":
+        gameState.player.x += action.details.dx;
+        gameState.player.y += action.details.dy;
+    }
+  };
 
   p.preload = async () => {
     p.gameStateLoaded = false;
@@ -87,7 +124,7 @@ const sketch = (p) => {
     const { offsetWidth: width, offsetHeight: height } =
       document.getElementById("game-canvas");
 
-    let { sessionId, gameState } = await getGameState(
+    let { sessionId, gameState } = await getInitialGameState(
       selectedWeaponId,
       width,
       height,
@@ -96,9 +133,8 @@ const sketch = (p) => {
     setStats(gameState);
 
     p.ws = connectToGameSession(sessionId);
-    p.ws.onmessage = (message) => {
-      // p.gameState = JSON.parse(message.data);
-    };
+    p.ws.onmessage = (message) =>
+      reconcileWithServerState(JSON.parse(message.data));
 
     p.gameState = gameState;
     p.gameStateLoaded = true;
@@ -126,14 +162,8 @@ const sketch = (p) => {
     ) {
       const mousePosition = { x: p.mouseX, y: p.mouseY };
 
-      // Update last sent position
       lastSentMousePosition = mousePosition;
-
-      if (!p.ws) return;
-
-      p.ws.send(
-        JSON.stringify({ type: "aim", mouseX: p.mouseX, mouseY: p.mouseY }),
-      );
+      sendUpdateToServer("aim", { mouseX: p.mouseX, mouseY: p.mouseY });
     }
   };
 
@@ -150,42 +180,32 @@ const sketch = (p) => {
     }
   };
 
-  const sendMovementUpdate = (keycode, isPressed, timeAtButtonPress) => {
-    const { player } = p.gameState;
-    p.ws.send(
-      JSON.stringify({
-        type: "move",
-        keycode,
-        isPressed,
-        playerX: player.x,
-        playerY: player.y,
-        clientTimestamp: timeAtButtonPress,
-      }),
-    );
-  };
-
-  function getMovementVector(isMoving, player) {
+  function getMovementVector(isMoving, entity) {
     const movementVector = { x: 0, y: 0 };
 
-    if (isMoving.up) movementVector.y -= player.speed;
-    if (isMoving.down) movementVector.y += player.speed;
-    if (isMoving.left) movementVector.x -= player.speed;
-    if (isMoving.right) movementVector.x += player.speed;
+    if (isMoving.up) movementVector.y -= entity.speed;
+    if (isMoving.down) movementVector.y += entity.speed;
+    if (isMoving.left) movementVector.x -= entity.speed;
+    if (isMoving.right) movementVector.x += entity.speed;
 
     return movementVector;
   }
 
-  function handleMovement(deltaTime) {
+  function predictMovementAndSendUpdate(deltaTime) {
     const { player } = p.gameState;
-    let movementVector = getMovementVector(isMoving, player);
+    let { x: dx, y: dy } = getMovementVector(isMoving, player);
 
-    if (movementVector.x !== 0 && movementVector.y !== 0) {
-      movementVector.x /= Math.sqrt(2);
-      movementVector.y /= Math.sqrt(2);
+    if (dx !== 0 && dy !== 0) {
+      dx /= Math.sqrt(2);
+      dy /= Math.sqrt(2);
     }
 
-    player.x += movementVector.x * deltaTime;
-    player.y += movementVector.y * deltaTime;
+    player.x += dx * deltaTime;
+    player.y += dy * deltaTime;
+
+    if (dx !== 0 || dy !== 0) {
+      sendUpdateToServer("move", { dx: dx * deltaTime, dy: dy * deltaTime });
+    }
   }
 
   function updateMovement(keyCode, isPressed) {
@@ -207,17 +227,9 @@ const sketch = (p) => {
     }
   }
 
-  p.keyPressed = () => {
-    const timestamp = Date.now();
-    updateMovement(p.keyCode, true);
-    // sendMovementUpdate(keycode, true, timestamp);
-  };
+  p.keyPressed = () => updateMovement(p.keyCode, true);
 
-  p.keyReleased = () => {
-    const timestamp = Date.now();
-    updateMovement(p.keyCode, false);
-    // sendMovementUpdate(keycode, false, timestamp);
-  };
+  p.keyReleased = () => updateMovement(p.keyCode, false);
 
   // Rendering logic
   function render() {
@@ -242,6 +254,19 @@ const sketch = (p) => {
         p.stroke("black");
         p.strokeWeight(1);
       });
+    }
+  }
+
+  function checkCollisionWithResources(player, resources) {
+    for (let resource of resources) {
+      if (
+        player.x < resource.x + resource.hitBox.width &&
+        player.x + player.hitBox.width > resource.x &&
+        player.y < resource.y + resource.hitBox.height &&
+        player.y + player.hitBox.height > resource.y
+      ) {
+        sendUpdateToServer("collect", resource);
+      }
     }
   }
 
@@ -270,8 +295,8 @@ const sketch = (p) => {
     if (!p.gameStateLoaded) {
       return;
     }
-
-    handleMovement(p.deltaTime);
+    predictMovementAndSendUpdate(p.deltaTime);
+    checkCollisionWithResources(p.gameState.player, p.gameState.resources);
     render();
   };
 
