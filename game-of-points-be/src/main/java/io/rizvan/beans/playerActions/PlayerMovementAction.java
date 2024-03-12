@@ -1,15 +1,10 @@
 package io.rizvan.beans.playerActions;
 
-import io.rizvan.beans.actors.CompetingEntity;
+import io.rizvan.beans.GameState;
 
 public class PlayerMovementAction extends PlayerAction {
     private double dx;
     private double dy;
-
-    @Override
-    public boolean check(CompetingEntity entity1, CompetingEntity entity2) {
-        return true;
-    }
 
     public double getDx() {
         return dx;
@@ -25,5 +20,16 @@ public class PlayerMovementAction extends PlayerAction {
 
     public void setDy(double dy) {
         this.dy = dy;
+    }
+
+    @Override
+    public boolean apply(GameState gameState) {
+
+        return true;
+    }
+
+    @Override
+    public boolean isLegal(GameState gameState) {
+        return false;
     }
 }

@@ -1,5 +1,6 @@
 package io.rizvan.beans.playerActions;
 
+import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.CompetingEntity;
 
 public class PlayerShootingAction extends PlayerAction {
@@ -23,7 +24,12 @@ public class PlayerShootingAction extends PlayerAction {
     }
 
     @Override
-    public boolean check(CompetingEntity entity1, CompetingEntity entity2) {
+    public boolean apply(GameState gameState) {
+        return false;
+    }
+
+    @Override
+    public boolean isLegal(GameState gameState) {
         return false;
     }
 }

@@ -1,5 +1,6 @@
 package io.rizvan.beans.playerActions;
 
+import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.CompetingEntity;
 
 public abstract class PlayerAction implements Comparable<PlayerAction> {
@@ -7,7 +8,9 @@ public abstract class PlayerAction implements Comparable<PlayerAction> {
     protected long clientTimestamp;
     protected long serverTimestamp;
 
-    public abstract boolean check(CompetingEntity entity1, CompetingEntity entity2);
+    public abstract boolean apply(GameState gameState);
+
+    public abstract boolean isLegal(GameState gameState);
 
     public String getType() {
         return type;

@@ -43,6 +43,9 @@ public class GameStateUpdateScheduler {
             playerActions.drainTo(actionsToProcess, MAX_ACTIONS_PER_TICK);
 
             for (var playerAction : actionsToProcess) {
+                if (playerAction.isLegal(gameState)) {
+                    playerAction.apply(gameState);
+                }
             }
         }
 

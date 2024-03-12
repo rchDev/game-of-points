@@ -1,15 +1,10 @@
 package io.rizvan.beans.playerActions;
 
-import io.rizvan.beans.actors.CompetingEntity;
+import io.rizvan.beans.GameState;
 
 public class PlayerAimingAction extends PlayerAction {
     private double mouseX;
     private double mouseY;
-
-    @Override
-    public boolean check(CompetingEntity entity1, CompetingEntity entity2) {
-        return false;
-    }
 
     public double getMouseX() {
         return mouseX;
@@ -25,5 +20,15 @@ public class PlayerAimingAction extends PlayerAction {
 
     public void setMouseY(double mouseY) {
         this.mouseY = mouseY;
+    }
+
+    @Override
+    public boolean apply(GameState gameState) {
+        return false;
+    }
+
+    @Override
+    public boolean isLegal(GameState gameState) {
+        return false;
     }
 }
