@@ -1,24 +1,23 @@
 package io.rizvan;
 
 import io.quarkus.vertx.ConsumeEvent;
-import io.rizvan.beans.FactStorage;
+import io.rizvan.beans.PlayerActionQueue;
 import io.rizvan.beans.GameState;
 import io.rizvan.beans.SessionStorage;
+import io.rizvan.beans.playerActions.PlayerAction;
 import io.rizvan.utils.RandomNumberGenerator;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 public class GameStateUpdateScheduler {
-
     @Inject
     RandomNumberGenerator rng;
-    @Inject
-    FactStorage factStorage;
     @Inject
     SessionStorage sessionStorage;
     @Inject
@@ -26,29 +25,25 @@ public class GameStateUpdateScheduler {
     @Inject
     Vertx vertx;
 
+    public static final int MAX_ACTIONS_PER_TICK = 1000;
+
     @ConsumeEvent("game.created")
     public void updateGameState(String sessionId) {
         if (sessionStorage.getSessionIds().isEmpty()) return;
 
         for (var id : sessionStorage.getSessionIds()) {
             var gameState = sessionStorage.getGameState(id);
+
             if (gameState == null) continue;
 
-            var movementFacts = factStorage.getPlayerMovementFacts(id);
-            if (movementFacts == null || movementFacts.isEmpty()) continue;
+            var playerActions = sessionStorage.getPlayerActions(id);
+            if (playerActions == null) continue;
 
-            var latestMovement = movementFacts.get(movementFacts.size() - 1);
-            gameState.getPlayer().setX(latestMovement.getPlayerX());
-            gameState.getPlayer().setY(latestMovement.getPlayerY());
+            List<PlayerAction> actionsToProcess = new ArrayList<>();
+            playerActions.drainTo(actionsToProcess, MAX_ACTIONS_PER_TICK);
 
-            var collectionFacts = factStorage.getResourceCollectionFacts(id);
-            if (collectionFacts == null || collectionFacts.isEmpty()) continue;
-
-//            for (var fact : collectionFacts) {
-//                gameState.getPlayer().addPoints(fact);
-//            }
-            factStorage.clearPlayerMovementFacts(id);
-            factStorage.clearCollectionFacts(id);
+            for (var playerAction : actionsToProcess) {
+            }
         }
 
         for (var id : sessionStorage.getSessionIds()) {

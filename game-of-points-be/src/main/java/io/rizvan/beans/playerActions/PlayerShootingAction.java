@@ -1,8 +1,8 @@
-package io.rizvan.beans.facts;
+package io.rizvan.beans.playerActions;
 
 import io.rizvan.beans.actors.CompetingEntity;
 
-public class PlayerShootsFact extends Fact {
+public class PlayerShootingAction extends PlayerAction {
     private double mouseX;
     private double mouseY;
 

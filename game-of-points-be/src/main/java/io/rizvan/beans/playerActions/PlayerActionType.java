@@ -1,6 +1,6 @@
-package io.rizvan.beans.facts;
+package io.rizvan.beans.playerActions;
 
-public class FactType {
+public class PlayerActionType {
     private String type;
 
     public String getType() {

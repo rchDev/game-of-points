@@ -80,14 +80,14 @@ const sketch = (p) => {
   let mousePositionSendTimer;
   let predictions = [];
 
-  const sendUpdateToServer = (type, details) => {
+  const sendPlayerActionToServer = (type, details) => {
     if (!p.ws) return;
 
     const clientTimestamp = Date.now();
 
     predictions.push({ type, details, clientTimestamp });
 
-    p.ws.send(JSON.stringify({ type, details, clientTimestamp }));
+    p.ws.send(JSON.stringify({ type, ...details, clientTimestamp }));
   };
 
   const reconcileWithServerState = (gameState) => {
@@ -111,6 +111,15 @@ const sketch = (p) => {
       case "move":
         gameState.player.x += action.details.dx;
         gameState.player.y += action.details.dy;
+        break;
+      case "aim":
+        gameState.player.mouseX = action.details.mouseX;
+        gameState.player.mouseY = action.details.mouseY;
+        break;
+      case "shoot":
+        break;
+      default:
+        console.error("Unknown action type:", action.type);
     }
   };
 
@@ -163,7 +172,7 @@ const sketch = (p) => {
       const mousePosition = { x: p.mouseX, y: p.mouseY };
 
       lastSentMousePosition = mousePosition;
-      sendUpdateToServer("aim", { mouseX: p.mouseX, mouseY: p.mouseY });
+      sendPlayerActionToServer("aim", { mouseX: p.mouseX, mouseY: p.mouseY });
     }
   };
 
@@ -204,7 +213,10 @@ const sketch = (p) => {
     player.y += dy * deltaTime;
 
     if (dx !== 0 || dy !== 0) {
-      sendUpdateToServer("move", { dx: dx * deltaTime, dy: dy * deltaTime });
+      sendPlayerActionToServer("move", {
+        dx: dx * deltaTime,
+        dy: dy * deltaTime,
+      });
     }
   }
 
@@ -265,7 +277,7 @@ const sketch = (p) => {
         player.y < resource.y + resource.hitBox.height &&
         player.y + player.hitBox.height > resource.y
       ) {
-        sendUpdateToServer("collect", resource);
+        sendPlayerActionToServer("collect", resource);
       }
     }
   }

@@ -5,6 +5,7 @@ import io.rizvan.beans.GameState;
 public class GameResponse {
     private GameState gameState;
     private String sessionId;
+    private Long lastProcessedTimestamp;
 
     public GameResponse() {
     }
@@ -28,5 +29,13 @@ public class GameResponse {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public Long getLastProcessedTimestamp() {
+        return lastProcessedTimestamp;
+    }
+
+    public void setLastProcessedTimestamp(Long lastProcessedTimestamp) {
+        this.lastProcessedTimestamp = lastProcessedTimestamp;
     }
 }

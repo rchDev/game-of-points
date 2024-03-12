@@ -1,9 +1,9 @@
 package io.rizvan;
 
 import io.quarkus.vertx.ConsumeEvent;
-import io.rizvan.beans.FactStorage;
+import io.rizvan.beans.PlayerActionQueue;
 import io.rizvan.beans.SessionStorage;
-import io.rizvan.beans.facts.FactDeserializer;
+import io.rizvan.beans.playerActions.PlayerActionDeserializer;
 import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -16,15 +16,15 @@ import jakarta.websocket.Session;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 
+import java.time.Instant;
+
 @ServerEndpoint("/games/{sessionId}")
 @ApplicationScoped
 public class StartWebSocket {
     @Inject
     SessionStorage sessionStorage;
     @Inject
-    FactStorage factStorage;
-    @Inject
-    FactDeserializer factDeserializer;
+    PlayerActionDeserializer playerActionDeserializer;
     @Inject
     EventBus eventBus;
     @Inject
@@ -49,8 +49,10 @@ public class StartWebSocket {
 
     @OnMessage
     public void onMessage(String message, @PathParam("sessionId") String sessionId) {
-        var fact = factDeserializer.deserialize(message);
-        factStorage.add(sessionId, fact);
+        var timestamp = Instant.now().toEpochMilli();
+        var playerAction = playerActionDeserializer.deserialize(message);
+        playerAction.setServerTimestamp(timestamp);
+        sessionStorage.addPlayerAction(sessionId, playerAction);
     }
 
     @ConsumeEvent("game.update")
