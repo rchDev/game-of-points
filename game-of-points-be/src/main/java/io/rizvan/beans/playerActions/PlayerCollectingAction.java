@@ -2,7 +2,6 @@ package io.rizvan.beans.playerActions;
 
 import io.rizvan.beans.GameState;
 import io.rizvan.beans.ResourcePoint;
-import io.rizvan.beans.actors.CompetingEntity;
 
 public class PlayerCollectingAction extends PlayerAction {
     ResourcePoint resource;

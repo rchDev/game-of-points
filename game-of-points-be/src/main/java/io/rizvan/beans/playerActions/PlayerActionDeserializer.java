@@ -16,7 +16,8 @@ public class PlayerActionDeserializer {
         return switch (actionType.getType()) {
             case "shoot" -> jsonb.fromJson(json, PlayerShootingAction.class);
             case "move" -> jsonb.fromJson(json, PlayerMovementAction.class);
-            case "collection" -> jsonb.fromJson(json, PlayerCollectingAction.class);
+            case "collect" -> jsonb.fromJson(json, PlayerCollectingAction.class);
+            case "aim" -> jsonb.fromJson(json, PlayerAimingAction.class);
             default -> throw new IllegalArgumentException("Unknown Fact type: " + actionType.getType());
         };
     }

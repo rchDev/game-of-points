@@ -4,6 +4,7 @@ import io.rizvan.beans.actors.Agent;
 import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.actors.GameEntity;
 import io.rizvan.beans.actors.Player;
+import io.rizvan.beans.playerActions.PlayerAction;
 import io.rizvan.utils.RandomNumberGenerator;
 
 import java.util.List;
@@ -13,7 +14,8 @@ public class GameState {
     private Player player;
     private Agent agent;
     private Zone zone;
-
+    private long lastAppliedServerTimestamp;
+    private long lastAppliedClientTimestamp;
     private RandomNumberGenerator rng;
 
     public static final int RESOURCE_SIZE = 20;
@@ -26,6 +28,8 @@ public class GameState {
         this.player = player;
         this.agent = agent;
         this.zone = new Zone(zoneWidth, zoneHeight);
+        this.lastAppliedServerTimestamp = 0;
+        this.lastAppliedClientTimestamp = 0;
         setRandomPosition(this.player);
         setRandomPosition(this.agent);
     }
@@ -83,5 +87,26 @@ public class GameState {
 
         entity.setX(x);
         entity.setY(y);
+    }
+
+    public long getLastAppliedServerTimestamp() {
+        return lastAppliedServerTimestamp;
+    }
+
+    public long getLastAppliedClientTimestamp() {
+        return lastAppliedClientTimestamp;
+    }
+
+    public void applyAction(PlayerAction action) {
+        if (!action.isLegal(this)) {
+            System.out.println("ILLEGAL ACTION!");
+            return;
+        };
+
+        var succeeded = action.apply(this);
+        if (succeeded) {
+            lastAppliedServerTimestamp = action.getServerTimestamp();
+            lastAppliedClientTimestamp = action.getClientTimestamp();
+        }
     }
 }

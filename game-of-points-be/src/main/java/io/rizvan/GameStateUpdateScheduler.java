@@ -43,15 +43,14 @@ public class GameStateUpdateScheduler {
             playerActions.drainTo(actionsToProcess, MAX_ACTIONS_PER_TICK);
 
             for (var playerAction : actionsToProcess) {
-                if (playerAction.isLegal(gameState)) {
-                    playerAction.apply(gameState);
-                }
+                gameState.applyAction(playerAction);
             }
         }
 
         for (var id : sessionStorage.getSessionIds()) {
             eventBus.publish("game.update", id);
         }
+
         scheduleNextGameStateUpdate(sessionId);
     }
 

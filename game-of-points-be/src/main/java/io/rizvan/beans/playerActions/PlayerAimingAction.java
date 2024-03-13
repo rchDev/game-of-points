@@ -24,11 +24,14 @@ public class PlayerAimingAction extends PlayerAction {
 
     @Override
     public boolean apply(GameState gameState) {
-        return false;
+        gameState.getPlayer().setMouseX(mouseX);
+        gameState.getPlayer().setMouseY(mouseY);
+
+        return true;
     }
 
     @Override
     public boolean isLegal(GameState gameState) {
-        return false;
+        return true;
     }
 }

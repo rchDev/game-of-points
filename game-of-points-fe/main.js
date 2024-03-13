@@ -86,19 +86,15 @@ const sketch = (p) => {
     const clientTimestamp = Date.now();
 
     predictions.push({ type, details, clientTimestamp });
-
     p.ws.send(JSON.stringify({ type, ...details, clientTimestamp }));
   };
 
   const reconcileWithServerState = (gameState) => {
-    console.log("Received game state update:", gameState);
-
-    // predictions = predictions.filter(
-    //   (action) => action.timeStamp > gameState.lastProcessedTimestamp,
-    // );
+    predictions = predictions.filter(
+      (action) => action.timeStamp >= gameState.lastAppliedClientTimestamp,
+    );
 
     const tempGameState = cloneDeep(gameState);
-
     predictions.forEach((action) => {
       applyPrediction(tempGameState, action);
     });
@@ -201,6 +197,7 @@ const sketch = (p) => {
   }
 
   function predictMovementAndSendUpdate(deltaTime) {
+    deltaTime = Math.floor(deltaTime);
     const { player } = p.gameState;
     let { x: dx, y: dy } = getMovementVector(isMoving, player);
 
@@ -209,6 +206,14 @@ const sketch = (p) => {
       dy /= Math.sqrt(2);
     }
 
+    console.log(
+      "dx, dy, deltaTime, dx*deltaTime, dy*deltaTime:",
+      dx,
+      dy,
+      deltaTime,
+      dx * deltaTime,
+      dy * deltaTime,
+    );
     player.x += dx * deltaTime;
     player.y += dy * deltaTime;
 

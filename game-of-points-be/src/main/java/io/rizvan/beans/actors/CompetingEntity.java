@@ -8,6 +8,9 @@ public class CompetingEntity extends GameEntity {
     private double speed;
     private int points;
 
+    private double mouseX;
+    private double mouseY;
+
     public static final double BASE_SPEED = 0.4;
 
     public CompetingEntity(int hitPoints, double x, double y, int width, int height, double speed, int points, RangedWeapon weapon) {
@@ -16,6 +19,8 @@ public class CompetingEntity extends GameEntity {
         this.hitPoints = hitPoints;
         this.speed = speed * BASE_SPEED;
         this.points = points;
+        this.mouseX = 0.0;
+        this.mouseY = 0.0;
     }
 
     public double getReach() {
@@ -56,5 +61,21 @@ public class CompetingEntity extends GameEntity {
 
     public void addPoints(int points) {
         this.points += points;
+    }
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public void setMouseX(double mouseX) {
+        this.mouseX = mouseX;
+    }
+
+    public double getMouseY() {
+        return mouseY;
+    }
+
+    public void setMouseY(double mouseY) {
+        this.mouseY = mouseY;
     }
 }
