@@ -112,6 +112,11 @@ const sketch = (p) => {
         gameState.player.mouseX = action.details.mouseX;
         gameState.player.mouseY = action.details.mouseY;
         break;
+      case "collect":
+        gameState.player.resources = gameState.player.resources.filter(
+          (r) => r.id !== action.details.id,
+        );
+        break;
       case "shoot":
         break;
       default:
@@ -146,7 +151,6 @@ const sketch = (p) => {
   };
 
   p.setup = () => {
-    // p.noCursor();
     const { offsetWidth: width, offsetHeight: height } =
       document.getElementById("game-canvas");
 
@@ -206,14 +210,6 @@ const sketch = (p) => {
       dy /= Math.sqrt(2);
     }
 
-    console.log(
-      "dx, dy, deltaTime, dx*deltaTime, dy*deltaTime:",
-      dx,
-      dy,
-      deltaTime,
-      dx * deltaTime,
-      dy * deltaTime,
-    );
     player.x += dx * deltaTime;
     player.y += dy * deltaTime;
 
