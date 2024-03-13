@@ -27,7 +27,6 @@ public class PlayerCollectingAction extends PlayerAction {
 
         gameState.removeResource(id);
         gameState.getPlayer().addPoints(points);
-        System.out.println("player points:" + gameState.getPlayer().getPoints());
         return true;
     }
 
