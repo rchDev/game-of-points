@@ -279,6 +279,9 @@ const sketch = (p) => {
         player.y + player.hitBox.height > resource.y
       ) {
         sendPlayerActionToServer("collect", resource);
+        p.gameState.resources = p.gameState.resources.filter(
+          (r) => r.id !== resource.id,
+        );
       }
     }
   }
