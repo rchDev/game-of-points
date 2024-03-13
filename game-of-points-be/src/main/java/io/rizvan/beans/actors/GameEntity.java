@@ -2,6 +2,8 @@ package io.rizvan.beans.actors;
 
 import io.rizvan.beans.HitBox;
 
+import java.util.Objects;
+
 public abstract class GameEntity {
     protected String id;
     protected double x;
@@ -37,5 +39,13 @@ public abstract class GameEntity {
 
     public void setHitBox(HitBox hitBox) {
         this.hitBox = hitBox;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

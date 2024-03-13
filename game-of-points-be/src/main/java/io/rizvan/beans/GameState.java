@@ -1,14 +1,14 @@
 package io.rizvan.beans;
 
 import io.rizvan.beans.actors.Agent;
-import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.actors.GameEntity;
 import io.rizvan.beans.actors.Player;
 import io.rizvan.beans.playerActions.PlayerAction;
 import io.rizvan.utils.RandomNumberGenerator;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameState {
     private Player player;
@@ -21,7 +21,7 @@ public class GameState {
     public static final int RESOURCE_SIZE = 20;
     public static final int POINTS_PER_RESOURCE = 10;
 
-    private final List<ResourcePoint> resources = new CopyOnWriteArrayList<>();
+    private final List<ResourcePoint> resources = Collections.synchronizedList(new ArrayList<>());
 
     public GameState(Player player, Agent agent, int zoneWidth, int zoneHeight, RandomNumberGenerator rng) {
         this.rng = rng;
@@ -71,8 +71,10 @@ public class GameState {
         return resources;
     }
 
-    public void collectResource(double x, double y, CompetingEntity entity) {
-        //TODO: implement this stuff
+    public void removeResource(String id) {
+        synchronized (resources) {
+            resources.removeIf(rp -> rp.getId().equals(id));
+        }
     }
 
     private void setRandomPosition(GameEntity entity) {
@@ -99,9 +101,8 @@ public class GameState {
 
     public void applyAction(PlayerAction action) {
         if (!action.isLegal(this)) {
-            System.out.println("ILLEGAL ACTION!");
             return;
-        };
+        }
 
         var succeeded = action.apply(this);
         if (succeeded) {
