@@ -223,6 +223,7 @@ const sketch = (p) => {
 
   function predictMovementAndSendUpdate(deltaTime) {
     deltaTime = Math.floor(deltaTime);
+
     const { player } = p.gameState;
     let { x: dx, y: dy } = getMovementVector(isMoving, player);
 
@@ -231,14 +232,22 @@ const sketch = (p) => {
       dy /= Math.sqrt(2);
     }
 
-    player.x += dx * deltaTime;
-    player.y += dy * deltaTime;
+    dx *= deltaTime;
+    dy *= deltaTime;
+
+    player.x = p.constrain(
+      player.x + dx,
+      0 + player.hitBox.width / 2,
+      p.gameState.zone.width - player.hitBox.width / 2,
+    );
+    player.y = p.constrain(
+      player.y + dy,
+      0 + player.hitBox.height / 2,
+      p.gameState.zone.height - player.hitBox.height / 2,
+    );
 
     if (dx !== 0 || dy !== 0) {
-      sendPlayerActionToServer("move", {
-        dx: dx * deltaTime,
-        dy: dy * deltaTime,
-      });
+      sendPlayerActionToServer("move", { dx, dy });
     }
   }
 
@@ -273,11 +282,6 @@ const sketch = (p) => {
 
     if (player) {
       p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
-      p.square(
-        player.x - player.hitBox.width / 2,
-        player.y - player.hitBox.height / 2,
-        player.hitBox.width,
-      );
       drawAimLine(player);
     }
 
