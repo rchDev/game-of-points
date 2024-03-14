@@ -57,7 +57,7 @@ function connectToGameSession(sessionId) {
   return ws;
 }
 
-function setStats(gameState) {
+function updateStats(gameState) {
   if (!gameState) return;
 
   document.querySelector(".ai-score").innerText =
@@ -87,6 +87,11 @@ const sketch = (p) => {
 
     predictions.push({ type, details, clientTimestamp });
     p.ws.send(JSON.stringify({ type, ...details, clientTimestamp }));
+  };
+
+  const onServerUpdate = (message) => {
+    reconcileWithServerState(JSON.parse(message.data));
+    updateStats(p.gameState);
   };
 
   const reconcileWithServerState = (gameState) => {
@@ -140,11 +145,10 @@ const sketch = (p) => {
       height,
     );
 
-    setStats(gameState);
+    updateStats(gameState);
 
     p.ws = connectToGameSession(sessionId);
-    p.ws.onmessage = (message) =>
-      reconcileWithServerState(JSON.parse(message.data));
+    p.ws.onmessage = (message) => onServerUpdate(message);
 
     p.gameState = gameState;
     p.gameStateLoaded = true;
