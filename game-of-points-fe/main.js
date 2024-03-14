@@ -252,6 +252,11 @@ const sketch = (p) => {
 
     if (player) {
       p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
+      p.square(
+        player.x - player.hitBox.width / 2,
+        player.y - player.hitBox.height / 2,
+        player.hitBox.width,
+      );
       drawAimLine(player);
     }
 
@@ -270,13 +275,18 @@ const sketch = (p) => {
     }
   }
 
+  // TODO: fix this
   function checkCollisionWithResources(player, resources) {
     for (let resource of resources) {
       if (
-        player.x < resource.x + resource.hitBox.width &&
-        player.x + player.hitBox.width > resource.x &&
-        player.y < resource.y + resource.hitBox.height &&
-        player.y + player.hitBox.height > resource.y
+        player.x - player.hitBox.width / 2 <=
+          resource.x + resource.hitBox.width / 2 &&
+        player.x + player.hitBox.width / 2 >=
+          resource.x - resource.hitBox.width / 2 &&
+        player.y - player.hitBox.height / 2 <=
+          resource.y + resource.hitBox.height / 2 &&
+        player.y + player.hitBox.height / 2 >=
+          resource.y - resource.hitBox.height / 2
       ) {
         sendPlayerActionToServer("collect", resource);
         p.gameState.resources = p.gameState.resources.filter(

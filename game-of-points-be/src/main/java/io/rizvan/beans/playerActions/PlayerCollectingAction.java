@@ -44,9 +44,13 @@ public class PlayerCollectingAction extends PlayerAction {
 
         var player = gameState.getPlayer();
 
-        return player.getX() < resourcePoint.getX() + resourcePoint.getHitbox().getWidth() &&
-                player.getX() + player.getHitBox().getWidth() > resourcePoint.getX() &&
-                player.getY() < resourcePoint.getY() + resourcePoint.getHitbox().getHeight() &&
-                player.getY() + player.getHitBox().getHeight() > resourcePoint.getY();
+        return player.getX() - player.getHitBox().getWidth() / 2.0 <=
+                resourcePoint.getX() + resourcePoint.getHitBox().getWidth() / 2.0 &&
+                player.getX() + player.getHitBox().getWidth() / 2.0 >=
+                        resourcePoint.getX() - resourcePoint.getHitBox().getWidth() / 2.0 &&
+                player.getY() - player.getHitBox().getHeight() / 2.0 <=
+                        resourcePoint.getY() + resourcePoint.getHitBox().getHeight() / 2.0 &&
+                player.getY() + player.getHitBox().getHeight() / 2.0 >=
+                        resourcePoint.getY() - resourcePoint.getHitBox().getHeight() / 2.0;
     }
 }
