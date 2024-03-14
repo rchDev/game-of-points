@@ -97,8 +97,4 @@ public class GameStateUpdateScheduler {
             gameState.setTime(time - 1);
         });
     }
-//    private void scheduleNextRPCreation(String sessionId) {
-//        int time = rng.getInteger(2, 5);
-//        vertx.setTimer(time * 1000L, id -> createNewResourcePoint(sessionId));
-//    }
 }
