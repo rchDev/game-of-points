@@ -59,11 +59,28 @@ function connectToGameSession(sessionId) {
 
 function updateStats(gameState) {
   if (!gameState) return;
+  console.log("gameState:", gameState);
+  console.log("player.speed:", gameState.player.speed.toFixed(2));
+  const {
+    player: {
+      points: playerPoints,
+      hitPoints: playerHp,
+      damage: playerDmg,
+      ammo: playerAmmo,
+      speed: playerSpd,
+      reach: playerReach,
+    },
+  } = gameState;
 
   document.querySelector(".ai-score").innerText =
     `${gameState.agent.points}: AI`;
-  document.querySelector(".player-score").innerText =
-    `Player: ${gameState.player.points}`;
+  document.querySelector(".player-score").innerText = `Player: ${playerPoints}`;
+  document.querySelector("#player-hp-real").innerText = playerHp;
+  document.querySelector("#player-dmg-real").innerText = playerDmg;
+  document.querySelector("#player-ammo-real").innerText = playerAmmo;
+  document.querySelector("#player-spd-real").innerText = playerSpd.toFixed(2);
+  document.querySelector("#player-reach-real").innerText = playerReach;
+  gameState.player.reach;
 }
 
 const sketch = (p) => {
