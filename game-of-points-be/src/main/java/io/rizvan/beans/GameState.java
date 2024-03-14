@@ -16,18 +16,22 @@ public class GameState {
     private Zone zone;
     private long lastAppliedServerTimestamp;
     private long lastAppliedClientTimestamp;
+    private int time;
     private RandomNumberGenerator rng;
 
     public static final int RESOURCE_SIZE = 20;
     public static final int POINTS_PER_RESOURCE = 10;
 
+    public static final int GAME_TIME = 60;
+
     private final List<ResourcePoint> resources = Collections.synchronizedList(new ArrayList<>());
 
-    public GameState(Player player, Agent agent, int zoneWidth, int zoneHeight, RandomNumberGenerator rng) {
+    public GameState(Player player, Agent agent, int zoneWidth, int zoneHeight, int time, RandomNumberGenerator rng) {
         this.rng = rng;
         this.player = player;
         this.agent = agent;
         this.zone = new Zone(zoneWidth, zoneHeight);
+        this.time = time;
         this.lastAppliedServerTimestamp = 0;
         this.lastAppliedClientTimestamp = 0;
         setRandomPosition(this.player);
@@ -109,5 +113,13 @@ public class GameState {
             lastAppliedServerTimestamp = action.getServerTimestamp();
             lastAppliedClientTimestamp = action.getClientTimestamp();
         }
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
     }
 }

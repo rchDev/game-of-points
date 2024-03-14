@@ -25,6 +25,8 @@ public class GameStateUpdateScheduler {
     @Inject
     Vertx vertx;
 
+    private long timerId = -1;
+
     public static final int MAX_ACTIONS_PER_TICK = 1000;
 
     @ConsumeEvent("game.created")
@@ -72,7 +74,7 @@ public class GameStateUpdateScheduler {
                 gameState.getZone().getHeight() - GameState.RESOURCE_SIZE / 2);
 
         gameState.addResource(x, y);
-        scheduleNextRPCreation(sessionId);
+        scheduleRPCreation(sessionId);
     }
 
     @ConsumeEvent("game.created")
@@ -81,8 +83,22 @@ public class GameStateUpdateScheduler {
         vertx.setTimer(time * 1000L, id -> createNewResourcePoint(sessionId));
     }
 
-    private void scheduleNextRPCreation(String sessionId) {
-        int time = rng.getInteger(2, 5);
-        vertx.setTimer(time * 1000L, id -> createNewResourcePoint(sessionId));
+    @ConsumeEvent("game.created")
+    public void scheduleGameTimer(String sessionId) {
+
+        timerId = vertx.setPeriodic(1000L, id -> {
+            var gameState = sessionStorage.getGameState(sessionId);
+            var time = gameState.getTime();
+
+            if (time <= 0) {
+                vertx.cancelTimer(timerId);
+                return;
+            }
+            gameState.setTime(time - 1);
+        });
     }
+//    private void scheduleNextRPCreation(String sessionId) {
+//        int time = rng.getInteger(2, 5);
+//        vertx.setTimer(time * 1000L, id -> createNewResourcePoint(sessionId));
+//    }
 }

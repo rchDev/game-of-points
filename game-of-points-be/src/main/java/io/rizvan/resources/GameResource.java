@@ -33,7 +33,14 @@ public class GameResource {
         var player = Player.fromWeapon(weapon);
         var agent = Agent.getRandom();
 
-        var gameState = new GameState(player, agent, request.getWindowWidth(), request.getWindowHeight(), rng);
+        var gameState = new GameState(
+                player,
+                agent,
+                request.getWindowWidth(),
+                request.getWindowHeight(),
+                GameState.GAME_TIME,
+                rng
+        );
         var sessionId = generateSessionId();
 
         storage.addGameState(sessionId, gameState);
