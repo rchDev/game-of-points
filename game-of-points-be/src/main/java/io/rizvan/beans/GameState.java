@@ -3,19 +3,19 @@ package io.rizvan.beans;
 import io.rizvan.beans.actors.Agent;
 import io.rizvan.beans.actors.GameEntity;
 import io.rizvan.beans.actors.Player;
-import io.rizvan.beans.playerActions.PlayerAction;
+import io.rizvan.beans.playerActions.*;
 import io.rizvan.utils.RandomNumberGenerator;
+import jakarta.json.bind.annotation.JsonbTransient;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class GameState {
     private Player player;
     private Agent agent;
     private Zone zone;
-    private long lastAppliedServerTimestamp;
-    private long lastAppliedClientTimestamp;
     private int time;
     private RandomNumberGenerator rng;
 
@@ -26,14 +26,17 @@ public class GameState {
 
     private final List<ResourcePoint> resources = Collections.synchronizedList(new ArrayList<>());
 
+    private PlayerMovementAction lastAppliedPlayerMovement;
+    private PlayerAimingAction lastAppliedPlayerAim = null;
+    private PlayerCollectingAction lastAppliedPlayerCollection = null;
+    private PlayerShootingAction lastAppliedPlayerShot = null;
+
     public GameState(Player player, Agent agent, int zoneWidth, int zoneHeight, int time, RandomNumberGenerator rng) {
         this.rng = rng;
         this.player = player;
         this.agent = agent;
         this.zone = new Zone(zoneWidth, zoneHeight);
         this.time = time;
-        this.lastAppliedServerTimestamp = 0;
-        this.lastAppliedClientTimestamp = 0;
         setRandomPosition(this.player);
         setRandomPosition(this.agent);
     }
@@ -95,14 +98,6 @@ public class GameState {
         entity.setY(y);
     }
 
-    public long getLastAppliedServerTimestamp() {
-        return lastAppliedServerTimestamp;
-    }
-
-    public long getLastAppliedClientTimestamp() {
-        return lastAppliedClientTimestamp;
-    }
-
     public void applyAction(PlayerAction action) {
         if (!action.isLegal(this)) {
             return;
@@ -110,8 +105,16 @@ public class GameState {
 
         var succeeded = action.apply(this);
         if (succeeded) {
-            lastAppliedServerTimestamp = action.getServerTimestamp();
-            lastAppliedClientTimestamp = action.getClientTimestamp();
+            registerAppliedAction(action);
+        }
+    }
+
+    private void registerAppliedAction(PlayerAction action) {
+        switch (action.getType()) {
+            case "shoot" -> lastAppliedPlayerShot = (PlayerShootingAction) action;
+            case "move" -> lastAppliedPlayerMovement = (PlayerMovementAction) action;
+            case "collect" -> lastAppliedPlayerCollection = (PlayerCollectingAction) action;
+            case "aim" -> lastAppliedPlayerAim = (PlayerAimingAction) action;
         }
     }
 
@@ -121,5 +124,25 @@ public class GameState {
 
     public void setTime(int time) {
         this.time = time;
+    }
+
+    @JsonbTransient
+    public Optional<PlayerMovementAction> getLastAppliedPlayerMovement() {
+        return Optional.ofNullable(lastAppliedPlayerMovement);
+    }
+
+    @JsonbTransient
+    public Optional<PlayerAimingAction> getLastAppliedPlayerAim() {
+        return Optional.ofNullable(lastAppliedPlayerAim);
+    }
+
+    @JsonbTransient
+    public Optional<PlayerCollectingAction> getLastAppliedPlayerCollection() {
+        return Optional.ofNullable(lastAppliedPlayerCollection);
+    }
+
+    @JsonbTransient
+    public Optional<PlayerShootingAction> getLastAppliesPlayerShot() {
+        return Optional.ofNullable(lastAppliedPlayerShot);
     }
 }

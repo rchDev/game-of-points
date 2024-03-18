@@ -5,8 +5,8 @@ import io.rizvan.beans.actors.CompetingEntity;
 
 public abstract class PlayerAction implements Comparable<PlayerAction> {
     protected String type;
-    protected long clientTimestamp;
-    protected long serverTimestamp;
+    protected long clientTimestamp = 0;
+    protected long serverTimestamp = 0;
 
     public abstract boolean apply(GameState gameState);
 

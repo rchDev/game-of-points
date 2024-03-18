@@ -3,8 +3,8 @@ package io.rizvan.beans.playerActions;
 import io.rizvan.beans.GameState;
 
 public class PlayerMovementAction extends PlayerAction {
-    private double dx;
-    private double dy;
+    private double dx = 0;
+    private double dy = 0;
 
     public double getDx() {
         return dx;
@@ -55,19 +55,28 @@ public class PlayerMovementAction extends PlayerAction {
 
     @Override
     public boolean isLegal(GameState gameState) {
-        var clientTimeDiff = clientTimestamp - gameState.getLastAppliedClientTimestamp();
-        var serverTimeDiff = serverTimestamp - gameState.getLastAppliedServerTimestamp();
+        var lastMovement = gameState.getLastAppliedPlayerMovement()
+                .orElseGet(PlayerMovementAction::NullAction);
+
+        var clientTimeDiff = clientTimestamp - lastMovement.clientTimestamp;
+        var serverTimeDiff = serverTimestamp - lastMovement.serverTimestamp;
+
         var distancePerMilli = gameState.getPlayer().getSpeed();
 
         var maxLegalDistanceClient = distancePerMilli * clientTimeDiff;
         var maxLegalDistanceServer = distancePerMilli * serverTimeDiff;
 
         var distanceTravelled = Math.sqrt(dx * dx + dy * dy);
+//        return true;
 
         if (clientTimeDiff <= serverTimeDiff + 20 || clientTimeDiff >= serverTimeDiff + 20) {
             return distanceTravelled <= maxLegalDistanceClient;
         }
 
         return distanceTravelled <= maxLegalDistanceServer;
+    }
+
+    public static PlayerMovementAction NullAction() {
+        return new PlayerMovementAction();
     }
 }
