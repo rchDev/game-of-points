@@ -31,7 +31,7 @@ public class CompetingEntity extends GameEntity {
         return speed * weapon.getSpeedModifier();
     }
 
-    public double getDamage() {
+    public int getDamage() {
         return weapon.getDamage();
     }
 

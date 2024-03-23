@@ -1,15 +1,14 @@
 package io.rizvan.beans.actors;
 
-import io.rizvan.beans.PlayerInfo;
+import io.rizvan.beans.AgentKnowledge;
 import io.rizvan.beans.RangedWeapon;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class Agent extends CompetingEntity {
-    private PlayerInfo playerInfo;
+    private AgentKnowledge knowledge;
 
     public enum Type {
         SNIPER(3, 0, 0, 50, 50, 1.0, 0, RangedWeapon.Type.SNIPER.get()),
@@ -37,5 +36,14 @@ public class Agent extends CompetingEntity {
         int index = new Random().nextInt(agents.size() - 1);
 
         return agents.get(index);
+    }
+
+    public AgentKnowledge getKnowledge() {
+        return knowledge;
+    }
+
+
+    public void updateKnowledge(AgentKnowledge.Type type, Object value) {
+        knowledge.update(type, value);
     }
 }

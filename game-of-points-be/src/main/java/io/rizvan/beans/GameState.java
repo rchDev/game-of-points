@@ -17,11 +17,10 @@ public class GameState {
     private Agent agent;
     private Zone zone;
     private int time;
-    private RandomNumberGenerator rng;
+    private final RandomNumberGenerator rng;
 
     public static final int RESOURCE_SIZE = 20;
     public static final int POINTS_PER_RESOURCE = 10;
-
     public static final int GAME_TIME = 60;
 
     private final List<ResourcePoint> resources = Collections.synchronizedList(new ArrayList<>());
