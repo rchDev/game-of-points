@@ -1,4 +1,5 @@
 package io.rizvan.beans.actors;
+import io.rizvan.beans.Facts.Fact;
 import io.rizvan.beans.ResourcePoint;
 
 import java.util.List;
@@ -9,5 +10,5 @@ public interface AgentsBrain {
     void senseMovement(double x, double y);
     void senseResourceCollection(int pointsCollected);
     void senseResourceChange(List<ResourcePoint> resources);
-    void reason(Agent agent);
+    void reason(List<Fact> facts, Agent agent);
 }
