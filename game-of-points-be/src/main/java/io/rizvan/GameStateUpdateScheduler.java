@@ -88,9 +88,10 @@ public class GameStateUpdateScheduler {
 
     @ConsumeEvent("game.created")
     public void scheduleGameTimer(String sessionId) {
-
         timerId = vertx.setPeriodic(1000L, id -> {
             var gameState = sessionStorage.getGameState(sessionId);
+            if (gameState == null) return;
+
             var time = gameState.getTime();
 
             if (time <= 0) {
