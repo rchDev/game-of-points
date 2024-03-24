@@ -10,5 +10,6 @@ public interface AgentsBrain {
     void senseMovement(double x, double y);
     void senseResourceCollection(int pointsCollected);
     void senseResourceChange(List<ResourcePoint> resources);
+    void sensePlayersAim(double mouseX, double mouseY);
     void reason(List<Fact> facts, Agent agent);
 }

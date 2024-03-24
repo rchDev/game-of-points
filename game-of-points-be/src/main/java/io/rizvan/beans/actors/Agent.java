@@ -44,7 +44,7 @@ public class Agent extends CompetingEntity {
         brain.reason(facts, this);
     }
 
-    public void setBrain(AgentsBrain brain) {
-        this.brain = brain;
+    public AgentsBrain getBrain() {
+        return brain;
     }
 }

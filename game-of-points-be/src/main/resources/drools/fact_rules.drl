@@ -11,9 +11,10 @@ import io.rizvan.beans.actors.Agent;
 rule "Player Moved"
     when
         $agent : Agent()
-        $playerMoveFact: PlayerMovementFact()
+        $moveFact: PlayerMovementFact()
     then
-        System.out.println("Move x: " + $playerMoveFact.getX() + " y: " + $playerMoveFact.getY());
+        System.out.println("Move x: " + $moveFact.getX() + " y: " + $moveFact.getY());
+        $moveFact.supplyInfo($agent.getBrain());
 end
 
 rule "Player Aimed"
@@ -22,6 +23,8 @@ rule "Player Aimed"
         $aimFact : PlayerAimFact()
     then
         System.out.println("Mouse x: " + $aimFact.getMouseX() + "Mouse y: " + $aimFact.getMouseY());
+        $aimFact.supplyInfo($agent.getBrain());
+
 end
 
 rule "Player shot"
@@ -30,6 +33,7 @@ rule "Player shot"
         $shootingFact : PlayerShootingFact()
     then
         System.out.println("Player shoots and deals: " + $shootingFact.getDamage() + " dmg");
+        $shootingFact.supplyInfo($agent.getBrain());
 end
 
 rule "Player collected resource"
@@ -38,6 +42,7 @@ rule "Player collected resource"
         $collectionFact : PlayerCollectionFact()
     then
         System.out.println("Player collects resource, total pointsv" + $collectionFact.getTotalPoints());
+        $collectionFact.supplyInfo($agent.getBrain());
 end
 
 rule "Resource Points Changed"
@@ -48,6 +53,7 @@ rule "Resource Points Changed"
         for (var resource : $resourcesChangedFact.getResources()) {
             System.out.println("Resource: x- " + resource.getX() + " y- " + resource.getY());
         }
+        $resourcesChangedFact.supplyInfo($agent.getBrain());
 end
 
 rule "Game Time Changed"
@@ -56,4 +62,5 @@ rule "Game Time Changed"
         $timeChangeFact : GameTimeChangeFact()
     then
        System.out.println("Time left: " + $timeChangeFact.getTimeLeft());
+       $timeChangeFact.supplyInfo($agent.getBrain());
 end

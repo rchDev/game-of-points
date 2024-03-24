@@ -50,6 +50,12 @@ public class DroolsBrain implements AgentsBrain {
     }
 
     @Override
+    public void sensePlayersAim(double mouseX, double mouseY) {
+        knowledge.update(AgentKnowledge.Type.MOUSE_X, mouseX);
+        knowledge.update(AgentKnowledge.Type.MOUSE_Y, mouseY);
+    }
+
+    @Override
     public void reason(List<Fact> facts, Agent agent) {
         KieSession kieSession = kieContainer.newKieSession("myKsession");
         kieSession.insert(agent);

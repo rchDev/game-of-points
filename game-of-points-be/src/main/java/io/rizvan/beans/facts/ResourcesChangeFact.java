@@ -14,7 +14,7 @@ public class ResourcesChangeFact implements Fact {
 
     @Override
     public void supplyInfo(AgentsBrain brain) {
-
+        brain.senseResourceChange(resources);
     }
 
     public List<ResourcePoint> getResources() {

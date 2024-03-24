@@ -19,6 +19,6 @@ public class PlayerCollectionFact implements Fact {
 
     @Override
     public void supplyInfo(AgentsBrain brain) {
-
+        brain.senseResourceCollection(totalPoints);
     }
 }

@@ -7,6 +7,8 @@ import java.util.List;
 public class AgentKnowledge {
     private double playerX;
     private double playerY;
+    private double mouseX;
+    private double mouseY;
     private int shotsHeard;
     private double playerSpeed;
     private int playerDamage;
@@ -32,6 +34,8 @@ public class AgentKnowledge {
         HP("hp"),
         PLAYER_X("playerX"),
         PLAYER_Y("playerY"),
+        MOUSE_X("mouseX"),
+        MOUSE_Y("mouseY"),
         SHOT_COUNT("shotCount"),
         SPEED("speed"),
         PLAYER_DAMAGE("damage"),
@@ -56,6 +60,14 @@ public class AgentKnowledge {
 
     public double getPlayerY() {
         return playerY;
+    }
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public double getMouseY() {
+        return mouseY;
     }
 
     public int getShotsHeard() {
@@ -83,16 +95,21 @@ public class AgentKnowledge {
     }
 
     public void update(Type type, Object value) {
-        if (type == Type.HP ||
+        if ((type == Type.HP ||
                 type == Type.PLAYER_DAMAGE ||
                 type == Type.SHOT_COUNT ||
                 type == Type.GAME_TIME ||
-                type == Type.PLAYER_POINTS && !(value instanceof Integer)
+                type == Type.PLAYER_POINTS) && !(value instanceof Integer)
         ) {
             throw new IllegalArgumentException("provided value is not of type: Integer");
         }
 
-        if (type == Type.PLAYER_X || type == Type.PLAYER_Y || type == Type.SPEED && !(value instanceof Double)) {
+        if ((type == Type.PLAYER_X ||
+                type == Type.PLAYER_Y ||
+                type == Type.MOUSE_X ||
+                type == Type.MOUSE_Y ||
+                type == Type.SPEED) && !(value instanceof Double)
+        ) {
             throw new IllegalArgumentException("provided value is not of type: Double");
         }
 
@@ -100,6 +117,8 @@ public class AgentKnowledge {
             case "hp" -> playerHitPoints = (int) value;
             case "playerX" -> playerX = (double) value;
             case "playerY" -> playerY = (double) value;
+            case "mouseX" -> mouseX = (double) value;
+            case "mouseY" -> mouseY = (double) value;
             case "shotCount" -> shotsHeard = (int) value;
             case "speed" -> playerSpeed = (double) value;
             case "damage" -> playerDamage = (int) value;

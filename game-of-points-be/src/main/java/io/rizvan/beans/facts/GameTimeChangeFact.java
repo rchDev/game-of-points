@@ -11,6 +11,7 @@ public class GameTimeChangeFact implements Fact {
 
     @Override
     public void supplyInfo(AgentsBrain brain) {
+        brain.senseTime(timeLeft);
     }
 
     public int getTimeLeft() {
