@@ -15,4 +15,12 @@ public class PlayerAimFact implements Fact {
     public void supplyInfo(AgentsBrain brain) {
 
     }
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public double getMouseY() {
+        return mouseY;
+    }
 }
