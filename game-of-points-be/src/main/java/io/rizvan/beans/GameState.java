@@ -32,7 +32,7 @@ public class GameState {
     private PlayerCollectingAction lastAppliedPlayerCollection = null;
     private PlayerShootingAction lastAppliedPlayerShot = null;
 
-    private List<Fact> facts;
+    private FactStorage factStorage;
 
     public GameState(Player player, Agent agent, int zoneWidth, int zoneHeight, int time, RandomNumberGenerator rng) {
         this.rng = rng;
@@ -40,7 +40,7 @@ public class GameState {
         this.agent = agent;
         this.zone = new Zone(zoneWidth, zoneHeight);
         this.time = time;
-        this.facts = new CopyOnWriteArrayList<>();
+        this.factStorage = new FactStorage();
 
         setRandomPosition(this.player);
         setRandomPosition(this.agent);
@@ -77,15 +77,15 @@ public class GameState {
 
     public void addResource(double x, double y) {
         resources.add(new ResourcePoint(x, y, RESOURCE_SIZE, RESOURCE_SIZE, POINTS_PER_RESOURCE));
-        facts.add(new ResourcesChangeFact(resources));
+        factStorage.add(new ResourcesChangeFact(resources));
     }
 
     public List<Fact> getFacts() {
-        return facts;
+        return factStorage.getAll();
     }
 
     public void clearFacts() {
-        this.facts = new CopyOnWriteArrayList<>();
+        factStorage.clear();
     }
 
     public List<ResourcePoint> getResources() {
@@ -95,7 +95,7 @@ public class GameState {
     public void removeResource(String id) {
         synchronized (resources) {
             resources.removeIf(rp -> rp.getId().equals(id));
-            facts.add(new ResourcesChangeFact(resources));
+            factStorage.add(new ResourcesChangeFact(resources));
         }
     }
 
@@ -140,16 +140,16 @@ public class GameState {
         switch (action.getType()) {
             case "shoot" -> {
                 var damage = success ? ((PlayerShootingAction) action).getDamage() : 0;
-                facts.add(new PlayerShootingFact(damage));
+                factStorage.add(new PlayerShootingFact(damage));
             }
             case "aim" -> {
                 var aimingAction = (PlayerAimingAction) action;
                 var mouseX = aimingAction.getMouseX();
                 var mouseY = aimingAction.getMouseY();
-                facts.add(new PlayerAimFact(mouseX, mouseY));
+                factStorage.add(new PlayerAimFact(mouseX, mouseY));
             }
-            case "move" -> facts.add(new PlayerMovementFact(player.getX(), player.getY()));
-            case "collect" -> facts.add(new PlayerCollectionFact(player.getPoints()));
+            case "move" -> factStorage.add(new PlayerMovementFact(player.getX(), player.getY()));
+            case "collect" -> factStorage.add(new PlayerCollectionFact(player.getPoints()));
             default -> {
                 // do nothing
             }
@@ -162,7 +162,7 @@ public class GameState {
 
     public void setTime(int time) {
         this.time = time;
-        facts.add(new GameTimeChangeFact(time));
+        factStorage.add(new GameTimeChangeFact(time));
     }
 
     @JsonbTransient
