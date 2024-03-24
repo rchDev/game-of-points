@@ -10,6 +10,8 @@ public abstract class GameEntity {
     protected double y;
     protected HitBox hitBox;
 
+    public GameEntity() {}
+
     public GameEntity(double x, double y, int width, int height) {
         this.id = java.util.UUID.randomUUID().toString();
         this.x = x;

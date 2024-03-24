@@ -16,4 +16,12 @@ public class PlayerMovementFact implements Fact {
     public void supplyInfo(AgentsBrain brain) {
         brain.senseMovement(x, y);
     }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
 }

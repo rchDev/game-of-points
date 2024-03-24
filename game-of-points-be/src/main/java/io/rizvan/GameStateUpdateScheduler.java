@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @ApplicationScoped
 public class GameStateUpdateScheduler {
@@ -46,6 +47,9 @@ public class GameStateUpdateScheduler {
             for (var playerAction : actionsToProcess) {
                 gameState.applyAction(playerAction);
             }
+
+            gameState.getAgent().reason(gameState.getFacts());
+            gameState.clearFacts();
         }
 
         for (var id : sessionStorage.getSessionIds()) {

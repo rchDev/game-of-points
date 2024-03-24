@@ -1,5 +1,6 @@
 package io.rizvan.beans;
 
+import io.rizvan.beans.Facts.*;
 import io.rizvan.beans.actors.Agent;
 import io.rizvan.beans.actors.GameEntity;
 import io.rizvan.beans.actors.Player;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameState {
     private Player player;
@@ -30,12 +32,16 @@ public class GameState {
     private PlayerCollectingAction lastAppliedPlayerCollection = null;
     private PlayerShootingAction lastAppliedPlayerShot = null;
 
+    private List<Fact> facts;
+
     public GameState(Player player, Agent agent, int zoneWidth, int zoneHeight, int time, RandomNumberGenerator rng) {
         this.rng = rng;
         this.player = player;
         this.agent = agent;
         this.zone = new Zone(zoneWidth, zoneHeight);
         this.time = time;
+        this.facts = new CopyOnWriteArrayList<>();
+
         setRandomPosition(this.player);
         setRandomPosition(this.agent);
     }
@@ -71,6 +77,15 @@ public class GameState {
 
     public void addResource(double x, double y) {
         resources.add(new ResourcePoint(x, y, RESOURCE_SIZE, RESOURCE_SIZE, POINTS_PER_RESOURCE));
+        facts.add(new ResourcesChangeFact(resources));
+    }
+
+    public List<Fact> getFacts() {
+        return facts;
+    }
+
+    public void clearFacts() {
+        this.facts = new CopyOnWriteArrayList<>();
     }
 
     public List<ResourcePoint> getResources() {
@@ -80,6 +95,7 @@ public class GameState {
     public void removeResource(String id) {
         synchronized (resources) {
             resources.removeIf(rp -> rp.getId().equals(id));
+            facts.add(new ResourcesChangeFact(resources));
         }
     }
 
@@ -105,6 +121,9 @@ public class GameState {
         var succeeded = action.apply(this);
         if (succeeded) {
             registerAppliedAction(action);
+            registerFact(action, true);
+        } else if (action instanceof PlayerShootingAction) {
+            registerFact(action, false);
         }
     }
 
@@ -117,12 +136,33 @@ public class GameState {
         }
     }
 
+    private void registerFact(PlayerAction action, boolean success) {
+        switch (action.getType()) {
+            case "shoot" -> {
+                var damage = success ? ((PlayerShootingAction) action).getDamage() : 0;
+                facts.add(new PlayerShootingFact(damage));
+            }
+            case "aim" -> {
+                var aimingAction = (PlayerAimingAction) action;
+                var mouseX = aimingAction.getMouseX();
+                var mouseY = aimingAction.getMouseY();
+                facts.add(new PlayerAimFact(mouseX, mouseY));
+            }
+            case "move" -> facts.add(new PlayerMovementFact(player.getX(), player.getY()));
+            case "collect" -> facts.add(new PlayerCollectionFact(player.getPoints()));
+            default -> {
+                // do nothing
+            }
+        }
+    }
+
     public int getTime() {
         return time;
     }
 
     public void setTime(int time) {
         this.time = time;
+        facts.add(new GameTimeChangeFact(time));
     }
 
     @JsonbTransient

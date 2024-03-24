@@ -1,14 +1,18 @@
 package io.rizvan.beans.actors;
 
 import io.rizvan.beans.AgentKnowledge;
+import io.rizvan.beans.Facts.Fact;
 import io.rizvan.beans.RangedWeapon;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class Agent extends CompetingEntity {
-    private AgentKnowledge knowledge;
+
+    public AgentsBrain brain;
 
     public enum Type {
         SNIPER(3, 0, 0, 50, 50, 1.0, 0, RangedWeapon.Type.SNIPER.get()),
@@ -29,6 +33,7 @@ public class Agent extends CompetingEntity {
 
     public Agent(int hitPoints, double x, double y, int width, int height, double speed, int points, RangedWeapon weapon) {
         super(hitPoints, x, y, width, height, speed, points, weapon);
+        this.brain = new DroolsBrain();
     }
 
     public static Agent getRandom() {
@@ -38,12 +43,11 @@ public class Agent extends CompetingEntity {
         return agents.get(index);
     }
 
-    public AgentKnowledge getKnowledge() {
-        return knowledge;
+    public void reason(List<Fact> facts) {
+        brain.reason(facts, this);
     }
 
-
-    public void updateKnowledge(AgentKnowledge.Type type, Object value) {
-        knowledge.update(type, value);
+    public void setBrain(AgentsBrain brain) {
+        this.brain = brain;
     }
 }

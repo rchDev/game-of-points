@@ -6,6 +6,7 @@ import io.rizvan.beans.actors.CompetingEntity;
 public class PlayerShootingAction extends PlayerAction {
     private double mouseX;
     private double mouseY;
+    private int damage;
 
     public double getMouseX() {
         return mouseX;
@@ -21,6 +22,14 @@ public class PlayerShootingAction extends PlayerAction {
 
     public void setMouseY(double mouseY) {
         this.mouseY = mouseY;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
     @Override

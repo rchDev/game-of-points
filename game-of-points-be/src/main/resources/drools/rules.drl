@@ -1,0 +1,18 @@
+package rules
+
+import io.rizvan.beans.Facts.GameTimeChangeFact;
+import io.rizvan.beans.Facts.PlayerMovementFact;
+import io.rizvan.beans.actors.Agent;
+
+rule "Player Movement with Game Time Change"
+    when
+        $agent: Agent()
+        $playerMoveFact : PlayerMovementFact()
+    then
+        // Action to take when both facts are present. This is just an example action.
+        System.out.println("Player moved to position x: " + $playerMoveFact.getX()
+            + " y: " + $playerMoveFact.getY());
+
+        // You can also call methods on the facts to update their state,
+        // retract them from the session, or insert new facts.
+end

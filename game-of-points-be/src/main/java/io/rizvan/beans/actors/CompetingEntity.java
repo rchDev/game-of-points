@@ -3,7 +3,7 @@ package io.rizvan.beans.actors;
 import io.rizvan.beans.RangedWeapon;
 
 public class CompetingEntity extends GameEntity {
-    private final RangedWeapon weapon;
+    private RangedWeapon weapon;
     private int hitPoints;
     private double speed;
     private int points;
@@ -12,6 +12,8 @@ public class CompetingEntity extends GameEntity {
     private double mouseY;
 
     public static final double BASE_SPEED = 0.4;
+
+    public CompetingEntity() {}
 
     public CompetingEntity(int hitPoints, double x, double y, int width, int height, double speed, int points, RangedWeapon weapon) {
         super(x, y, width, height);
@@ -81,5 +83,9 @@ public class CompetingEntity extends GameEntity {
 
     public void setMouseY(double mouseY) {
         this.mouseY = mouseY;
+    }
+
+    public void setWeapon(RangedWeapon weapon) {
+        this.weapon = weapon;
     }
 }
