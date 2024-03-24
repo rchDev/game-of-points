@@ -1,7 +1,7 @@
 package io.rizvan.beans.actors;
 
 import io.rizvan.beans.AgentKnowledge;
-import io.rizvan.beans.Facts.Fact;
+import io.rizvan.beans.facts.Fact;
 import io.rizvan.beans.ResourcePoint;
 import jakarta.annotation.PreDestroy;
 import org.kie.api.KieServices;

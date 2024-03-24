@@ -1,4 +1,4 @@
-package io.rizvan.beans.Facts;
+package io.rizvan.beans.facts;
 
 import jakarta.enterprise.context.ApplicationScoped;
 

@@ -1,6 +1,6 @@
 package io.rizvan.beans.actors;
 
-import io.rizvan.beans.Facts.Fact;
+import io.rizvan.beans.facts.Fact;
 import io.rizvan.beans.RangedWeapon;
 
 import java.util.Arrays;

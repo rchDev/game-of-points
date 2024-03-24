@@ -1,5 +1,5 @@
 package io.rizvan.beans.actors;
-import io.rizvan.beans.Facts.Fact;
+import io.rizvan.beans.facts.Fact;
 import io.rizvan.beans.ResourcePoint;
 
 import java.util.List;
