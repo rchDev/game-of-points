@@ -12,7 +12,6 @@ import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @ApplicationScoped
 public class GameStateUpdateScheduler {

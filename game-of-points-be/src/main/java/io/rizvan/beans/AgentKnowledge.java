@@ -1,7 +1,6 @@
 package io.rizvan.beans;
 
 import jakarta.inject.Inject;
-import org.crac.Resource;
 
 import java.util.List;
 

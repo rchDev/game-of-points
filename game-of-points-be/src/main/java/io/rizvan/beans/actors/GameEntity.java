@@ -2,8 +2,6 @@ package io.rizvan.beans.actors;
 
 import io.rizvan.beans.HitBox;
 
-import java.util.Objects;
-
 public abstract class GameEntity {
     protected String id;
     protected double x;

@@ -1,7 +1,6 @@
 package io.rizvan;
 
 import io.quarkus.vertx.ConsumeEvent;
-import io.rizvan.beans.PlayerActionQueue;
 import io.rizvan.beans.SessionStorage;
 import io.rizvan.beans.playerActions.PlayerActionDeserializer;
 import io.vertx.core.eventbus.EventBus;

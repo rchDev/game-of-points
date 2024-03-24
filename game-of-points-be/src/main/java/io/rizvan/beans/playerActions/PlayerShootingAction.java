@@ -1,7 +1,6 @@
 package io.rizvan.beans.playerActions;
 
 import io.rizvan.beans.GameState;
-import io.rizvan.beans.actors.CompetingEntity;
 
 public class PlayerShootingAction extends PlayerAction {
     private double mouseX;

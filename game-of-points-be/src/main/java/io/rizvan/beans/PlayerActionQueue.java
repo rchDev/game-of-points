@@ -1,15 +1,10 @@
 package io.rizvan.beans;
 
 import io.rizvan.beans.playerActions.PlayerAction;
-import io.rizvan.beans.playerActions.PlayerMovementAction;
-import io.rizvan.beans.playerActions.PlayerShootingAction;
-import io.rizvan.beans.playerActions.PlayerCollectingAction;
 import jakarta.annotation.Nullable;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
 
 @ApplicationScoped

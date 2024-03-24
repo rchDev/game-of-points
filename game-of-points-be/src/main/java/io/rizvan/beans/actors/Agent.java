@@ -1,10 +1,7 @@
 package io.rizvan.beans.actors;
 
-import io.rizvan.beans.AgentKnowledge;
 import io.rizvan.beans.Facts.Fact;
 import io.rizvan.beans.RangedWeapon;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 import java.util.Arrays;
 import java.util.List;
