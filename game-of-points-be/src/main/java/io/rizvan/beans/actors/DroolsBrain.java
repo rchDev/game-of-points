@@ -16,7 +16,6 @@ public class DroolsBrain implements AgentsBrain {
     // I want KieSession to reside here
     private final KieContainer kieContainer;
 
-
     public DroolsBrain() {
         knowledge = new AgentKnowledge();
         KieServices kieService = KieServices.Factory.get();
@@ -24,45 +23,14 @@ public class DroolsBrain implements AgentsBrain {
     }
 
     @Override
-    public void senseShot(int damage) {
-        knowledge.update(AgentKnowledge.Type.PLAYER_DAMAGE, damage);
-    }
-
-    @Override
-    public void senseTime(int gameTimeLeft) {
-        knowledge.update(AgentKnowledge.Type.GAME_TIME, gameTimeLeft);
-    }
-
-    @Override
-    public void senseMovement(double x, double y) {
-        knowledge.update(AgentKnowledge.Type.PLAYER_X, x);
-        knowledge.update(AgentKnowledge.Type.PLAYER_Y, y);
-    }
-
-    @Override
-    public void senseResourceCollection(int pointsCollected) {
-        knowledge.update(AgentKnowledge.Type.PLAYER_POINTS, pointsCollected);
-    }
-
-    @Override
-    public void senseResourceChange(List<ResourcePoint> resources) {
-        knowledge.update(AgentKnowledge.Type.RESOURCE_POINTS, resources);
-    }
-
-    @Override
-    public void sensePlayersAim(double mouseX, double mouseY) {
-        knowledge.update(AgentKnowledge.Type.MOUSE_X, mouseX);
-        knowledge.update(AgentKnowledge.Type.MOUSE_Y, mouseY);
-    }
-
-    @Override
     public void reason(List<Fact> facts, Agent agent) {
         KieSession kieSession = kieContainer.newKieSession("myKsession");
-        kieSession.insert(agent);
+        kieSession.insert(knowledge);
 
         try {
             facts.forEach(kieSession::insert);
             kieSession.fireAllRules();
+            System.out.println(knowledge);
         } finally {
             kieSession.dispose();
         }

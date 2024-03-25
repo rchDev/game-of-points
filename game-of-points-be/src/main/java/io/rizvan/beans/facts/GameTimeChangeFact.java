@@ -9,11 +9,6 @@ public class GameTimeChangeFact implements Fact {
         this.timeLeft = timeLeft;
     }
 
-    @Override
-    public void supplyInfo(AgentsBrain brain) {
-        brain.senseTime(timeLeft);
-    }
-
     public int getTimeLeft() {
         return timeLeft;
     }

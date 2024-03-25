@@ -12,11 +12,6 @@ public class PlayerMovementFact implements Fact {
         this.y = y;
     }
 
-    @Override
-    public void supplyInfo(AgentsBrain brain) {
-        brain.senseMovement(x, y);
-    }
-
     public double getX() {
         return x;
     }

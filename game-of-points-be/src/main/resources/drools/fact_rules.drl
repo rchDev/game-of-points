@@ -6,61 +6,93 @@ import io.rizvan.beans.facts.PlayerShootingFact;
 import io.rizvan.beans.facts.PlayerCollectionFact;
 import io.rizvan.beans.facts.GameTimeChangeFact;
 import io.rizvan.beans.facts.ResourcesChangeFact;
+import io.rizvan.beans.AgentKnowledge;
 import io.rizvan.beans.actors.Agent;
+import io.rizvan.beans.KnowledgeUpdateSignal;
 
 rule "Player Moved"
+    no-loop true
     when
-        $agent : Agent()
-        $moveFact: PlayerMovementFact()
+        $moveFact : PlayerMovementFact()
+        $knowledge : AgentKnowledge()
     then
-        System.out.println("Move x: " + $moveFact.getX() + " y: " + $moveFact.getY());
-        $moveFact.supplyInfo($agent.getBrain());
+    System.out.println("Player Moved ran");
+        modify($knowledge){
+            setPlayerX($moveFact.getX()),
+            setPlayerY($moveFact.getY())
+        }
+        insertLogical(new KnowledgeUpdateSignal());
 end
 
 rule "Player Aimed"
+    no-loop true
     when
-        $agent : Agent()
         $aimFact : PlayerAimFact()
+        $knowledge : AgentKnowledge()
     then
-        System.out.println("Mouse x: " + $aimFact.getMouseX() + "Mouse y: " + $aimFact.getMouseY());
-        $aimFact.supplyInfo($agent.getBrain());
-
+        System.out.println("Player aimed ran");
+        modify($knowledge) {
+            setMouseX($aimFact.getMouseX()),
+            setMouseY($aimFact.getMouseY())
+        }
+        insertLogical(new KnowledgeUpdateSignal());
 end
 
 rule "Player shot"
+    no-loop true
     when
-        $agent : Agent()
         $shootingFact : PlayerShootingFact()
+        $knowledge: AgentKnowledge()
     then
-        System.out.println("Player shoots and deals: " + $shootingFact.getDamage() + " dmg");
-        $shootingFact.supplyInfo($agent.getBrain());
+        modify($knowledge){
+            setPlayerDamage($shootingFact.getDamage())
+        }
+        insertLogical(new KnowledgeUpdateSignal());
 end
 
 rule "Player collected resource"
+    no-loop true
     when
-        $agent : Agent()
         $collectionFact : PlayerCollectionFact()
+        $knowledge : AgentKnowledge()
     then
-        System.out.println("Player collects resource, total pointsv" + $collectionFact.getTotalPoints());
-        $collectionFact.supplyInfo($agent.getBrain());
+        System.out.println("Player collected ran");
+        modify($knowledge){
+            setPlayerPoints($collectionFact.getTotalPoints())
+        }
+        insertLogical(new KnowledgeUpdateSignal());
 end
 
 rule "Resource Points Changed"
+    no-loop true
     when
-        $agent : Agent()
         $resourcesChangedFact : ResourcesChangeFact()
+        $knowledge : AgentKnowledge()
     then
-        for (var resource : $resourcesChangedFact.getResources()) {
-            System.out.println("Resource: x- " + resource.getX() + " y- " + resource.getY());
+        modify($knowledge){
+            setResourcePointLocations($resourcesChangedFact.getResources())
         }
-        $resourcesChangedFact.supplyInfo($agent.getBrain());
+        insertLogical(new KnowledgeUpdateSignal());
 end
 
 rule "Game Time Changed"
+    no-loop true
     when
-        $agent : Agent()
         $timeChangeFact : GameTimeChangeFact()
+        $knowledge : AgentKnowledge()
     then
-       System.out.println("Time left: " + $timeChangeFact.getTimeLeft());
-       $timeChangeFact.supplyInfo($agent.getBrain());
+       modify($knowledge) {
+           setTimeLeft($timeChangeFact.getTimeLeft())
+       }
+        insertLogical(new KnowledgeUpdateSignal());
 end
+
+rule "Knowledge Inference"
+    when
+        $knowledge : AgentKnowledge() and
+        $signal : KnowledgeUpdateSignal()
+    then
+    System.out.println("Knowledge Inference ran");
+    retract($signal);
+end
+

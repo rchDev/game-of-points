@@ -16,9 +16,4 @@ public class PlayerCollectionFact implements Fact {
     public void setTotalPoints(int totalPoints) {
         this.totalPoints = totalPoints;
     }
-
-    @Override
-    public void supplyInfo(AgentsBrain brain) {
-        brain.senseResourceCollection(totalPoints);
-    }
 }

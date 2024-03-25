@@ -94,40 +94,69 @@ public class AgentKnowledge {
         return playerHitPoints;
     }
 
-    public void update(Type type, Object value) {
-        if ((type == Type.HP ||
-                type == Type.PLAYER_DAMAGE ||
-                type == Type.SHOT_COUNT ||
-                type == Type.GAME_TIME ||
-                type == Type.PLAYER_POINTS) && !(value instanceof Integer)
-        ) {
-            throw new IllegalArgumentException("provided value is not of type: Integer");
-        }
+    public void setMouseX(double mouseX) {
+        this.mouseX = mouseX;
+    }
 
-        if ((type == Type.PLAYER_X ||
-                type == Type.PLAYER_Y ||
-                type == Type.MOUSE_X ||
-                type == Type.MOUSE_Y ||
-                type == Type.SPEED) && !(value instanceof Double)
-        ) {
-            throw new IllegalArgumentException("provided value is not of type: Double");
-        }
+    public void setMouseY(double mouseY) {
+        this.mouseY = mouseY;
+    }
 
-        switch (type.getLabel()) {
-            case "hp" -> playerHitPoints = (int) value;
-            case "playerX" -> playerX = (double) value;
-            case "playerY" -> playerY = (double) value;
-            case "mouseX" -> mouseX = (double) value;
-            case "mouseY" -> mouseY = (double) value;
-            case "shotCount" -> shotsHeard = (int) value;
-            case "speed" -> playerSpeed = (double) value;
-            case "damage" -> playerDamage = (int) value;
-            case "gameTime" -> timeLeft = (int) value;
-            case "playerPoints" -> playerPoints = (int) value;
-            case "resourcePoints" -> resourcePointLocations = (List<ResourcePoint>) value;
-            default -> {
-                // do nothing
-            }
-        }
+    public void setPlayerX(double playerX) {
+        this.playerX = playerX;
+    }
+
+    public void setPlayerY(double playerY) {
+        this.playerY = playerY;
+    }
+
+    public void setShotsHeard(int shotsHeard) {
+        this.shotsHeard = shotsHeard;
+    }
+
+    public void setPlayerSpeed(double playerSpeed) {
+        this.playerSpeed = playerSpeed;
+    }
+
+    public void setPlayerDamage(int playerDamage) {
+        this.playerDamage = playerDamage;
+    }
+
+    public void setPlayerHitPoints(int playerHitPoints) {
+        this.playerHitPoints = playerHitPoints;
+    }
+
+    public void setTimeLeft(int timeLeft) {
+        this.timeLeft = timeLeft;
+    }
+
+    public void setPlayerPoints(int playerPoints) {
+        this.playerPoints = playerPoints;
+    }
+
+    public void setResourcePointLocations(List<ResourcePoint> resourcePointLocations) {
+        this.resourcePointLocations = resourcePointLocations;
+    }
+
+    public void setPossibleWeapons(WeaponCache possibleWeapons) {
+        this.possibleWeapons = possibleWeapons;
+    }
+
+    @Override
+    public String toString() {
+        return "AgentKnowledge{" +
+                "playerX=" + playerX +
+                ", playerY=" + playerY +
+                ", mouseX=" + mouseX +
+                ", mouseY=" + mouseY +
+                ", shotsHeard=" + shotsHeard +
+                ", playerSpeed=" + playerSpeed +
+                ", playerDamage=" + playerDamage +
+                ", playerHitPoints=" + playerHitPoints +
+                ", timeLeft=" + timeLeft +
+                ", playerPoints=" + playerPoints +
+                ", resourcePointLocations=" + resourcePointLocations +
+                ", possibleWeapons=" + possibleWeapons +
+                '}';
     }
 }

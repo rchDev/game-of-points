@@ -11,11 +11,6 @@ public class PlayerAimFact implements Fact {
         this.mouseY = mouseY;
     }
 
-    @Override
-    public void supplyInfo(AgentsBrain brain) {
-        brain.sensePlayersAim(mouseX, mouseY);
-    }
-
     public double getMouseX() {
         return mouseX;
     }
