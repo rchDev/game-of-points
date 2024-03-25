@@ -1,8 +1,8 @@
 package io.rizvan.beans.actors;
 
 import io.rizvan.beans.AgentKnowledge;
+import io.rizvan.beans.KnowledgeUpdateSignal;
 import io.rizvan.beans.facts.Fact;
-import io.rizvan.beans.ResourcePoint;
 import jakarta.annotation.PreDestroy;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -26,6 +26,7 @@ public class DroolsBrain implements AgentsBrain {
     public void reason(List<Fact> facts, Agent agent) {
         KieSession kieSession = kieContainer.newKieSession("myKsession");
         kieSession.insert(knowledge);
+        kieSession.insert(new KnowledgeUpdateSignal());
 
         try {
             facts.forEach(kieSession::insert);

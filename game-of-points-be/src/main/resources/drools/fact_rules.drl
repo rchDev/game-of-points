@@ -15,13 +15,16 @@ rule "Player Moved"
     when
         $moveFact : PlayerMovementFact()
         $knowledge : AgentKnowledge()
+        $signal : KnowledgeUpdateSignal()
     then
     System.out.println("Player Moved ran");
         modify($knowledge){
             setPlayerX($moveFact.getX()),
             setPlayerY($moveFact.getY())
         }
-        insertLogical(new KnowledgeUpdateSignal());
+        modify($signal) {
+            setRunInference(true)
+        }
 end
 
 rule "Player Aimed"
@@ -29,25 +32,31 @@ rule "Player Aimed"
     when
         $aimFact : PlayerAimFact()
         $knowledge : AgentKnowledge()
+        $signal : KnowledgeUpdateSignal()
     then
         System.out.println("Player aimed ran");
         modify($knowledge) {
             setMouseX($aimFact.getMouseX()),
             setMouseY($aimFact.getMouseY())
         }
-        insertLogical(new KnowledgeUpdateSignal());
+        modify($signal) {
+            setRunInference(true)
+        }
 end
 
 rule "Player shot"
     no-loop true
     when
         $shootingFact : PlayerShootingFact()
-        $knowledge: AgentKnowledge()
+        $knowledge : AgentKnowledge()
+        $signal : KnowledgeUpdateSignal()
     then
-        modify($knowledge){
+        modify($knowledge) {
             setPlayerDamage($shootingFact.getDamage())
         }
-        insertLogical(new KnowledgeUpdateSignal());
+        modify($signal) {
+            setRunInference(true)
+        }
 end
 
 rule "Player collected resource"
@@ -55,12 +64,15 @@ rule "Player collected resource"
     when
         $collectionFact : PlayerCollectionFact()
         $knowledge : AgentKnowledge()
+        $signal : KnowledgeUpdateSignal()
     then
         System.out.println("Player collected ran");
         modify($knowledge){
             setPlayerPoints($collectionFact.getTotalPoints())
         }
-        insertLogical(new KnowledgeUpdateSignal());
+        modify($signal) {
+            setRunInference(true)
+        }
 end
 
 rule "Resource Points Changed"
@@ -68,11 +80,14 @@ rule "Resource Points Changed"
     when
         $resourcesChangedFact : ResourcesChangeFact()
         $knowledge : AgentKnowledge()
+        $signal : KnowledgeUpdateSignal()
     then
-        modify($knowledge){
+        modify($knowledge) {
             setResourcePointLocations($resourcesChangedFact.getResources())
         }
-        insertLogical(new KnowledgeUpdateSignal());
+        modify($signal) {
+            setRunInference(true)
+        }
 end
 
 rule "Game Time Changed"
@@ -80,19 +95,27 @@ rule "Game Time Changed"
     when
         $timeChangeFact : GameTimeChangeFact()
         $knowledge : AgentKnowledge()
+        $signal : KnowledgeUpdateSignal()
     then
        modify($knowledge) {
            setTimeLeft($timeChangeFact.getTimeLeft())
        }
-        insertLogical(new KnowledgeUpdateSignal());
+       modify($signal) {
+           setRunInference(true)
+       }
 end
 
 rule "Knowledge Inference"
+salience -100
     when
         $knowledge : AgentKnowledge() and
-        $signal : KnowledgeUpdateSignal()
+        $signal : KnowledgeUpdateSignal(shouldRunInference())
     then
+
     System.out.println("Knowledge Inference ran");
-    retract($signal);
+
+    modify($signal){
+        setRunInference(false)
+    }
 end
 
