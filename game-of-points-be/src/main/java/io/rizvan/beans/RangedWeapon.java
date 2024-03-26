@@ -38,6 +38,7 @@ public class RangedWeapon {
     private int damage;
     private double speedModifier;
     private int ammo;
+    private int ammoCapacity;
     private double range;
 
     public RangedWeapon(int id, String name, int damage, double speedModifier, int ammo, double range) {
@@ -95,5 +96,9 @@ public class RangedWeapon {
 
     public void setRange(double range) {
         this.range = range;
+    }
+
+    public int getAmmoCapacity() {
+        return ammoCapacity;
     }
 }
