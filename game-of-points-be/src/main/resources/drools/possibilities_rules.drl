@@ -1,0 +1,17 @@
+package rules
+
+import io.rizvan.beans.AgentKnowledge;
+import io.rizvan.beans.KnowledgeInferredSignal;
+
+rule "Test possibilities group"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $knowledge : AgentKnowledge()
+        $signal : KnowledgeInferredSignal(isProcessed() == false)
+    then
+        System.out.println("Test possibilities group ran");
+        modify($signal){
+            setProcessed(true)
+        }
+end

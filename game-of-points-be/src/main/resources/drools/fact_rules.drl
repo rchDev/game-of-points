@@ -9,9 +9,11 @@ import io.rizvan.beans.facts.ResourcesChangeFact;
 import io.rizvan.beans.AgentKnowledge;
 import io.rizvan.beans.actors.Agent;
 import io.rizvan.beans.KnowledgeUpdateSignal;
+import io.rizvan.beans.KnowledgeInferredSignal;
 
 rule "Player Moved"
-    no-loop true
+agenda-group "inference-group"
+no-loop true
     when
         $moveFact : PlayerMovementFact()
         $knowledge : AgentKnowledge()
@@ -28,7 +30,8 @@ rule "Player Moved"
 end
 
 rule "Player Aimed"
-    no-loop true
+agenda-group "inference-group"
+no-loop true
     when
         $aimFact : PlayerAimFact()
         $knowledge : AgentKnowledge()
@@ -45,7 +48,8 @@ rule "Player Aimed"
 end
 
 rule "Player shot"
-    no-loop true
+agenda-group "inference-group"
+no-loop true
     when
         $shootingFact : PlayerShootingFact()
         $knowledge : AgentKnowledge()
@@ -60,7 +64,8 @@ rule "Player shot"
 end
 
 rule "Player collected resource"
-    no-loop true
+agenda-group "inference-group"
+no-loop true
     when
         $collectionFact : PlayerCollectionFact()
         $knowledge : AgentKnowledge()
@@ -76,7 +81,8 @@ rule "Player collected resource"
 end
 
 rule "Resource Points Changed"
-    no-loop true
+agenda-group "inference-group"
+no-loop true
     when
         $resourcesChangedFact : ResourcesChangeFact()
         $knowledge : AgentKnowledge()
@@ -91,7 +97,8 @@ rule "Resource Points Changed"
 end
 
 rule "Game Time Changed"
-    no-loop true
+agenda-group "inference-group"
+no-loop true
     when
         $timeChangeFact : GameTimeChangeFact()
         $knowledge : AgentKnowledge()
@@ -106,6 +113,7 @@ rule "Game Time Changed"
 end
 
 rule "Knowledge Inference"
+agenda-group "inference-group"
 salience -100
     when
         $knowledge : AgentKnowledge() and
@@ -117,5 +125,6 @@ salience -100
     modify($signal){
         setRunInference(false)
     }
+    insert(new KnowledgeInferredSignal());
 end
 
