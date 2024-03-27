@@ -141,11 +141,12 @@ salience -100
         $signal : KnowledgeUpdateSignal(shouldRunInference())
     then
         var isShotCountKnown = $knowledge.getShotCount().isKnown();
+        var isAmmoCapacityKnown = $knowledge.getPlayerAmmoCapacity().isKnown();
         var isPlayerDamageKnown = $knowledge.getPlayerDamage().isKnown();
         var isPlayerSpeedKnown = $knowledge.getPlayerSpeed().isKnown();
         var isPlayerReachKnown = $knowledge.getPlayerReach().isKnown();
 
-        if (!isPlayerDamageKnown || !isPlayerSpeedKnown || !isPlayerReachKnown) {
+        if (!isPlayerDamageKnown || !isPlayerSpeedKnown || !isPlayerReachKnown || !isAmmoCapacityKnown) {
             var weapons = $knowledge.getPossibleWeapons().stream()
             .filter(wep ->
                 (!isShotCountKnown || wep.getAmmoCapacity() >= $knowledge.getShotCount().getValue()) &&
@@ -155,6 +156,11 @@ salience -100
             );
 
             var oneWeaponLeft = weapons.toList().size() == 1;
+
+            weapons.max(Comparator.comparingInt(RangedWeapon::getAmmoCapacity))
+                .ifPresent(maxCapacityWeapon -> {
+                    $knowledge.setPlayerAmmoCapacity(maxCapacityWeapon.getAmmoCapacity(), oneWeaponLeft);
+                });
 
             weapons.max(Comparator.comparingInt(RangedWeapon::getDamage))
                 .ifPresent(maxDamageWeapon -> {
