@@ -1,6 +1,6 @@
 package io.rizvan.beans.actors;
 
-import io.rizvan.beans.AgentKnowledge;
+import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.KnowledgeUpdateSignal;
 import io.rizvan.beans.facts.Fact;
 import jakarta.annotation.PreDestroy;
