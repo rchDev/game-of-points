@@ -3,6 +3,7 @@ package io.rizvan.beans.actors;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.KnowledgeUpdateSignal;
 import io.rizvan.beans.facts.Fact;
+import io.rizvan.beans.knowledge.AgentPossibilities;
 import jakarta.annotation.PreDestroy;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -13,11 +14,13 @@ import java.util.List;
 public class DroolsBrain implements AgentsBrain {
 
     private final AgentKnowledge knowledge;
+    private final AgentPossibilities possibilities;
     // I want KieSession to reside here
     private final KieContainer kieContainer;
 
     public DroolsBrain() {
         knowledge = new AgentKnowledge();
+        possibilities = new AgentPossibilities();
         KieServices kieService = KieServices.Factory.get();
         kieContainer = kieService.getKieClasspathContainer();
     }
@@ -26,6 +29,7 @@ public class DroolsBrain implements AgentsBrain {
     public void reason(List<Fact> facts, Agent agent) {
         KieSession kieSession = kieContainer.newKieSession("myKsession");
         kieSession.insert(knowledge);
+        kieSession.insert(possibilities);
         kieSession.insert(new KnowledgeUpdateSignal());
 
         try {

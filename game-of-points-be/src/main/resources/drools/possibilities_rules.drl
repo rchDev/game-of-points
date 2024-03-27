@@ -1,17 +1,74 @@
 package rules
 
-import io.rizvan.beans.AgentKnowledge;
-import io.rizvan.beans.KnowledgeInferredSignal;
+import io.rizvan.beans.knowledge.AgentKnowledge;
+import io.rizvan.beans.KnowledgeInferredSignal
+import io.rizvan.beans.actors.Agent
+import io.rizvan.beans.knowledge.AgentPossibilities;
 
-rule "Test possibilities group"
+rule "Determine if a kill is possible"
 agenda-group "possibilities-group"
 no-loop true
     when
-        $knowledge : AgentKnowledge()
+        $agent : Agent()
+        $knowledge : AgentKnowledge(getPlayerHitPoints() <= $agent.getDamage() * $agent.getAmmo())
+        $possibilities : AgentPossibilities()
         $signal : KnowledgeInferredSignal(isProcessed() == false)
     then
-        System.out.println("Test possibilities group ran");
-        modify($signal){
+        modify($possibilities) {
+            setCanKillPlayer(true)
+        }
+        modify($signal) {
+            setProcessed(true)
+        }
+end
+
+rule "Determine if one shot kill is possible"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent()
+        $knowledge : AgentKnowledge(getPlayerHitPoints() <= $agent.getDamage())
+        $possibilities : AgentPossibilities()
+        $signal : KnowledgeInferredSignal(isProcessed() == false)
+    then
+        modify($possibilities) {
+            setCanOneShootPlayer(true)
+        }
+        modify($signal) {
+            setProcessed(true)
+        }
+end
+
+rule "Determine if can get killed by player"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent()
+        $knowledge : AgentKnowledge($agent.getHitPoints() <= getPlayerDamage() * getPlayerAmmo())
+        $possibilities : AgentPossibilities()
+        $signal : KnowledgeInferredSignal(isProcessed() == false)
+    then
+        modify($possibilities) {
+            setKilledByPlayer(true)
+        }
+        modify($signal) {
+            setProcessed(true)
+        }
+end
+
+rule "Determine if can get one shot by player"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent()
+        $knowledge : AgentKnowledge($agent.getHitPoints() <= getPlayerDamage())
+        $possibilities : AgentPossibilities()
+        $signal : KnowledgeInferredSignal(isProcessed() == false)
+    then
+        modify($possibilities) {
+            setOneShotByPlayer(true)
+        }
+        modify($signal) {
             setProcessed(true)
         }
 end
