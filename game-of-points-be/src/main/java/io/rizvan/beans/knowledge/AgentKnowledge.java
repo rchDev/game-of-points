@@ -18,7 +18,8 @@ public class AgentKnowledge {
     private PlayerPointsKnowledge playerPoints;
     private ResourcePointKnowledge resourcePoints;
     private GameTimeKnowledge timeLeft;
-    public WeaponCache possibleWeapons;
+    private PlayerReachKnowledge playerReach;
+    private WeaponCache possibleWeapons;
 
     public AgentKnowledge() {
         this.playerPosition = new PlayerPositionKnowledge();
@@ -103,6 +104,14 @@ public class AgentKnowledge {
 
     public void setTimeLeft(Integer timeLeft) {
         this.timeLeft.setValue(timeLeft);
+    }
+
+    public PlayerReachKnowledge getPlayerReach() {
+        return playerReach;
+    }
+
+    public void setPlayerReach(Double playerReach) {
+        this.playerReach.setValue(playerReach);
     }
 
     public List<RangedWeapon> getPossibleWeapons() {
