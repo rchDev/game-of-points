@@ -1,11 +1,9 @@
 package io.rizvan.beans.knowledge;
 
-import io.rizvan.beans.GameState;
 import io.rizvan.beans.RangedWeapon;
 import io.rizvan.beans.ResourcePoint;
 import io.rizvan.beans.WeaponCache;
-import io.rizvan.beans.actors.Player;
-import jakarta.inject.Inject;
+import io.rizvan.utils.Coord;
 
 import java.util.List;
 
@@ -39,72 +37,72 @@ public class AgentKnowledge {
         return playerPosition;
     }
 
-    public void setPlayerPosition(PlayerPositionKnowledge playerPosition) {
-        this.playerPosition = playerPosition;
+    public void setPlayerPosition(Double x, Double y) {
+        this.playerPosition.setValue(new Coord<>(x, y));
     }
 
     public PlayerAimKnowledge getPlayerAim() {
         return playerAim;
     }
 
-    public void setPlayerAim(PlayerAimKnowledge playerAim) {
-        this.playerAim = playerAim;
+    public void setPlayerAim(Double x, Double y) {
+        this.playerAim.setValue(new Coord<>(x, y));
     }
 
     public ShotCountKnowledge getShotCount() {
         return shotCount;
     }
 
-    public void setShotCount(ShotCountKnowledge shotCount) {
-        this.shotCount = shotCount;
+    public void setShotCount(Integer shotCount) {
+        this.shotCount.setValue(shotCount);
     }
 
     public PlayerSpeedKnowledge getPlayerSpeed() {
         return playerSpeed;
     }
 
-    public void setPlayerSpeed(PlayerSpeedKnowledge playerSpeed) {
-        this.playerSpeed = playerSpeed;
+    public void setPlayerSpeed(Double speed) {
+        this.playerSpeed.setValue(speed);
     }
 
     public PlayerDamageKnowledge getPlayerDamage() {
         return playerDamage;
     }
 
-    public void setPlayerDamage(PlayerDamageKnowledge playerDamage) {
-        this.playerDamage = playerDamage;
+    public void setPlayerDamage(Integer damage) {
+        this.playerDamage.setValue(damage);
     }
 
     public PlayerHPKnowledge getPlayerHitPoints() {
         return playerHitPoints;
     }
 
-    public void setPlayerHitPoints(PlayerHPKnowledge playerHitPoints) {
-        this.playerHitPoints = playerHitPoints;
+    public void setPlayerHitPoints(Integer playerHP) {
+        this.playerHitPoints.setValue(playerHP);
     }
 
     public PlayerPointsKnowledge getPlayerPoints() {
         return playerPoints;
     }
 
-    public void setPlayerPoints(PlayerPointsKnowledge playerPoints) {
-        this.playerPoints = playerPoints;
+    public void setPlayerPoints(Integer playerPoints) {
+        this.playerPoints.setValue(playerPoints);
     }
 
     public ResourcePointKnowledge getResourcePoints() {
         return resourcePoints;
     }
 
-    public void setResourcePoints(ResourcePointKnowledge resourcePoints) {
-        this.resourcePoints = resourcePoints;
+    public void setResourcePoints(List<ResourcePoint> resourcePoints) {
+        this.resourcePoints.setValue(resourcePoints);
     }
 
     public GameTimeKnowledge getTimeLeft() {
         return timeLeft;
     }
 
-    public void setTimeLeft(GameTimeKnowledge timeLeft) {
-        this.timeLeft = timeLeft;
+    public void setTimeLeft(Integer timeLeft) {
+        this.timeLeft.setValue(timeLeft);
     }
 
     public List<RangedWeapon> getPossibleWeapons() {
