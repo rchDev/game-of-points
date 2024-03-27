@@ -9,10 +9,11 @@ rule "Determine if a kill is possible"
 agenda-group "possibilities-group"
 no-loop true
     when
-        $agent : Agent()
-        $knowledge : AgentKnowledge(getPlayerHitPoints() <= $agent.getDamage() * $agent.getAmmo())
+        $agent : Agent($damage : getDamage(), $ammo : getAmmo())
+        $knowledge : AgentKnowledge($playerHitPoints : getPlayerHitPoints())
         $possibilities : AgentPossibilities()
         $signal : KnowledgeInferredSignal(isProcessed() == false)
+        eval($playerHitPoints.getValue() <= $damage * $ammo)
     then
         modify($possibilities) {
             setCanKillPlayer(true)
@@ -26,10 +27,11 @@ rule "Determine if one shot kill is possible"
 agenda-group "possibilities-group"
 no-loop true
     when
-        $agent : Agent()
-        $knowledge : AgentKnowledge(getPlayerHitPoints() <= $agent.getDamage())
+        $agent : Agent($damage : getDamage())
+        $knowledge : AgentKnowledge($playerHitPoints : getPlayerHitPoints())
         $possibilities : AgentPossibilities()
         $signal : KnowledgeInferredSignal(isProcessed() == false)
+        eval($playerHitPoints.getValue() <= $damage)
     then
         modify($possibilities) {
             setCanOneShootPlayer(true)
@@ -43,10 +45,11 @@ rule "Determine if can get killed by player"
 agenda-group "possibilities-group"
 no-loop true
     when
-        $agent : Agent()
-        $knowledge : AgentKnowledge($agent.getHitPoints() <= getPlayerDamage() * getPlayerAmmo())
+        $agent : Agent($hitPoints : getHitPoints())
+        $knowledge : AgentKnowledge($playerDamage : getPlayerDamage(), $playerAmmo : getPlayerAmmoCapacity())
         $possibilities : AgentPossibilities()
         $signal : KnowledgeInferredSignal(isProcessed() == false)
+        eval($hitPoints <= $playerDamage.getValue() * $playerAmmo.getValue())
     then
         modify($possibilities) {
             setKilledByPlayer(true)
@@ -60,10 +63,11 @@ rule "Determine if can get one shot by player"
 agenda-group "possibilities-group"
 no-loop true
     when
-        $agent : Agent()
-        $knowledge : AgentKnowledge($agent.getHitPoints() <= getPlayerDamage())
+        $agent : Agent($hitPoints : getHitPoints())
+        $knowledge : AgentKnowledge($playerDamage : getPlayerDamage())
         $possibilities : AgentPossibilities()
         $signal : KnowledgeInferredSignal(isProcessed() == false)
+        eval($hitPoints <= $playerDamage.getValue())
     then
         modify($possibilities) {
             setOneShotByPlayer(true)
