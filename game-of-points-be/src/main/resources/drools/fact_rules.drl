@@ -4,9 +4,10 @@ import io.rizvan.beans.facts.PlayerAimFact;
 import io.rizvan.beans.facts.PlayerMovementFact;
 import io.rizvan.beans.facts.PlayerShootingFact;
 import io.rizvan.beans.facts.PlayerCollectionFact;
+import io.rizvan.beans.facts.PlayerHPChangeFact;
 import io.rizvan.beans.facts.GameTimeChangeFact;
 import io.rizvan.beans.facts.ResourcesChangeFact;
-import io.rizvan.beans.AgentKnowledge;
+import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.actors.Agent;
 import io.rizvan.beans.KnowledgeUpdateSignal;
 import io.rizvan.beans.KnowledgeInferredSignal;
@@ -21,8 +22,7 @@ no-loop true
     then
     System.out.println("Player Moved ran");
         modify($knowledge){
-            setPlayerX($moveFact.getX()),
-            setPlayerY($moveFact.getY())
+            setPlayerPosition($moveFact.getX(), $moveFact.getY())
         }
         modify($signal) {
             setRunInference(true)
@@ -39,8 +39,7 @@ no-loop true
     then
         System.out.println("Player aimed ran");
         modify($knowledge) {
-            setMouseX($aimFact.getMouseX()),
-            setMouseY($aimFact.getMouseY())
+            setPlayerAim($aimFact.getMouseX(), $aimFact.getMouseY())
         }
         modify($signal) {
             setRunInference(true)
@@ -89,7 +88,7 @@ no-loop true
         $signal : KnowledgeUpdateSignal()
     then
         modify($knowledge) {
-            setResourcePointLocations($resourcesChangedFact.getResources())
+            setResourcePoints($resourcesChangedFact.getResources())
         }
         modify($signal) {
             setRunInference(true)
@@ -112,6 +111,19 @@ no-loop true
        }
 end
 
+rule "Player HP changed"
+agenda-group "inference-group"
+no-loop true
+    when
+        $hpChangeFact : PlayerHPChangeFact()
+        $knowledge : AgentKnowledge()
+        $signal : KnowledgeUpdateSignal()
+    then
+        modify($knowledge) {
+            setPlayerHitPoints($hpChangeFact.getHP())
+        }
+end
+
 rule "Knowledge Inference"
 agenda-group "inference-group"
 salience -100
@@ -119,6 +131,13 @@ salience -100
         $knowledge : AgentKnowledge() and
         $signal : KnowledgeUpdateSignal(shouldRunInference())
     then
+
+    var weapons = $knowledge.getPossibleWeapons()
+    .stream()
+    .filter(wep ->
+        (!$knowledge.getShotCount().isKnown() || wep.getAmmoCapacity() >= $knowledge.getShotCount().getValue()) &&
+    );
+
 
     System.out.println("Knowledge Inference ran");
 
