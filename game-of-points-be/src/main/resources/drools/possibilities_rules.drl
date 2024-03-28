@@ -3,7 +3,8 @@ package rules
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.KnowledgeInferredSignal
 import io.rizvan.beans.actors.Agent
-import io.rizvan.beans.knowledge.AgentPossibilities;
+import io.rizvan.beans.knowledge.AgentPossibilities
+import io.rizvan.beans.GameState;
 
 rule "Determine if a kill is possible"
 agenda-group "possibilities-group"
@@ -72,6 +73,113 @@ no-loop true
         modify($possibilities) {
             setOneShotByPlayer(true)
         }
+        modify($signal) {
+            setProcessed(true)
+        }
+end
+
+rule "Determine if agent is faster than player"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($speed : getSpeed())
+        $knowledge : AgentKnowledge($playerSpeed : getPlayerSpeed())
+        $possibilities : AgentPossibilities()
+        $signal : KnowledgeInferredSignal(isProcessed() == false)
+        eval($speed > $playerSpeed.getValue())
+    then
+        modify($possibilities) {
+            setOneShotByPlayer(true)
+        }
+        modify($signal) {
+            setProcessed(true)
+        }
+end
+
+rule "Determine if agent is slower than player"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($speed : getSpeed())
+        $knowledge : AgentKnowledge($playerSpeed : getPlayerSpeed())
+        $possibilities : AgentPossibilities()
+        $signal : KnowledgeInferredSignal(isProcessed() == false)
+        eval($speed < $playerSpeed.getValue())
+    then
+        modify($possibilities) {
+            setOneShotByPlayer(true)
+        }
+        modify($signal) {
+            setProcessed(true)
+        }
+end
+
+rule "Determine if agent can reach player"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($x : getX(), $y : getY(), $reach : getReach())
+        $knowledge : AgentKnowledge($playerPosition : getPlayerPosition())
+        $possibilities : AgentPossibilities()
+        $signal : KnowledgeInferredSignal(isProcessed() == false)
+    then
+        Double playerX = $playerPosition.getValue().getX();
+        Double playerY = $playerPosition.getValue().getY();
+
+        Double distance = Math.sqrt(Math.pow($x - playerX, 2) + Math.pow($y - playerY, 2));
+
+        modify($possibilities) {
+            setCanReachPlayer($reach >= distance)
+        }
+        modify($signal) {
+            setProcessed(true)
+        }
+end
+
+rule "Determine if player can reach agent"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($x : getX(), $y : getY())
+        $knowledge : AgentKnowledge($playerPosition : getPlayerPosition(), $playerReach : getPlayerReach())
+        $possibilities : AgentPossibilities()
+        $signal : KnowledgeInferredSignal(isProcessed() == false)
+    then
+        Double playerX = $playerPosition.getValue().getX();
+        Double playerY = $playerPosition.getValue().getY();
+
+        Double distance = Math.sqrt(Math.pow($x - playerX, 2) + Math.pow($y - playerY, 2));
+
+        modify($possibilities) {
+            setReachedByPlayer($playerReach.getValue() >= distance)
+        }
+        modify($signal) {
+            setProcessed(true)
+        }
+end
+
+rule "Determine if agent can win by collecting points"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($agentPoints : getPoints())
+        $knowledge : AgentKnowledge($timeLeft : getTimeLeft(), $playerPoints : getPlayerPoints())
+        $possibilities : AgentPossibilities()
+        $signal : KnowledgeInferredSignal(isProcessed() == false)
+    then
+        var timePassed = GameState.GAME_TIME == $timeLeft.getValue() ? 1 : GameState.GAME_TIME - $timeLeft.getValue();
+        var pointDiff = $agentPoints - $playerPoints.getValue();
+
+        var agentPointsPerSecond = $agentPoints / timePassed;
+        var playerPointsPerSecond = $playerPoints.getValue() / timePassed;
+
+        var agentPointPrognosis = Math.round($timeLeft.getValue() * agentPointsPerSecond) + $agentPoints;
+        var playerPointPrognosis = Math.round($timeLeft.getValue() * playerPointsPerSecond) + $playerPoints.getValue();
+
+        modify($possibilities) {
+            setCanWinByPointCollection(pointDiff >= 0 || agentPointPrognosis > playerPointPrognosis)
+        }
+
         modify($signal) {
             setProcessed(true)
         }
