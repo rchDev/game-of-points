@@ -33,6 +33,8 @@ public class AgentKnowledge {
         this.timeLeft = new GameTimeKnowledge();
         this.resourcePoints = new ResourcePointKnowledge();
         this.possibleWeapons = new WeaponCache();
+        this.playerAmmoCapacity = new PlayerAmmoCapacityKnowledge();
+        this.playerReach = new PlayerReachKnowledge();
     }
 
     public PlayerPositionKnowledge getPlayerPosition() {

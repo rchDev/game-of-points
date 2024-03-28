@@ -10,13 +10,15 @@ import io.rizvan.beans.facts.ResourcesChangeFact;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.actors.Agent;
 import io.rizvan.beans.KnowledgeUpdateSignal;
-import io.rizvan.beans.KnowledgeInferredSignal
-import io.rizvan.beans.GameState
-import io.rizvan.beans.actors.CompetingEntity
-import java.util.stream.Collectors
-import java.util.Comparator
-import io.rizvan.beans.RangedWeapon
+import io.rizvan.beans.KnowledgeInferredSignal;
+import io.rizvan.beans.GameState;
+import io.rizvan.beans.actors.CompetingEntity;
+import java.util.stream.Collectors;
+import java.util.Comparator;
+import io.rizvan.beans.RangedWeapon;
 import java.util.Optional;
+import java.util.stream.Stream
+import java.util.List;
 
 rule "Player Moved"
 agenda-group "inference-group"
@@ -29,10 +31,10 @@ no-loop true
     System.out.println("Player Moved ran");
         modify($knowledge){
             setPlayerPosition($moveFact.getX(), $moveFact.getY(), true)
-        }
+        };
         modify($signal) {
             setRunInference(true)
-        }
+        };
 end
 
 rule "Player Aimed"
@@ -46,10 +48,10 @@ no-loop true
         System.out.println("Player aimed ran");
         modify($knowledge) {
             setPlayerAim($aimFact.getMouseX(), $aimFact.getMouseY(), true)
-        }
+        };
         modify($signal) {
             setRunInference(true)
-        }
+        };
 end
 
 rule "Player shot"
@@ -62,10 +64,10 @@ no-loop true
     then
         modify($knowledge) {
             setPlayerDamage($shootingFact.getDamage(), true)
-        }
+        };
         modify($signal) {
             setRunInference(true)
-        }
+        };
 end
 
 rule "Player collected resource"
@@ -77,12 +79,12 @@ no-loop true
         $signal : KnowledgeUpdateSignal()
     then
         System.out.println("Player collected ran");
-        modify($knowledge){
+        modify($knowledge) {
             setPlayerPoints($collectionFact.getTotalPoints(), true)
-        }
+        };
         modify($signal) {
             setRunInference(true)
-        }
+        };
 end
 
 rule "Resource Points Changed"
@@ -95,10 +97,10 @@ no-loop true
     then
         modify($knowledge) {
             setResourcePoints($resourcesChangedFact.getResources(), true)
-        }
+        };
         modify($signal) {
             setRunInference(true)
-        }
+        };
 end
 
 rule "Game Time Changed"
@@ -111,10 +113,10 @@ no-loop true
     then
        modify($knowledge) {
            setTimeLeft($timeChangeFact.getTimeLeft(), true)
-       }
+       };
        modify($signal) {
            setRunInference(true)
-       }
+       };
 end
 
 rule "Player HP changed"
@@ -127,62 +129,56 @@ no-loop true
     then
         modify($knowledge) {
             setPlayerHitPoints($hpChangeFact.getHP(), true)
-        }
+        };
         modify($signal) {
             setRunInference(true)
-        }
+        };
 end
 
 rule "Knowledge Inference"
 agenda-group "inference-group"
 salience -100
     when
-        $knowledge : AgentKnowledge() and
-        $signal : KnowledgeUpdateSignal(shouldRunInference())
+        $knowledge : AgentKnowledge()
+        $signal : KnowledgeUpdateSignal($shouldRunInference : shouldRunInference())
     then
-        var isShotCountKnown = $knowledge.getShotCount().isKnown();
-        var isAmmoCapacityKnown = $knowledge.getPlayerAmmoCapacity().isKnown();
-        var isPlayerDamageKnown = $knowledge.getPlayerDamage().isKnown();
-        var isPlayerSpeedKnown = $knowledge.getPlayerSpeed().isKnown();
-        var isPlayerReachKnown = $knowledge.getPlayerReach().isKnown();
+        boolean isShotCountKnown = $knowledge.getShotCount().isKnown();
+        boolean isAmmoCapacityKnown = $knowledge.getPlayerAmmoCapacity().isKnown();
+        boolean isPlayerDamageKnown = $knowledge.getPlayerDamage().isKnown();
+        boolean isPlayerSpeedKnown = $knowledge.getPlayerSpeed().isKnown();
+        boolean isPlayerReachKnown = $knowledge.getPlayerReach().isKnown();
 
         if (!isPlayerDamageKnown || !isPlayerSpeedKnown || !isPlayerReachKnown || !isAmmoCapacityKnown) {
-            var weapons = $knowledge.getPossibleWeapons().stream()
+
+            List<RangedWeapon> weapons = $knowledge.getPossibleWeapons()
+            .stream()
             .filter(wep ->
-                (!isShotCountKnown || wep.getAmmoCapacity() >= $knowledge.getShotCount().getValue()) &&
+                ((!isShotCountKnown || wep.getAmmoCapacity() >= $knowledge.getShotCount().getValue()) &&
                 (!isPlayerDamageKnown || wep.getDamage() == $knowledge.getPlayerDamage().getValue()) &&
                 (!isPlayerSpeedKnown || wep.getSpeedModifier() * CompetingEntity.BASE_SPEED == $knowledge.getPlayerSpeed().getValue()) &&
-                (!isPlayerReachKnown || wep.getRange() == $knowledge.getPlayerReach().getValue())
-            );
+                (!isPlayerReachKnown || wep.getRange() == $knowledge.getPlayerReach().getValue()))
+            ).toList();
 
-            var oneWeaponLeft = weapons.toList().size() == 1;
+            boolean oneWeaponLeft = weapons.size() == 1;
 
-            weapons.max(Comparator.comparingInt(RangedWeapon::getAmmoCapacity))
-                .ifPresent(maxCapacityWeapon -> {
-                    $knowledge.setPlayerAmmoCapacity(maxCapacityWeapon.getAmmoCapacity(), oneWeaponLeft);
-                });
+            weapons.stream().max(Comparator.comparingInt(RangedWeapon::getAmmoCapacity))
+                .ifPresent(maxCapacityWeapon -> $knowledge.setPlayerAmmoCapacity(maxCapacityWeapon.getAmmoCapacity(), oneWeaponLeft));
 
-            weapons.max(Comparator.comparingInt(RangedWeapon::getDamage))
-                .ifPresent(maxDamageWeapon -> {
-                    $knowledge.setPlayerDamage(maxDamageWeapon.getDamage(), oneWeaponLeft);
-                });
+            weapons.stream().max(Comparator.comparingInt(RangedWeapon::getDamage))
+                .ifPresent(maxDamageWeapon -> $knowledge.setPlayerDamage(maxDamageWeapon.getDamage(), oneWeaponLeft));
 
-            weapons.max(Comparator.comparingDouble(RangedWeapon::getSpeedModifier))
-               .ifPresent(maxSpeedWeapon -> {
-                   var playerSpeed = maxSpeedWeapon.getSpeedModifier() * CompetingEntity.BASE_SPEED;
-                   $knowledge.setPlayerSpeed(playerSpeed, oneWeaponLeft);
-               });
+            weapons.stream().max(Comparator.comparingDouble(RangedWeapon::getSpeedModifier))
+               .ifPresent(maxSpeedWeapon -> $knowledge.setPlayerSpeed(maxSpeedWeapon.getSpeedModifier() * CompetingEntity.BASE_SPEED, oneWeaponLeft));
 
-            weapons.max(Comparator.comparingDouble(RangedWeapon::getRange))
-               .ifPresent(maxRangeWeapon -> {
-                   $knowledge.setPlayerReach(maxRangeWeapon.getRange(), oneWeaponLeft);
-               });
+            weapons.stream().max(Comparator.comparingDouble(RangedWeapon::getRange))
+               .ifPresent(maxRangeWeapon -> $knowledge.setPlayerReach(maxRangeWeapon.getRange(), oneWeaponLeft));
+
         }
         System.out.println("Knowledge Inference ran");
 
-        modify($signal){
+        modify($signal) {
             setRunInference(false)
-        }
+        };
 
         insert(new KnowledgeInferredSignal());
 end

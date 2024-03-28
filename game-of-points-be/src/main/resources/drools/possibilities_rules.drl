@@ -167,14 +167,14 @@ no-loop true
         $possibilities : AgentPossibilities()
         $signal : KnowledgeInferredSignal(isProcessed() == false)
     then
-        var timePassed = GameState.GAME_TIME == $timeLeft.getValue() ? 1 : GameState.GAME_TIME - $timeLeft.getValue();
-        var pointDiff = $agentPoints - $playerPoints.getValue();
+        int timePassed = GameState.GAME_TIME == $timeLeft.getValue() ? 1 : GameState.GAME_TIME - $timeLeft.getValue();
+        int pointDiff = $agentPoints - $playerPoints.getValue();
 
-        var agentPointsPerSecond = $agentPoints / timePassed;
-        var playerPointsPerSecond = $playerPoints.getValue() / timePassed;
+        double agentPointsPerSecond = (double) $agentPoints / timePassed;
+        double playerPointsPerSecond = (double) $playerPoints.getValue() / timePassed;
 
-        var agentPointPrognosis = Math.round($timeLeft.getValue() * agentPointsPerSecond) + $agentPoints;
-        var playerPointPrognosis = Math.round($timeLeft.getValue() * playerPointsPerSecond) + $playerPoints.getValue();
+        long agentPointPrognosis = Math.round($timeLeft.getValue() * agentPointsPerSecond) + $agentPoints;
+        long playerPointPrognosis = Math.round($timeLeft.getValue() * playerPointsPerSecond) + $playerPoints.getValue();
 
         modify($possibilities) {
             setCanWinByPointCollection(pointDiff >= 0 || agentPointPrognosis > playerPointPrognosis)
