@@ -140,7 +140,7 @@ agenda-group "inference-group"
 salience -100
     when
         $knowledge : AgentKnowledge()
-        $signal : KnowledgeUpdateSignal($shouldRunInference : shouldRunInference())
+        $knowledgeUpdateSignal : KnowledgeUpdateSignal(shouldRunInference())
     then
         boolean isShotCountKnown = $knowledge.getShotCount().isKnown();
         boolean isAmmoCapacityKnown = $knowledge.getPlayerAmmoCapacity().isKnown();
@@ -176,10 +176,9 @@ salience -100
         }
         System.out.println("Knowledge Inference ran");
 
-        modify($signal) {
+        modify($knowledgeUpdateSignal) {
             setRunInference(false)
         };
-
         insert(new KnowledgeInferredSignal());
 end
 

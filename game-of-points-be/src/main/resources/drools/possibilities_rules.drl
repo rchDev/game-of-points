@@ -6,7 +6,7 @@ import io.rizvan.beans.actors.Agent
 import io.rizvan.beans.knowledge.AgentPossibilities
 import io.rizvan.beans.GameState;
 
-rule "Determine if a kill is possible"
+rule "Determine if agent can kill a player"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -19,12 +19,10 @@ no-loop true
         modify($possibilities) {
             setCanKillPlayer(true)
         }
-        modify($signal) {
-            setProcessed(true)
-        }
+        System.out.println("agent-kill-player - ran");
 end
 
-rule "Determine if one shot kill is possible"
+rule "Determine if player is low on health"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -34,15 +32,13 @@ no-loop true
         $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($playerHitPoints.getValue() <= $damage)
     then
+        System.out.println("player-low-health - ran");
         modify($possibilities) {
             setCanOneShootPlayer(true)
         }
-        modify($signal) {
-            setProcessed(true)
-        }
 end
 
-rule "Determine if can get killed by player"
+rule "Determine if player can kill an agent"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -52,6 +48,7 @@ no-loop true
         $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($hitPoints <= $playerDamage.getValue() * $playerAmmo.getValue())
     then
+        System.out.println("player-kill-agent - ran");
         modify($possibilities) {
             setKilledByPlayer(true)
         }
@@ -60,7 +57,7 @@ no-loop true
         }
 end
 
-rule "Determine if can get one shot by player"
+rule "Determine if agent is low on health"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -70,11 +67,9 @@ no-loop true
         $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($hitPoints <= $playerDamage.getValue())
     then
+        System.out.println("agent-low-health - ran");
         modify($possibilities) {
             setOneShotByPlayer(true)
-        }
-        modify($signal) {
-            setProcessed(true)
         }
 end
 
@@ -88,11 +83,10 @@ no-loop true
         $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($speed > $playerSpeed.getValue())
     then
+        System.out.println("agent-is-faster - ran");
+
         modify($possibilities) {
             setOneShotByPlayer(true)
-        }
-        modify($signal) {
-            setProcessed(true)
         }
 end
 
@@ -106,11 +100,10 @@ no-loop true
         $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($speed < $playerSpeed.getValue())
     then
+        System.out.println("player-is-faster - ran");
+
         modify($possibilities) {
             setOneShotByPlayer(true)
-        }
-        modify($signal) {
-            setProcessed(true)
         }
 end
 
@@ -123,6 +116,8 @@ no-loop true
         $possibilities : AgentPossibilities()
         $signal : KnowledgeInferredSignal(isProcessed() == false)
     then
+        System.out.println("agent-can-reach-player - ran");
+
         Double playerX = $playerPosition.getValue().getX();
         Double playerY = $playerPosition.getValue().getY();
 
@@ -130,9 +125,6 @@ no-loop true
 
         modify($possibilities) {
             setCanReachPlayer($reach >= distance)
-        }
-        modify($signal) {
-            setProcessed(true)
         }
 end
 
@@ -145,6 +137,8 @@ no-loop true
         $possibilities : AgentPossibilities()
         $signal : KnowledgeInferredSignal(isProcessed() == false)
     then
+        System.out.println("player-can-reach-agent - ran");
+
         Double playerX = $playerPosition.getValue().getX();
         Double playerY = $playerPosition.getValue().getY();
 
@@ -152,9 +146,6 @@ no-loop true
 
         modify($possibilities) {
             setReachedByPlayer($playerReach.getValue() >= distance)
-        }
-        modify($signal) {
-            setProcessed(true)
         }
 end
 
@@ -167,6 +158,8 @@ no-loop true
         $possibilities : AgentPossibilities()
         $signal : KnowledgeInferredSignal(isProcessed() == false)
     then
+        System.out.println("agent-can-win-by-collecting-points - ran");
+
         int timePassed = GameState.GAME_TIME == $timeLeft.getValue() ? 1 : GameState.GAME_TIME - $timeLeft.getValue();
         int pointDiff = $agentPoints - $playerPoints.getValue();
 
@@ -178,9 +171,5 @@ no-loop true
 
         modify($possibilities) {
             setCanWinByPointCollection(pointDiff >= 0 || agentPointPrognosis > playerPointPrognosis)
-        }
-
-        modify($signal) {
-            setProcessed(true)
         }
 end
