@@ -4,10 +4,8 @@ package io.rizvan.beans.knowledge;
 public class AgentPossibilities {
     private boolean canOneShootPlayer;
     private boolean oneShotByPlayer;
-
     private boolean fasterThanPlayer;
     private boolean slowerThanPlayer;
-
     private boolean canReachPlayer;
     private boolean reachedByPlayer;
 

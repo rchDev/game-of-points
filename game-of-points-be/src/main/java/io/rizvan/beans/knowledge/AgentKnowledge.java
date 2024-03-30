@@ -8,7 +8,6 @@ import io.rizvan.utils.Coord;
 import java.util.List;
 
 public class AgentKnowledge {
-
     private PlayerPositionKnowledge playerPosition;
     private PlayerAimKnowledge playerAim;
     private ShotCountKnowledge shotCount;
@@ -21,6 +20,8 @@ public class AgentKnowledge {
     private GameTimeKnowledge timeLeft;
     private PlayerReachKnowledge playerReach;
     private WeaponCache possibleWeapons;
+
+    public static double REACH_DISTANCE_OFFSET = 50.0;
 
     public AgentKnowledge() {
         this.playerPosition = new PlayerPositionKnowledge();

@@ -1,0 +1,69 @@
+import io.rizvan.beans.KnowledgeInferredSignal
+import io.rizvan.beans.actors.Agent
+import io.rizvan.beans.knowledge.AgentKnowledge
+import io.rizvan.beans.knowledge.AgentPossibilities
+import io.rizvan.beans.GameState
+import io.rizvan.beans.knowledge.PlayerIsCloseSignal
+
+rule "Agent collect points"
+agenda-group "agent-choices-group"
+no-loop true
+    when
+        $signal : PlayerIsCloseSignal($playerIsClose : isClose())
+        $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
+        $possibilities : AgentPossibilities(
+                            $worthCollectingPoints : canWinByPointCollection(),
+                            $agentCanKillPlayer : isKilledByPlayer(),
+                            $playerCanKillAgent : canKillPlayer(),
+                            $playerOneShots : isOneShotByPlayer()
+                         )
+        eval($worthCollectingPoints || ($timeLeft > GameState.GAME_TIME * 0.35 && !$playerOneShots))
+        eval(!$playerIsClose || !($agentCanKillPlayer && !$playerCanKillAgent && !$playerOneShots))
+    then
+        System.out.println("agent-collect-points - ran");
+end
+
+rule "Agent avoid player"
+agenda-group "agent-choices-group"
+no-loop true
+    when
+        $agent : Agent()
+        $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
+        $signal : PlayerIsCloseSignal(isClose() == true)
+        $possibilities : AgentPossibilities(
+                            $agentCanKill : canKillPlayer() == true,
+                            $agentOneShots : canOneShootPlayer() == true,
+                            $playerCanKill : isKilledByPlayer() == true,
+                            $playerOneShots : isOneShotByPlayer() == true,
+                            $worthCollectingPoints : canWinByPointCollection() == false
+                         )
+        eval(($playerOneShots == true && $timeLeft > GameState.GAME_TIME * 0.35) ||
+             ($timeLeft <= GameState.GAME_TIME * 0.35 && $playerOneShots == true && (!$agentCanKill || !$worthCollectingPoints)) ||
+             ($timeLeft <= GameState.GAME_TIME * 0.10 && $playerOneShots == true && $agentCanKill && !$worthCollectingPoints)
+            )
+    then
+        System.out.println("Agent avoid player - ran");
+end
+
+rule "Agent kill player"
+agenda-group "agent-choices-group"
+no-loop true
+    when
+        $agent : Agent($agentPoints : getPoints())
+        $knowledge : AgentKnowledge($timeLeft : getTimeLeft(), $playerPoints : getPlayerPoints())
+        $possibilities : AgentPossibilities(
+            $agentCanKill : canKillPlayer(),
+            $agentOneShots : canOneShootPlayer() == false,
+            $playerCanKill : isKilledByPlayer() == false,
+            $playerOneShots : isOneShotByPlayer(),
+            $worthCollectingPoints : canWinByPointCollection() == false
+        )
+        eval(
+            ($agentCanKill && !$playerCanKill) || // Agent can kill player, and player can't kill agent
+            ($timeLeft <= GameState.GAME_TIME * 0.10 && !$worthCollectingPoints) || // Less than 10% game time left and not worth collecting points
+            ($timeLeft <= GameState.GAME_TIME * 0.35 && !$worthCollectingPoints && !$playerOneShots) || // Less than 35% game time left, not worth collecting points, and player can't one-shot
+            ($timeLeft <= GameState.GAME_TIME * 0.50 && !$worthCollectingPoints && $agentOneShots && !$playerOneShots) // At 50% or less game time, not worth collecting points, agent can one-shot player, but player can't one-shot agent
+        )
+    then
+        System.out.println("agent-kill-player - ran");
+end
