@@ -36,6 +36,8 @@ public class AgentKnowledge {
         this.possibleWeapons = new WeaponCache();
         this.playerAmmoCapacity = new PlayerAmmoCapacityKnowledge();
         this.playerReach = new PlayerReachKnowledge();
+
+        this.shotCount.setKnown(true);
     }
 
     public PlayerPositionKnowledge getPlayerPosition() {
@@ -144,7 +146,7 @@ public class AgentKnowledge {
         var agentDistanceToPlayer = Math.sqrt(Math.pow(agentX - playerX, 2) + Math.pow(agentY - playerY, 2));
         var confrontationalDistance = playerReach.getValue() + AgentKnowledge.REACH_DISTANCE_OFFSET;
 
-        return confrontationalDistance < agentDistanceToPlayer;
+        return agentDistanceToPlayer <= confrontationalDistance;
     }
 
     public List<RangedWeapon> getPossibleWeapons() {
