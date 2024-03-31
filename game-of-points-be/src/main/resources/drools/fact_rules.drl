@@ -24,9 +24,8 @@ rule "Player Moved"
 agenda-group "inference-group"
 no-loop true
     when
-        $agent : Agent($agentX : getX(), $agentY : getY())
         $moveFact : PlayerMovementFact()
-        $knowledge : AgentKnowledge($playerReach : getPlayerReach(), $playerPosition : getPlayerPosition())
+        $knowledge : AgentKnowledge()
         $signal : KnowledgeUpdateSignal()
     then
         System.out.println("Player Moved ran");
@@ -148,7 +147,6 @@ salience -100
         boolean isPlayerDamageKnown = $knowledge.getPlayerDamage().isKnown();
         boolean isPlayerSpeedKnown = $knowledge.getPlayerSpeed().isKnown();
         boolean isPlayerReachKnown = $knowledge.getPlayerReach().isKnown();
-
         if (!isPlayerDamageKnown || !isPlayerSpeedKnown || !isPlayerReachKnown || !isAmmoCapacityKnown) {
 
             List<RangedWeapon> weapons = $knowledge.getPossibleWeapons()
@@ -173,13 +171,15 @@ salience -100
 
             weapons.stream().max(Comparator.comparingDouble(RangedWeapon::getRange))
                .ifPresent(maxRangeWeapon -> $knowledge.setPlayerReach(maxRangeWeapon.getRange(), oneWeaponLeft));
-
         }
+
         System.out.println("Knowledge Inference ran");
+        System.out.println("-----------------------");
 
         modify($knowledgeUpdateSignal) {
             setRunInference(false)
         };
+
         insert(new KnowledgeInferredSignal());
 end
 
