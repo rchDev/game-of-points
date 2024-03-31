@@ -1,6 +1,5 @@
 package io.rizvan.beans.actors;
 
-import io.rizvan.beans.KnowledgeInferredSignal;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.KnowledgeUpdateSignal;
 import io.rizvan.beans.facts.Fact;
@@ -46,7 +45,6 @@ public class DroolsBrain implements AgentsBrain {
             kieSession.getAgenda().getAgendaGroup("agent-choices-group").setFocus();
             kieSession.fireAllRules();
 
-//            System.out.println(knowledge);
         } finally {
             kieSession.dispose();
         }
