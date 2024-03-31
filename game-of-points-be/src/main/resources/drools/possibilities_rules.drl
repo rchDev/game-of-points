@@ -13,13 +13,12 @@ no-loop true
         $agent : Agent($damage : getDamage(), $ammo : getAmmo())
         $knowledge : AgentKnowledge($playerHitPoints : getPlayerHitPoints())
         $possibilities : AgentPossibilities()
-        $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($playerHitPoints.getValue() <= $damage * $ammo)
     then
         modify($possibilities) {
             setCanKillPlayer(true)
         }
-        System.out.println("agent-kill-player - ran");
+        System.out.println("can-agent-kill-player: " + true);
 end
 
 rule "Determine if player is low on health"
@@ -29,13 +28,12 @@ no-loop true
         $agent : Agent($damage : getDamage())
         $knowledge : AgentKnowledge($playerHitPoints : getPlayerHitPoints())
         $possibilities : AgentPossibilities()
-        $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($playerHitPoints.getValue() <= $damage)
     then
-        System.out.println("player-low-health - ran");
         modify($possibilities) {
             setCanOneShootPlayer(true)
         }
+        System.out.println("is-player-low-on-health: " + true);
 end
 
 rule "Determine if player can kill an agent"
@@ -45,16 +43,12 @@ no-loop true
         $agent : Agent($hitPoints : getHitPoints())
         $knowledge : AgentKnowledge($playerDamage : getPlayerDamage(), $playerAmmo : getPlayerAmmoCapacity())
         $possibilities : AgentPossibilities()
-        $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($hitPoints <= $playerDamage.getValue() * $playerAmmo.getValue())
     then
-        System.out.println("player-kill-agent - ran");
         modify($possibilities) {
             setKilledByPlayer(true)
         }
-        modify($signal) {
-            setProcessed(true)
-        }
+        System.out.println("can-player-kill-agent: " + true);
 end
 
 rule "Determine if agent is low on health"
@@ -64,13 +58,12 @@ no-loop true
         $agent : Agent($hitPoints : getHitPoints())
         $knowledge : AgentKnowledge($playerDamage : getPlayerDamage())
         $possibilities : AgentPossibilities()
-        $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($hitPoints <= $playerDamage.getValue())
     then
-        System.out.println("agent-low-health - ran");
         modify($possibilities) {
             setOneShotByPlayer(true)
         }
+        System.out.println("is-agent-low-on-health: " + true);
 end
 
 rule "Determine if agent is faster than player"
@@ -80,14 +73,13 @@ no-loop true
         $agent : Agent($speed : getSpeed())
         $knowledge : AgentKnowledge($playerSpeed : getPlayerSpeed())
         $possibilities : AgentPossibilities()
-        $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($speed > $playerSpeed.getValue())
     then
-        System.out.println("agent-is-faster - ran");
-
         modify($possibilities) {
             setOneShotByPlayer(true)
         }
+        System.out.println("is-agent-faster-than-player: " + true);
+
 end
 
 rule "Determine if agent is slower than player"
@@ -97,14 +89,12 @@ no-loop true
         $agent : Agent($speed : getSpeed())
         $knowledge : AgentKnowledge($playerSpeed : getPlayerSpeed())
         $possibilities : AgentPossibilities()
-        $signal : KnowledgeInferredSignal(isProcessed() == false)
         eval($speed < $playerSpeed.getValue())
     then
-        System.out.println("player-is-faster - ran");
-
         modify($possibilities) {
             setOneShotByPlayer(true)
         }
+        System.out.println("is-agent-slower-than-player: " + true);
 end
 
 rule "Determine if agent can reach player"
@@ -114,18 +104,17 @@ no-loop true
         $agent : Agent($x : getX(), $y : getY(), $reach : getReach())
         $knowledge : AgentKnowledge($playerPosition : getPlayerPosition())
         $possibilities : AgentPossibilities()
-        $signal : KnowledgeInferredSignal(isProcessed() == false)
     then
-        System.out.println("agent-can-reach-player - ran");
-
         Double playerX = $playerPosition.getValue().getX();
         Double playerY = $playerPosition.getValue().getY();
 
         Double distance = Math.sqrt(Math.pow($x - playerX, 2) + Math.pow($y - playerY, 2));
 
+        boolean canReach = $reach >= distance;
         modify($possibilities) {
-            setCanReachPlayer($reach >= distance)
+            setCanReachPlayer(canReach)
         }
+        System.out.println("can-agent-reach-player: " + canReach + ", dist: " + distance + ", reach: " + $reach);
 end
 
 rule "Determine if player can reach agent"
@@ -135,18 +124,17 @@ no-loop true
         $agent : Agent($x : getX(), $y : getY())
         $knowledge : AgentKnowledge($playerPosition : getPlayerPosition(), $playerReach : getPlayerReach())
         $possibilities : AgentPossibilities()
-        $signal : KnowledgeInferredSignal(isProcessed() == false)
     then
-        System.out.println("player-can-reach-agent - ran");
-
         Double playerX = $playerPosition.getValue().getX();
         Double playerY = $playerPosition.getValue().getY();
 
         Double distance = Math.sqrt(Math.pow($x - playerX, 2) + Math.pow($y - playerY, 2));
 
+        boolean canReach = $playerReach.getValue() >= distance;
         modify($possibilities) {
-            setReachedByPlayer($playerReach.getValue() >= distance)
+            setReachedByPlayer(canReach)
         }
+        System.out.println("can-player-reach-agent: " + canReach  + ", dist: " + distance + ", reach: " + $playerReach.getValue());
 end
 
 rule "Determine if agent can win by collecting points"
@@ -156,10 +144,7 @@ no-loop true
         $agent : Agent($agentPoints : getPoints())
         $knowledge : AgentKnowledge($timeLeft : getTimeLeft(), $playerPoints : getPlayerPoints())
         $possibilities : AgentPossibilities()
-        $signal : KnowledgeInferredSignal(isProcessed() == false)
     then
-        System.out.println("agent-can-win-by-collecting-points - ran");
-
         int timePassed = GameState.GAME_TIME == $timeLeft.getValue() ? 1 : GameState.GAME_TIME - $timeLeft.getValue();
         int pointDiff = $agentPoints - $playerPoints.getValue();
 
@@ -168,8 +153,10 @@ no-loop true
 
         long agentPointPrognosis = Math.round($timeLeft.getValue() * agentPointsPerSecond) + $agentPoints;
         long playerPointPrognosis = Math.round($timeLeft.getValue() * playerPointsPerSecond) + $playerPoints.getValue();
-
+        boolean worthCollecting = pointDiff >= 0 || agentPointPrognosis >= playerPointPrognosis;
         modify($possibilities) {
-            setCanWinByPointCollection(pointDiff >= 0 || agentPointPrognosis > playerPointPrognosis)
+            setCanWinByPointCollection(worthCollecting)
         }
+        System.out.println("can-agent-win-by-collecting-points: " + worthCollecting);
+        System.out.println("----------------------------------------");
 end
