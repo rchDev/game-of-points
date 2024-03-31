@@ -19,7 +19,6 @@ import io.rizvan.beans.RangedWeapon;
 import java.util.Optional;
 import java.util.stream.Stream
 import java.util.List
-import io.rizvan.beans.knowledge.PlayerIsCloseSignal;
 
 rule "Player Moved"
 agenda-group "inference-group"
@@ -37,14 +36,6 @@ no-loop true
         modify($signal) {
             setRunInference(true)
         };
-
-        Double playerX = $playerPosition.getValue().getX();
-        Double playerY = $playerPosition.getValue().getY();
-
-        Double agentDistanceToPlayer = Math.sqrt(Math.pow($agentX - playerX, 2) + Math.pow($agentY - playerY, 2));
-        Double confrontationalDistance = $playerReach.getValue() + AgentKnowledge.REACH_DISTANCE_OFFSET;
-
-        insert(new PlayerIsCloseSignal(confrontationalDistance < agentDistanceToPlayer));
 end
 
 rule "Player Aimed"

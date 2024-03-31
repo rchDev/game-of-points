@@ -137,6 +137,16 @@ public class AgentKnowledge {
         this.playerReach.setKnown(isKnown);
     }
 
+    public boolean isPlayerClose(Double agentX, Double agentY) {
+        Double playerX = playerPosition.getValue().getX();
+        Double playerY = playerPosition.getValue().getY();
+
+        var agentDistanceToPlayer = Math.sqrt(Math.pow(agentX - playerX, 2) + Math.pow(agentY - playerY, 2));
+        var confrontationalDistance = playerReach.getValue() + AgentKnowledge.REACH_DISTANCE_OFFSET;
+
+        return confrontationalDistance < agentDistanceToPlayer;
+    }
+
     public List<RangedWeapon> getPossibleWeapons() {
         return possibleWeapons.getWeapons();
     }
