@@ -1,0 +1,70 @@
+package rules;
+
+import io.rizvan.beans.actors.Agent;
+import io.rizvan.beans.knowledge.AgentKnowledge;
+import io.rizvan.beans.knowledge.AgentPossibilities;
+import io.rizvan.beans.GameState;
+
+rule "Agent Kills Player"
+when
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
+    $possibilities : AgentPossibilities(
+        $agentCanKill : canKillPlayer(),
+        $agentOneShots : canOneShootPlayer(),
+        $playerCanKill : isKilledByPlayer(),
+        $playerOneShots : isOneShotByPlayer()
+    )
+    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y)
+
+    eval(
+        ($agentOneShots && $playerIsClose && !$playerOneShots) ||
+        ($agentCanKill && !$playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 && $timeLeft.getValue() > GameState.GAME_TIME * 0.35) ||
+        ($agentCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.10)
+    )
+then
+    System.out.println("AGENT - KILLS");
+end
+
+rule "Agent Avoids Player"
+when
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
+    $possibilities : AgentPossibilities(
+        $playerCanKill : isKilledByPlayer(),
+        $playerOneShots : isOneShotByPlayer()
+    )
+    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y)
+
+    eval(
+        ($playerCanKill && $playerIsClose && $timeLeft.getValue() > GameState.GAME_TIME * 0.50) ||
+        ($playerOneShots && $playerIsClose && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 && $timeLeft.getValue() > GameState.GAME_TIME * 0.35)
+    )
+then
+    System.out.println("AGENT - AVOID");
+end
+
+rule "Agent Collects Points"
+when
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
+    $possibilities : AgentPossibilities(
+        $worthCollectingPoints : canWinByPointCollection(),
+        $playerCanKill : isKilledByPlayer(),
+        $agentCanKill : canKillPlayer(),
+        $agentOneShots : canOneShootPlayer(),
+        $playerOneShots : isOneShotByPlayer()
+    )
+    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y)
+
+    eval(
+        ($timeLeft.getValue() > GameState.GAME_TIME * 0.50 && !$playerIsClose) ||
+        ($worthCollectingPoints && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 && $timeLeft.getValue() > GameState.GAME_TIME * 0.35 && !$playerIsClose) ||
+        ($worthCollectingPoints && $timeLeft.getValue() <= GameState.GAME_TIME * 0.35 && $timeLeft.getValue() > GameState.GAME_TIME * 0.10 && !$playerIsClose) ||
+        ($worthCollectingPoints && $timeLeft.getValue() <= GameState.GAME_TIME * 0.10 && !$playerIsClose)
+    )
+then
+    System.out.println("AGENT - COLLECT");
+end
+
+
