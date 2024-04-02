@@ -3,6 +3,7 @@ package io.rizvan.beans.knowledge;
 import io.rizvan.beans.RangedWeapon;
 import io.rizvan.beans.ResourcePoint;
 import io.rizvan.beans.WeaponCache;
+import io.rizvan.beans.actors.AgentChoice;
 import io.rizvan.utils.Coord;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class AgentKnowledge {
     private ResourcePointKnowledge resourcePoints;
     private GameTimeKnowledge timeLeft;
     private PlayerReachKnowledge playerReach;
+    private AgentChoice agentChoice;
     private WeaponCache possibleWeapons;
 
     public static double REACH_DISTANCE_OFFSET = 50.0;
@@ -155,6 +157,14 @@ public class AgentKnowledge {
 
     public void setPossibleWeapons(WeaponCache possibleWeapons) {
         this.possibleWeapons = possibleWeapons;
+    }
+
+    public void setAgentChoice(AgentChoice choice) {
+        this.agentChoice = choice;
+    }
+
+    public AgentChoice getAgentChoice() {
+        return agentChoice;
     }
 
     @Override
