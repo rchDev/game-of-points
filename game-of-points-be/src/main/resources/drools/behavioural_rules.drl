@@ -5,66 +5,108 @@ import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.knowledge.AgentPossibilities;
 import io.rizvan.beans.GameState;
 
+// Rule for "Agent Kills Player"
 rule "Agent Kills Player"
 when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
+    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y)
     $possibilities : AgentPossibilities(
         $agentCanKill : canKillPlayer(),
-        $agentOneShots : canOneShootPlayer(),
         $playerCanKill : isKilledByPlayer(),
-        $playerOneShots : isOneShotByPlayer()
+        $agentOneShots : canOneShootPlayer(),
+        $playerOneShots : isOneShotByPlayer(),
+        $worthCollectingPoints : canWinByPointCollection() == false
     )
-    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y)
-
     eval(
-        ($agentOneShots && $playerIsClose && !$playerOneShots) ||
-        ($agentCanKill && !$playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 && $timeLeft.getValue() > GameState.GAME_TIME * 0.35) ||
-        ($agentCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.10)
+        // 1. Agent can kill and player can't
+        ($agentCanKill && !$playerCanKill) ||
+        // 2. Both can kill, specific conditions for mid-game
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.35 && !$worthCollectingPoints &&
+         $playerIsClose && !$playerOneShots && $agentOneShots) ||
+        // 3. Late mid-game, not worth collecting, either player is close and can't one-shot, or player is not close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.35 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.10 && !$worthCollectingPoints &&
+         (($playerIsClose && !$playerOneShots) || (!$playerIsClose && ((!$playerOneShots) || ($playerOneShots && $agentOneShots))))) ||
+        // 4. End-game, both can kill, not worth collecting
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.10 && !$worthCollectingPoints)
     )
 then
-    System.out.println("AGENT - KILLS");
+    System.out.println("Agent decides to kill the player based on strategic conditions.");
 end
 
+// Rule for "Agent Avoids Player"
 rule "Agent Avoids Player"
 when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
-    $possibilities : AgentPossibilities(
-        $playerCanKill : isKilledByPlayer(),
-        $playerOneShots : isOneShotByPlayer()
-    )
     $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y)
-
+    $possibilities : AgentPossibilities(
+        $agentCanKill : canKillPlayer(),
+        $playerCanKill : isKilledByPlayer(),
+        $agentOneShots : canOneShootPlayer(),
+        $playerOneShots : isOneShotByPlayer(),
+        $worthCollectingPoints : canWinByPointCollection()
+    )
     eval(
-        ($playerCanKill && $playerIsClose && $timeLeft.getValue() > GameState.GAME_TIME * 0.50) ||
-        ($playerOneShots && $playerIsClose && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 && $timeLeft.getValue() > GameState.GAME_TIME * 0.35)
+        // 1. Agent can't kill, player can kill, and player is close
+        (!$agentCanKill && $playerCanKill && $playerIsClose) ||
+        // 2. Both can kill, game time > 50%, player is close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() > GameState.GAME_TIME * 0.50 && $playerIsClose) ||
+        // 3. Worth collecting, both can kill, game time <= 50% and > 35%, player is close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.35 && $worthCollectingPoints && $playerIsClose) ||
+        // 4. Not worth collecting, both can kill, player is close, player can one-shoot or neither can one-shoot, game time <= 50% and > 35%
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.35 && !$worthCollectingPoints && $playerIsClose &&
+         ($playerOneShots || (!$playerOneShots && !$agentOneShots))) ||
+        // 5. Worth collecting, both can kill, game time <= 35% and > 10%, player is close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.35 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.10 && $worthCollectingPoints && $playerIsClose) ||
+        // 6. Not worth collecting, both can kill, player can one-shot, game time <= 35% and > 10%, player is close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.35 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.10 && !$worthCollectingPoints && $playerIsClose && $playerOneShots) ||
+        // 7. Worth collecting, both can kill, game time <= 10%, player is close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.10 &&
+         $worthCollectingPoints && $playerIsClose)
     )
 then
-    System.out.println("AGENT - AVOID");
+    System.out.println("Agent decides to avoid the player based on strategic conditions.");
 end
 
+// Rule for "Agent Collects Points"
 rule "Agent Collects Points"
 when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
-    $possibilities : AgentPossibilities(
-        $worthCollectingPoints : canWinByPointCollection(),
-        $playerCanKill : isKilledByPlayer(),
-        $agentCanKill : canKillPlayer(),
-        $agentOneShots : canOneShootPlayer(),
-        $playerOneShots : isOneShotByPlayer()
-    )
     $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y)
-
+    $possibilities : AgentPossibilities(
+        $agentCanKill : canKillPlayer(),
+        $playerCanKill : isKilledByPlayer(),
+        $agentOneShots : canOneShootPlayer(),
+        $playerOneShots : isOneShotByPlayer(),
+        $worthCollectingPoints : canWinByPointCollection()
+    )
     eval(
-        ($timeLeft.getValue() > GameState.GAME_TIME * 0.50 && !$playerIsClose) ||
-        ($worthCollectingPoints && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 && $timeLeft.getValue() > GameState.GAME_TIME * 0.35 && !$playerIsClose) ||
-        ($worthCollectingPoints && $timeLeft.getValue() <= GameState.GAME_TIME * 0.35 && $timeLeft.getValue() > GameState.GAME_TIME * 0.10 && !$playerIsClose) ||
-        ($worthCollectingPoints && $timeLeft.getValue() <= GameState.GAME_TIME * 0.10 && !$playerIsClose)
+        // 1. Agent cannot kill or player cannot kill or player can kill but is not close
+        (!$agentCanKill && (!$playerCanKill || ($playerCanKill && !$playerIsClose))) ||
+        // 2. Agent can kill, player can kill, game time > 50%, player is not close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() > GameState.GAME_TIME * 0.50 && !$playerIsClose) ||
+        // 3. Game time <= 50% and > 35%, (worth collecting and player is not close) or (not worth collecting and player is not close)
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.35 && !$playerIsClose) ||
+        // 4. Game time <= 35% and > 10%, worth collecting, player is not close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.35 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.10 && $worthCollectingPoints && !$playerIsClose) ||
+        // 5. Game time <= 35% and > 10%, not worth collecting, player is not close, player can one-shot, agent cannot one-shot
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.35 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.10 && !$worthCollectingPoints && !$playerIsClose &&
+         $playerOneShots && !$agentOneShots) ||
+        // 6. Game time <= 10%, worth collecting, player is not close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.10 &&
+         $worthCollectingPoints && !$playerIsClose)
     )
 then
-    System.out.println("AGENT - COLLECT");
+    System.out.println("Agent decides to collect points.");
 end
-
-
