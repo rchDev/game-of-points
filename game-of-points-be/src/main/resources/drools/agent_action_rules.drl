@@ -9,7 +9,7 @@ import io.rizvan.beans.actors.agent.CollectChoice
 import io.rizvan.beans.actors.agent.KillChoice
 
 rule "agent-chose-kill-and-can-reach-player"
-agenda-group "agent-move-group"
+agenda-group "agent-actions-group"
 when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
@@ -20,7 +20,7 @@ then
 end
 
 rule "agent-chose-kill-and-cannot-reach-player"
-agenda-group "agent-move-group"
+agenda-group "agent-actions-group"
 when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
@@ -31,7 +31,7 @@ then
 end
 
 rule "agent-chose-collect"
-agenda-group "agent-move-group"
+agenda-group "agent-actions-group"
 when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
@@ -42,7 +42,7 @@ then
 end
 
 rule "agent-chose-avoid"
-agenda-group "agent-move-group"
+agenda-group "agent-actions-group"
 when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
