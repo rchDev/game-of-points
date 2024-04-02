@@ -1,5 +1,7 @@
-package io.rizvan.beans.actors;
+package io.rizvan.beans.actors.agent;
 
+import io.rizvan.beans.actors.agent.Agent;
+import io.rizvan.beans.actors.agent.AgentsBrain;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.KnowledgeUpdateSignal;
 import io.rizvan.beans.facts.Fact;

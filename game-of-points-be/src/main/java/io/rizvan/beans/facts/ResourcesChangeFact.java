@@ -1,7 +1,6 @@
 package io.rizvan.beans.facts;
 
 import io.rizvan.beans.ResourcePoint;
-import io.rizvan.beans.actors.AgentsBrain;
 
 import java.util.List;
 

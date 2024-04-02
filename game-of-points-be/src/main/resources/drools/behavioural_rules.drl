@@ -1,12 +1,12 @@
 package rules;
 
-import io.rizvan.beans.actors.Agent;
+import io.rizvan.beans.actors.agent.Agent;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.knowledge.AgentPossibilities;
 import io.rizvan.beans.GameState
-import io.rizvan.beans.actors.AvoidChoice
-import io.rizvan.beans.actors.KillChoice
-import io.rizvan.beans.actors.CollectChoice;
+import io.rizvan.beans.actors.agent.AvoidChoice
+import io.rizvan.beans.actors.agent.KillChoice
+import io.rizvan.beans.actors.agent.CollectChoice;
 
 // Rule for "Agent Kills Player"
 rule "Agent Kills Player"

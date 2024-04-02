@@ -1,7 +1,5 @@
 package io.rizvan.beans.facts;
 
-import io.rizvan.beans.actors.AgentsBrain;
-
 public class PlayerAimFact implements Fact {
     double mouseX;
     double mouseY;

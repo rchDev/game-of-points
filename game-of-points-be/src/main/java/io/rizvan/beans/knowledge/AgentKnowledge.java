@@ -3,7 +3,7 @@ package io.rizvan.beans.knowledge;
 import io.rizvan.beans.RangedWeapon;
 import io.rizvan.beans.ResourcePoint;
 import io.rizvan.beans.WeaponCache;
-import io.rizvan.beans.actors.AgentChoice;
+import io.rizvan.beans.actors.agent.AgentChoice;
 import io.rizvan.utils.Coord;
 
 import java.util.List;

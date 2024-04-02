@@ -1,7 +1,7 @@
 package io.rizvan.beans;
 
 import io.rizvan.beans.facts.*;
-import io.rizvan.beans.actors.Agent;
+import io.rizvan.beans.actors.agent.Agent;
 import io.rizvan.beans.actors.GameEntity;
 import io.rizvan.beans.actors.Player;
 import io.rizvan.beans.playerActions.*;

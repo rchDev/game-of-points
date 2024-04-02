@@ -2,7 +2,7 @@ package rules
 
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.KnowledgeInferredSignal
-import io.rizvan.beans.actors.Agent
+import io.rizvan.beans.actors.agent.Agent
 import io.rizvan.beans.knowledge.AgentPossibilities
 import io.rizvan.beans.GameState;
 

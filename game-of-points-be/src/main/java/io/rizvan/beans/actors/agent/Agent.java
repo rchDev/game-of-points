@@ -1,5 +1,6 @@
-package io.rizvan.beans.actors;
+package io.rizvan.beans.actors.agent;
 
+import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.facts.Fact;
 import io.rizvan.beans.RangedWeapon;
 
