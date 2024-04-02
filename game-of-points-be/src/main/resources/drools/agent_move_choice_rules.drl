@@ -1,0 +1,51 @@
+import io.rizvan.beans.actors.Agent
+import io.rizvan.beans.knowledge.AgentKnowledge
+import io.rizvan.beans.knowledge.AgentPossibilities
+import io.rizvan.beans.GameState
+import io.rizvan.beans.actors.AvoidChoice
+import io.rizvan.beans.actors.CollectChoice
+import io.rizvan.beans.actors.KillChoice
+
+rule "agent-chose-kill-and-can-reach-player"
+agenda-group "agent-move-group"
+when
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities($agentCanReach : canReachPlayer() == true)
+    eval($choice instanceof KillChoice)
+then
+    System.out.println("agent kill - can reach");
+end
+
+rule "agent-chose-kill-and-cannot-reach-player"
+agenda-group "agent-move-group"
+when
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities($agentCanReach : canReachPlayer() == false)
+    eval($choice instanceof KillChoice)
+then
+    System.out.println("agent kill - cannot reach");
+end
+
+rule "agent-chose-collect"
+agenda-group "agent-move-group"
+when
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities()
+    eval($choice instanceof CollectChoice)
+then
+    System.out.println("collect");
+end
+
+rule "agent-chose-avoid"
+agenda-group "agent-move-group"
+when
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities()
+    eval($choice instanceof AvoidChoice)
+then
+    System.out.println("agent avoid");
+end

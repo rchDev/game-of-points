@@ -45,6 +45,8 @@ public class DroolsBrain implements AgentsBrain {
             kieSession.getAgenda().getAgendaGroup("agent-choices-group").setFocus();
             kieSession.fireAllRules();
 
+            kieSession.getAgenda().getAgendaGroup("agent-move-group").setFocus();
+            kieSession.fireAllRules();
         } finally {
             kieSession.dispose();
         }

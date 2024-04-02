@@ -3,10 +3,14 @@ package rules;
 import io.rizvan.beans.actors.Agent;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.knowledge.AgentPossibilities;
-import io.rizvan.beans.GameState;
+import io.rizvan.beans.GameState
+import io.rizvan.beans.actors.AvoidChoice
+import io.rizvan.beans.actors.KillChoice
+import io.rizvan.beans.actors.CollectChoice;
 
 // Rule for "Agent Kills Player"
 rule "Agent Kills Player"
+agenda-group "agent-choices-group"
 when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
@@ -33,11 +37,15 @@ when
         ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.10 && !$worthCollectingPoints)
     )
 then
-    System.out.println("Agent decides to kill the player based on strategic conditions.");
+    System.out.println("AGENT KILL");
+        modify($knowledge){
+            setAgentChoice(new KillChoice())
+        }
 end
 
 // Rule for "Agent Avoids Player"
 rule "Agent Avoids Player"
+agenda-group "agent-choices-group"
 when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
@@ -72,11 +80,15 @@ when
          $worthCollectingPoints && $playerIsClose)
     )
 then
-    System.out.println("Agent decides to avoid the player based on strategic conditions.");
+    System.out.println("AGENT AVOID");
+    modify($knowledge){
+        setAgentChoice(new AvoidChoice())
+    }
 end
 
 // Rule for "Agent Collects Points"
 rule "Agent Collects Points"
+agenda-group "agent-choices-group"
 when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
@@ -108,5 +120,8 @@ when
          $worthCollectingPoints && !$playerIsClose)
     )
 then
-    System.out.println("Agent decides to collect points.");
+    System.out.println("AGENT COLLECT");
+    modify($knowledge){
+        setAgentChoice(new CollectChoice())
+    }
 end
