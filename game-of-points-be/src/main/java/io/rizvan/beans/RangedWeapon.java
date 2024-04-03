@@ -87,8 +87,12 @@ public class RangedWeapon {
         return ammo;
     }
 
-    public void setAmmo(int ammo) {
-        this.ammo = ammo;
+    public int shoot() {
+        if (ammo <= 0) {
+            return 0;
+        }
+        this.ammo -= 1;
+        return damage;
     }
 
     public double getRange() {

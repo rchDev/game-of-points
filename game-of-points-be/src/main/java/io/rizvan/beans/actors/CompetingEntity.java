@@ -88,4 +88,8 @@ public class CompetingEntity extends GameEntity {
     public void setWeapon(RangedWeapon weapon) {
         this.weapon = weapon;
     }
+
+    public int shoot() {
+        return weapon.shoot();
+    }
 }

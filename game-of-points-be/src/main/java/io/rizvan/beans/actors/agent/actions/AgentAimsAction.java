@@ -4,7 +4,7 @@ import io.rizvan.beans.GameState;
 
 public class AgentAimsAction extends AgentAction {
     @Override
-    void applyAction(GameState gameState) {
+    public void apply(GameState gameState) {
 
     }
 }

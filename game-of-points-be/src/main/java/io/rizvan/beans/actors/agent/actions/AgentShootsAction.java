@@ -4,7 +4,11 @@ import io.rizvan.beans.GameState;
 
 public class AgentShootsAction extends AgentAction {
     @Override
-    void applyAction(GameState gameState) {
+    public void apply(GameState gameState) {
+        var damage = gameState.getAgent().shoot();
 
+        var playerX = gameState.getPlayer().getX();
+        var playerY = gameState.getPlayer().getY();
+        var playerHitBox = gameState.getPlayer().getHitBox();
     }
 }

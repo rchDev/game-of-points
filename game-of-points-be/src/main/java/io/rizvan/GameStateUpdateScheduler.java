@@ -10,6 +10,7 @@ import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,10 @@ public class GameStateUpdateScheduler {
             var gameState = sessionStorage.getGameState(id);
 
             if (gameState == null) continue;
+
+            var now = Instant.now().toEpochMilli();
+            gameState.setDeltaBetweenUpdates(now - gameState.getLastUpdateTime());
+            gameState.setLastUpdateTime(now);
 
             var playerActions = sessionStorage.getPlayerActions(id);
             if (playerActions == null) continue;

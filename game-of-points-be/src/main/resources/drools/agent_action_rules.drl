@@ -7,6 +7,7 @@ import io.rizvan.beans.GameState
 import io.rizvan.beans.actors.agent.AvoidChoice
 import io.rizvan.beans.actors.agent.CollectChoice
 import io.rizvan.beans.actors.agent.KillChoice
+import io.rizvan.beans.actors.agent.actions.AgentShootsAction
 
 rule "agent-chose-kill-and-can-reach-player"
 agenda-group "agent-actions-group"
@@ -30,7 +31,7 @@ then
     System.out.println("agent kill - cannot reach");
 end
 
-rule "agent-chose-collect"
+rule "agent-chose-collect-can-reach"
 agenda-group "agent-actions-group"
 when
     $agent : Agent($x : getX(), $y : getY())
@@ -38,7 +39,22 @@ when
     $possibilities : AgentPossibilities()
     eval($choice instanceof CollectChoice)
 then
-    System.out.println("collect");
+    System.out.println("collect - can reach");
+end
+
+rule "agent-chose-collect-cannot-reach"
+agenda-group "agent-actions-group"
+when
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities()
+    eval($choice instanceof CollectChoice)
+then
+    modify($gameState){
+        applyAction(new PlayerMovesAction())
+    }
+
+    System.out.println("collect - cannot reach");
 end
 
 rule "agent-chose-avoid"

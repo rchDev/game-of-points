@@ -1,5 +1,6 @@
 package io.rizvan.beans;
 
+import io.rizvan.beans.actors.agent.actions.AgentAction;
 import io.rizvan.beans.facts.*;
 import io.rizvan.beans.actors.agent.Agent;
 import io.rizvan.beans.actors.GameEntity;
@@ -18,6 +19,8 @@ public class GameState {
     private Agent agent;
     private Zone zone;
     private int time;
+    private long lastUpdateTime;
+    private long deltaBetweenUpdates;
     private final RandomNumberGenerator rng;
 
     public static final int RESOURCE_SIZE = 20;
@@ -31,12 +34,14 @@ public class GameState {
     private PlayerCollectingAction lastAppliedPlayerCollection = null;
     private PlayerShootingAction lastAppliedPlayerShot = null;
 
-    private FactStorage factStorage;
+    private final FactStorage factStorage;
 
     public GameState(Player player, Agent agent, int zoneWidth, int zoneHeight, int time, RandomNumberGenerator rng) {
         this.rng = rng;
         this.player = player;
         this.agent = agent;
+        this.lastUpdateTime = 0;
+        this.deltaBetweenUpdates = 0;
         this.zone = new Zone(zoneWidth, zoneHeight);
         this.time = time;
         this.factStorage = new FactStorage();
@@ -68,6 +73,22 @@ public class GameState {
     public void setZone(int width, int height) {
         this.zone.setWidth(width);
         this.zone.setHeight(height);
+    }
+
+    public long getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(long lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public long getDeltaBetweenUpdates() {
+        return deltaBetweenUpdates;
+    }
+
+    public void setDeltaBetweenUpdates(long delta) {
+        this.deltaBetweenUpdates = delta;
     }
 
     public void setZone(Zone zone) {
@@ -124,6 +145,10 @@ public class GameState {
         } else if (action instanceof PlayerShootingAction) {
             registerFact(action, false);
         }
+    }
+
+    public void applyAction(AgentAction action) {
+        action.apply(this);
     }
 
     private void registerAppliedAction(PlayerAction action) {
