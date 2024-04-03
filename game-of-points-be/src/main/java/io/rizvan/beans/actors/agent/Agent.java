@@ -1,5 +1,6 @@
 package io.rizvan.beans.actors.agent;
 
+import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.facts.Fact;
 import io.rizvan.beans.RangedWeapon;
@@ -41,8 +42,8 @@ public class Agent extends CompetingEntity {
         return agents.get(index);
     }
 
-    public void reason(List<Fact> facts) {
-        brain.reason(facts, this);
+    public void reason(GameState gameState) {
+        brain.reason(gameState);
     }
 
     public AgentsBrain getBrain() {

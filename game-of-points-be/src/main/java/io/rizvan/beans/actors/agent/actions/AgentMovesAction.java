@@ -33,10 +33,10 @@ public class AgentMovesAction extends AgentAction {
         }
 
         var delta = gameState.getDeltaBetweenUpdates();
-        var deltaBetweenUpdateAndNow = Instant.now().toEpochMilli();
+        var deltaBetweenUpdateAndNow = Instant.now().toEpochMilli() - gameState.getLastUpdateTime();
         var combinedDelta = delta + deltaBetweenUpdateAndNow;
 
-        double moveDistance = gameState.getAgent().getSpeed() * (combinedDelta / 1000.0);
+        double moveDistance = gameState.getAgent().getSpeed() * combinedDelta;
 
         double moveX = directionX * moveDistance;
         double moveY = directionY * moveDistance;

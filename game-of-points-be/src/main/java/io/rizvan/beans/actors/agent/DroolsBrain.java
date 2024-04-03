@@ -1,5 +1,6 @@
 package io.rizvan.beans.actors.agent;
 
+import io.rizvan.beans.GameState;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.KnowledgeUpdateSignal;
 import io.rizvan.beans.facts.Fact;
@@ -26,15 +27,17 @@ public class DroolsBrain implements AgentsBrain {
     }
 
     @Override
-    public void reason(List<Fact> facts, Agent agent) {
+    public void reason(GameState gameState) {
         KieSession kieSession = kieContainer.newKieSession("myKsession");
-        kieSession.insert(agent);
+        System.out.println("gameState: " +   gameState);
+        kieSession.insert(gameState);
+        kieSession.insert(gameState.getAgent());
         kieSession.insert(knowledge);
         kieSession.insert(possibilities);
         kieSession.insert(new KnowledgeUpdateSignal());
 
         try {
-            facts.forEach(kieSession::insert);
+            gameState.getFacts().forEach(kieSession::insert);
 
             kieSession.getAgenda().getAgendaGroup("inference-group").setFocus();
             kieSession.fireAllRules();

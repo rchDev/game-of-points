@@ -51,8 +51,8 @@ public class GameStateUpdateScheduler {
             for (var playerAction : actionsToProcess) {
                 gameState.applyAction(playerAction);
             }
-
-            gameState.getAgent().reason(gameState.getFacts());
+            var agent = gameState.getAgent();
+            agent.reason(gameState);
             gameState.clearFacts();
         }
 

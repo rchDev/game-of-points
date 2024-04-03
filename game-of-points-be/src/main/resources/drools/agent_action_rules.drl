@@ -8,6 +8,9 @@ import io.rizvan.beans.actors.agent.AvoidChoice
 import io.rizvan.beans.actors.agent.CollectChoice
 import io.rizvan.beans.actors.agent.KillChoice
 import io.rizvan.beans.actors.agent.actions.AgentShootsAction
+import io.rizvan.beans.actors.agent.actions.AgentMovesAction
+import java.time.Instant
+import io.rizvan.beans.ResourcePoint
 
 rule "agent-chose-kill-and-can-reach-player"
 agenda-group "agent-actions-group"
@@ -45,14 +48,30 @@ end
 rule "agent-chose-collect-cannot-reach"
 agenda-group "agent-actions-group"
 when
+    $gameState : GameState()
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
     $possibilities : AgentPossibilities()
     eval($choice instanceof CollectChoice)
 then
-    modify($gameState){
-        applyAction(new PlayerMovesAction())
+    ResourcePoint closest = null;
+    double closestDistance = Double.MAX_VALUE;
+
+    // Directly iterate over $resources.getValue() without extra braces
+    for(ResourcePoint resource : $knowledge.getResourcePoints().getValue()) {
+        double currentDistance = Math.hypot(resource.getX() - $x, resource.getY() - $y);
+        if(currentDistance < closestDistance) {
+            closest = resource;
+            closestDistance = currentDistance;
+        }
     }
+
+    // Assuming there's a method to act based on the closest resource found
+    if(closest != null) {
+        System.out.println("Closest resource point is at: " + closest.getX() + ", " + closest.getY());
+        $gameState.applyAction(new AgentMovesAction(closest));
+    }
+
 
     System.out.println("collect - cannot reach");
 end
