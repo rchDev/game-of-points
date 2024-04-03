@@ -64,7 +64,7 @@ public class GameStateUpdateScheduler {
     }
 
     private void scheduleNextGameStateUpdate(String sessionId) {
-        vertx.setTimer(100, id -> updateGameState(sessionId));
+        vertx.setTimer(50, id -> updateGameState(sessionId));
     }
 
     private void createNewResourcePoint(String sessionId) {
