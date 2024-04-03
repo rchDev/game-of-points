@@ -26,12 +26,14 @@ end
 rule "agent-chose-kill-and-cannot-reach-player"
 agenda-group "agent-actions-group"
 when
+    $gameState : GameState()
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
     $possibilities : AgentPossibilities($agentCanReach : canReachPlayer() == false)
     eval($choice instanceof KillChoice)
 then
     System.out.println("agent kill - cannot reach");
+    $gameState.applyAction(new AgentMovesAction($gameState.getPlayer()));
 end
 
 rule "agent-chose-collect-can-reach"
@@ -71,7 +73,6 @@ then
         System.out.println("Closest resource point is at: " + closest.getX() + ", " + closest.getY());
         $gameState.applyAction(new AgentMovesAction(closest));
     }
-
 
     System.out.println("collect - cannot reach");
 end
