@@ -57,10 +57,8 @@ function connectToGameSession(sessionId) {
   return ws;
 }
 
-function updateStats(gameState) {
+function updatePlayerStats(gameState) {
   if (!gameState) return;
-  console.log("gameState:", gameState);
-  console.log("player.speed:", gameState.player.speed.toFixed(2));
   const {
     player: {
       points: playerPoints,
@@ -72,8 +70,6 @@ function updateStats(gameState) {
     },
   } = gameState;
 
-  document.querySelector(".ai-score").innerText =
-    `${gameState.agent.points}: AI`;
   document.querySelector(".player-score").innerText = `Player: ${playerPoints}`;
   document.querySelector("#player-hp-real").innerText = playerHp;
   document.querySelector("#player-dmg-real").innerText = playerDmg;
@@ -81,6 +77,13 @@ function updateStats(gameState) {
   document.querySelector("#player-spd-real").innerText = playerSpd.toFixed(2);
   document.querySelector("#player-reach-real").innerText = playerReach;
   gameState.player.reach;
+}
+
+function updateAgentPoints(gameState) {
+  if (!gameState) return;
+
+  document.querySelector(".ai-score").innerText =
+    `${gameState.agent.points}: AI`;
 }
 
 const sketch = (p) => {
@@ -96,6 +99,7 @@ const sketch = (p) => {
   const mousePositionSendInterval = 100; // ms
   let mousePositionSendTimer;
   let predictions = [];
+  let unappliedStateChanges = [];
 
   const sendPlayerActionToServer = (type, details) => {
     if (!p.ws) return;
@@ -106,9 +110,23 @@ const sketch = (p) => {
     p.ws.send(JSON.stringify({ type, ...details, clientTimestamp }));
   };
 
+  const addToUnappliedStateChanges = (gameState, gameStateUpdate) => {
+    const diff = gameState.resources.filter(
+      ({ id }) => !gameStateUpdate.resources.some((item) => item.id === id),
+    );
+
+    unappliedStateChanges.push({
+      agent: gameStateUpdate.agent,
+      resources: diff,
+    });
+  };
+
   const onServerUpdate = (message) => {
-    reconcileWithServerState(JSON.parse(message.data));
-    updateStats(p.gameState);
+    var updatedGameState = JSON.parse(message.data);
+
+    addToUnappliedStateChanges(cloneDeep(p.gameState), updatedGameState);
+    reconcileWithServerState(updatedGameState);
+    updatePlayerStats(p.gameState);
   };
 
   const reconcileWithServerState = (gameState) => {
@@ -121,7 +139,9 @@ const sketch = (p) => {
       applyPrediction(tempGameState, action);
     });
 
+    const agent = p.gameState.agent;
     p.gameState = tempGameState;
+    p.gameState.agent = agent;
   };
 
   const applyPrediction = (gameState, action) => {
@@ -162,7 +182,7 @@ const sketch = (p) => {
       height,
     );
 
-    updateStats(gameState);
+    updatePlayerStats(gameState);
 
     p.ws = connectToGameSession(sessionId);
     p.ws.onmessage = (message) => onServerUpdate(message);
@@ -300,6 +320,62 @@ const sketch = (p) => {
     }
   }
 
+  function interpolateAgentPosition(deltaTime) {
+    // Convert deltaTime to seconds if needed
+    const dtSeconds = Math.floor(deltaTime);
+    // Check if there are any updates to interpolate towards
+    if (unappliedStateChanges.length > 0) {
+      console.log(unappliedStateChanges);
+      // Get the next update
+      const update = unappliedStateChanges[0];
+      const agent = p.gameState.agent;
+      const targetPos = { x: update.agent.x, y: update.agent.y };
+
+      console.log(`${agent.x}, ${agent.y} -> ${targetPos.x}, ${targetPos.y}`);
+
+      // Calculate the step based on agent's speed and deltaTime
+      const directionX = targetPos.x - agent.x;
+      const directionY = targetPos.y - agent.y;
+
+      // Calculate the distance to the target position
+      const distance = Math.sqrt(
+        directionX * directionX + directionY * directionY,
+      );
+
+      // Normalize the direction vector
+      const dirX = directionX / distance || 0;
+      const dirY = directionY / distance || 0;
+
+      // Calculate the step size based on the agent's speed and deltaTime
+      const stepSize = agent.speed * dtSeconds;
+
+      // Update the agent's position towards the target
+      let newAgentX = agent.x + dirX * stepSize;
+      let newAgentY = agent.y + dirY * stepSize;
+
+      p.gameState.agent.x = newAgentX;
+      p.gameState.agent.y = newAgentY;
+
+      // Check if the agent has reached the target position
+      if (distance <= stepSize) {
+        console.log("Agent reached target position");
+        p.gameState.agent.x = targetPos.x;
+        p.gameState.agent.y = targetPos.y;
+
+        unappliedStateChanges.shift();
+        updateAgentPoints(p.gameState);
+      }
+    }
+  }
+
+  // Inside your p.draw function
+  p.draw = () => {
+    if (!p.gameStateLoaded) {
+      return;
+    }
+
+    render();
+  };
   // TODO: fix this
   function checkCollisionWithResources(player, resources) {
     for (let resource of resources) {
@@ -346,6 +422,7 @@ const sketch = (p) => {
     if (!p.gameStateLoaded) {
       return;
     }
+    interpolateAgentPosition(p.deltaTime);
     predictMovementAndSendUpdate(p.deltaTime);
     checkCollisionWithResources(p.gameState.player, p.gameState.resources);
     render();
