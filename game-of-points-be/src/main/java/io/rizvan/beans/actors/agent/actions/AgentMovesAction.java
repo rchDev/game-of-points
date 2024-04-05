@@ -37,6 +37,9 @@ public class AgentMovesAction extends AgentAction {
         var combinedDelta = delta + deltaBetweenUpdateAndNow;
 
         double moveDistance = gameState.getAgent().getSpeed() * combinedDelta;
+        if (moveDistance > magnitude) {
+            moveDistance = magnitude;
+        }
 
         double moveX = directionX * moveDistance;
         double moveY = directionY * moveDistance;
