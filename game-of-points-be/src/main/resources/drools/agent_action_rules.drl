@@ -44,8 +44,8 @@ when
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
     $possibilities : AgentPossibilities()
-    $resource : ResourcePoint()
-    eval($choice instanceof CollectChoice)
+    $resource : ResourcePoint($resourceX : getX(), $resourceY : getY())
+    eval($choice instanceof CollectChoice && Math.sqrt(Math.pow($resourceX - $x, 2) + Math.pow($resourceY - $y, 2)) == 0)
 then
     System.out.println("collect - can reach");
     $gameState.applyAction(new AgentCollectsAction($resource));

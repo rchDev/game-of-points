@@ -2,10 +2,10 @@ package io.rizvan.beans;
 
 public class RangedWeapon {
     public enum Type {
-        SNIPER(0, "Sniper", 3, 0.85f, 2, 40),
-        CARBINE(1, "Carbine", 1, 0.95f, 5, 30),
-        SUB_MACHINE(2, "Sub-machine", 1, 1.0f, 10, 10),
-        PISTOL(3, "Pistol", 1, 1.25f, 5, 20);
+        SNIPER(0, "Sniper", 3, 0.85f, 2, 400),
+        CARBINE(1, "Carbine", 1, 0.95f, 5, 300),
+        SUB_MACHINE(2, "Sub-machine", 1, 1.0f, 10, 150),
+        PISTOL(3, "Pistol", 1, 1.25f, 5, 200);
 
         private final RangedWeapon weapon;
         Type(int id, String name, int damage, double speedModifier, int ammo, double range) {
