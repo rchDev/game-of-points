@@ -302,15 +302,20 @@ const sketch = (p) => {
 
     if (player) {
       p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
-      drawAimLine(player);
+      drawPlayerAim(player);
     }
 
     if (agent) {
       p.ellipse(agent.x, agent.y, agent.hitBox.width, agent.hitBox.height);
+      drawAgentAim(agent);
     }
 
     if (resources) {
-      resources.forEach((resourse) => {
+      const unappliedResources = unappliedStateChanges.flatMap(
+        (state) => state.resources,
+      );
+      console.log(unappliedResources);
+      resources.concat(unappliedResources).forEach((resourse) => {
         p.stroke("purple");
         p.strokeWeight(resourse.hitBox.width);
         p.point(resourse.x, resourse.y);
@@ -325,14 +330,10 @@ const sketch = (p) => {
     const dtSeconds = Math.floor(deltaTime);
     // Check if there are any updates to interpolate towards
     if (unappliedStateChanges.length > 0) {
-      console.log(unappliedStateChanges);
       // Get the next update
       const update = unappliedStateChanges[0];
       const agent = p.gameState.agent;
       const targetPos = { x: update.agent.x, y: update.agent.y };
-
-      console.log(`${agent.x}, ${agent.y} -> ${targetPos.x}, ${targetPos.y}`);
-
       // Calculate the step based on agent's speed and deltaTime
       const directionX = targetPos.x - agent.x;
       const directionY = targetPos.y - agent.y;
@@ -368,14 +369,6 @@ const sketch = (p) => {
     }
   }
 
-  // Inside your p.draw function
-  p.draw = () => {
-    if (!p.gameStateLoaded) {
-      return;
-    }
-
-    render();
-  };
   // TODO: fix this
   function checkCollisionWithResources(player, resources) {
     for (let resource of resources) {
@@ -397,17 +390,20 @@ const sketch = (p) => {
     }
   }
 
-  function drawAimLine(entity) {
+  function drawPlayerAim(entity) {
     // Calculate angle between player position and mouse position
     let angle = p.atan2(p.mouseY - entity.y, p.mouseX - entity.x);
 
-    // Calculate the start point of the line based on the player's edge
-    let startX = entity.x + p.cos(angle) * entity.hitBox.width;
-    let startY = entity.y + p.sin(angle) * entity.hitBox.height;
+    let radius = entity.hitBox.width / 2; // Assuming hitBox.width is the diameter
+
+    // Calculate the start point of the line at the edge of the player's hitbox
+    let startX = entity.x + p.cos(angle) * radius;
+    let startY = entity.y + p.sin(angle) * radius;
 
     // Calculate the end point of the line based on the player's reach
-    let endX = entity.x + p.cos(angle) * entity.reach;
-    let endY = entity.y + p.sin(angle) * entity.reach;
+    let endX = startX + p.cos(angle) * entity.reach + radius;
+    let endY = startY + p.sin(angle) * entity.reach + radius;
+    console.log(endX - startX, endY - startY);
 
     // Draw the line
     p.stroke("red");
@@ -415,6 +411,49 @@ const sketch = (p) => {
     p.line(startX, startY, endX, endY);
     p.strokeWeight(1);
     p.stroke("black");
+  }
+
+  function drawAgentAim(entity, deltaTime) {
+    if (unappliedStateChanges.length > 0) {
+      const nextUpdate = unappliedStateChanges[0];
+      const targetPos = { x: nextUpdate.agent.x, y: nextUpdate.agent.y };
+
+      // Calculate angle between agent position and interpolated mouse (target) position
+      let angle = p.atan2(targetPos.y - entity.y, targetPos.x - entity.x);
+
+      // Calculate the start point of the line based on the agent's edge
+      let startX = entity.x + p.cos(angle) * entity.hitBox.width;
+      let startY = entity.y + p.sin(angle) * entity.hitBox.height;
+
+      // Future position interpolation for a smoother aim line
+      const dtSeconds = Math.floor(deltaTime);
+      const directionX = targetPos.x - entity.x;
+      const directionY = targetPos.y - entity.y;
+      const distance = Math.sqrt(
+        directionX * directionX + directionY * directionY,
+      );
+      const dirX = directionX / distance || 0;
+      const dirY = directionY / distance || 0;
+      const stepSize = entity.speed * dtSeconds;
+
+      // Calculate a future position based on the current interpolation
+      // This is useful if you want the aim line to predict where the agent is aiming, not just point to its current target.
+      let futureX = entity.x + dirX * stepSize * 5; // Multiplying stepSize to extend the aim further than just the next step
+      let futureY = entity.y + dirY * stepSize * 5;
+
+      // Calculate the end point of the line
+      let endX =
+        startX + p.cos(angle) * (Math.min(stepSize, distance) + entity.reach);
+      let endY =
+        startY + p.sin(angle) * (Math.min(stepSize, distance) + entity.reach);
+
+      // Draw the aim line
+      p.stroke("blue"); // Different color to distinguish agent's aim
+      p.strokeWeight(4);
+      p.line(startX, startY, futureX, futureY); // Drawing the line to the future position for visualizing aim direction
+      p.strokeWeight(1);
+      p.stroke("black");
+    }
   }
 
   // Draw loop
