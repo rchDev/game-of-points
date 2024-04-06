@@ -55,6 +55,11 @@ public class DroolsBrain implements AgentsBrain {
         }
     }
 
+    @Override
+    public AgentKnowledge getKnowledge() {
+        return knowledge;
+    }
+
     @PreDestroy
     public void cleanup() {
         if (kieContainer != null) {

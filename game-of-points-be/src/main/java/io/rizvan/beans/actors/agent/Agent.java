@@ -4,6 +4,7 @@ import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.facts.Fact;
 import io.rizvan.beans.RangedWeapon;
+import io.rizvan.beans.knowledge.AgentKnowledge;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,7 +47,7 @@ public class Agent extends CompetingEntity {
         brain.reason(gameState);
     }
 
-    public AgentsBrain getBrain() {
-        return brain;
+    public AgentKnowledge getKnowledge() {
+        return brain.getKnowledge();
     }
 }

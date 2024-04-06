@@ -146,8 +146,9 @@ public class AgentKnowledge {
         Double playerY = playerPosition.getValue().getY();
 
         var agentDistanceToPlayer = Math.sqrt(Math.pow(agentX - playerX, 2) + Math.pow(agentY - playerY, 2));
-        var confrontationalDistance = playerReach.getValue() + AgentKnowledge.REACH_DISTANCE_OFFSET;
-
+        var confrontationalDistance = playerReach.getValue(); // + AgentKnowledge.REACH_DISTANCE_OFFSET;
+        System.out.println("playerX: " + playerX + ", playerY: " + playerY);
+        System.out.println("agent-to-player: " + agentDistanceToPlayer + " player-reach: " + confrontationalDistance);
         return agentDistanceToPlayer <= confrontationalDistance;
     }
 
