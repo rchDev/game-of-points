@@ -302,10 +302,17 @@ const sketch = (p) => {
 
     if (player) {
       p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
-      drawPlayerAim(player);
+      drawPlayerAim(
+        player,
+        agent.knowledge.playerReach.value,
+        [255, 0, 0, 191],
+        20,
+      );
+      drawPlayerAim(player, player.reach, [255, 0, 0, 69], 6);
     }
 
     if (agent) {
+      console.log(agent);
       p.ellipse(agent.x, agent.y, agent.hitBox.width, agent.hitBox.height);
       drawAgentAim(agent);
     }
@@ -390,7 +397,12 @@ const sketch = (p) => {
     }
   }
 
-  function drawPlayerAim(entity) {
+  function drawPlayerAim(
+    entity,
+    lineLength,
+    color = [255, 0, 0, 255],
+    strokeWidth = 4,
+  ) {
     // Calculate angle between player position and mouse position
     let angle = p.atan2(p.mouseY - entity.y, p.mouseX - entity.x);
 
@@ -401,14 +413,12 @@ const sketch = (p) => {
     let startY = entity.y + radius * p.sin(angle);
 
     // Calculate the end point of the line based on the player's reach
-    let endX = entity.x + (radius + entity.reach) * p.cos(angle);
-    let endY = entity.y + (radius + entity.reach) * p.sin(angle);
-    console.log(entity.reach);
-    console.log(endX - startX, endY - startY);
+    let endX = entity.x + (radius + lineLength) * p.cos(angle);
+    let endY = entity.y + (radius + lineLength) * p.sin(angle);
 
     // Draw the line
-    p.stroke("red");
-    p.strokeWeight(4);
+    p.stroke(255, 0, 0, 69);
+    p.strokeWeight(strokeWidth);
     p.line(startX, startY, endX, endY);
     p.strokeWeight(1);
     p.stroke("black");
