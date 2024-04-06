@@ -397,12 +397,13 @@ const sketch = (p) => {
     let radius = entity.hitBox.width / 2; // Assuming hitBox.width is the diameter
 
     // Calculate the start point of the line at the edge of the player's hitbox
-    let startX = entity.x + p.cos(angle) * radius;
-    let startY = entity.y + p.sin(angle) * radius;
+    let startX = entity.x + radius * p.cos(angle);
+    let startY = entity.y + radius * p.sin(angle);
 
     // Calculate the end point of the line based on the player's reach
-    let endX = startX + p.cos(angle) * entity.reach + radius;
-    let endY = startY + p.sin(angle) * entity.reach + radius;
+    let endX = entity.x + (radius + entity.reach) * p.cos(angle);
+    let endY = entity.y + (radius + entity.reach) * p.sin(angle);
+    console.log(entity.reach);
     console.log(endX - startX, endY - startY);
 
     // Draw the line
