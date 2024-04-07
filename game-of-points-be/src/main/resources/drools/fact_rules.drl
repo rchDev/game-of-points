@@ -26,14 +26,10 @@ no-loop true
     when
         $moveFact : PlayerMovementFact()
         $knowledge : AgentKnowledge()
-        $signal : KnowledgeUpdateSignal()
     then
         System.out.println("Player Moved ran");
         modify($knowledge){
             setPlayerPosition($moveFact.getX(), $moveFact.getY(), true)
-        };
-        modify($signal) {
-            setRunInference(true)
         };
 end
 
@@ -43,14 +39,10 @@ no-loop true
     when
         $aimFact : PlayerAimFact()
         $knowledge : AgentKnowledge()
-        $signal : KnowledgeUpdateSignal()
     then
         System.out.println("Player aimed ran");
         modify($knowledge) {
             setPlayerAim($aimFact.getMouseX(), $aimFact.getMouseY(), true)
-        };
-        modify($signal) {
-            setRunInference(true)
         };
 end
 
@@ -60,13 +52,9 @@ no-loop true
     when
         $shootingFact : PlayerShootingFact()
         $knowledge : AgentKnowledge()
-        $signal : KnowledgeUpdateSignal()
     then
         modify($knowledge) {
             setPlayerDamage($shootingFact.getDamage(), true)
-        };
-        modify($signal) {
-            setRunInference(true)
         };
 end
 
@@ -76,14 +64,10 @@ no-loop true
     when
         $collectionFact : PlayerCollectionFact()
         $knowledge : AgentKnowledge()
-        $signal : KnowledgeUpdateSignal()
     then
         System.out.println("Player collected ran");
         modify($knowledge) {
             setPlayerPoints($collectionFact.getTotalPoints(), true)
-        };
-        modify($signal) {
-            setRunInference(true)
         };
 end
 
@@ -93,13 +77,9 @@ no-loop true
     when
         $resourcesChangedFact : ResourcesChangeFact()
         $knowledge : AgentKnowledge()
-        $signal : KnowledgeUpdateSignal()
     then
         modify($knowledge) {
             setResourcePoints($resourcesChangedFact.getResources(), true)
-        };
-        modify($signal) {
-            setRunInference(true)
         };
 end
 
@@ -109,13 +89,9 @@ no-loop true
     when
         $timeChangeFact : GameTimeChangeFact()
         $knowledge : AgentKnowledge()
-        $signal : KnowledgeUpdateSignal()
     then
        modify($knowledge) {
            setTimeLeft($timeChangeFact.getTimeLeft(), true)
-       };
-       modify($signal) {
-           setRunInference(true)
        };
 end
 
@@ -125,13 +101,9 @@ no-loop true
     when
         $hpChangeFact : PlayerHPChangeFact()
         $knowledge : AgentKnowledge()
-        $signal : KnowledgeUpdateSignal()
     then
         modify($knowledge) {
             setPlayerHitPoints($hpChangeFact.getHP(), true)
-        };
-        modify($signal) {
-            setRunInference(true)
         };
 end
 
@@ -140,7 +112,6 @@ agenda-group "inference-group"
 salience -100
     when
         $knowledge : AgentKnowledge()
-        $knowledgeUpdateSignal : KnowledgeUpdateSignal(shouldRunInference())
     then
         boolean isShotCountKnown = $knowledge.getShotCount().isKnown();
         boolean isAmmoCapacityKnown = $knowledge.getPlayerAmmoCapacity().isKnown();
@@ -148,6 +119,9 @@ salience -100
         boolean isPlayerSpeedKnown = $knowledge.getPlayerSpeed().isKnown();
         boolean isPlayerReachKnown = $knowledge.getPlayerReach().isKnown();
         if (!isPlayerDamageKnown || !isPlayerSpeedKnown || !isPlayerReachKnown || !isAmmoCapacityKnown) {
+
+            System.out.println("Knowledge Inference ran");
+            System.out.println("-----------------------");
 
             List<RangedWeapon> weapons = $knowledge.getPossibleWeapons()
             .stream()
@@ -158,28 +132,33 @@ salience -100
                 (!isPlayerReachKnown || wep.getRange() == $knowledge.getPlayerReach().getValue()))
             ).toList();
 
+            System.out.println("possible weapons");
+            weapons.forEach(wp -> System.out.println(wp.getId()));
             boolean oneWeaponLeft = weapons.size() == 1;
 
             weapons.stream().max(Comparator.comparingInt(RangedWeapon::getAmmoCapacity))
-                .ifPresent(maxCapacityWeapon -> $knowledge.setPlayerAmmoCapacity(maxCapacityWeapon.getAmmoCapacity(), oneWeaponLeft));
+                .ifPresent(maxCapacityWeapon -> {
+                    System.out.println("max capacity: " + maxCapacityWeapon.getAmmoCapacity());
+                    $knowledge.setPlayerAmmoCapacity(maxCapacityWeapon.getAmmoCapacity(), oneWeaponLeft);
+                });
 
             weapons.stream().max(Comparator.comparingInt(RangedWeapon::getDamage))
-                .ifPresent(maxDamageWeapon -> $knowledge.setPlayerDamage(maxDamageWeapon.getDamage(), oneWeaponLeft));
+                .ifPresent(maxDamageWeapon -> {
+                    System.out.println("max damage: " + maxDamageWeapon.getDamage());
+                    $knowledge.setPlayerDamage(maxDamageWeapon.getDamage(), oneWeaponLeft);
+                });
 
             weapons.stream().max(Comparator.comparingDouble(RangedWeapon::getSpeedModifier))
-               .ifPresent(maxSpeedWeapon -> $knowledge.setPlayerSpeed(maxSpeedWeapon.getSpeedModifier() * CompetingEntity.BASE_SPEED, oneWeaponLeft));
+               .ifPresent(maxSpeedWeapon -> {
+                    System.out.println("max speed: " + maxSpeedWeapon.getSpeedModifier());
+                   $knowledge.setPlayerSpeed(maxSpeedWeapon.getSpeedModifier() * CompetingEntity.BASE_SPEED, oneWeaponLeft);
+               });
 
             weapons.stream().max(Comparator.comparingDouble(RangedWeapon::getRange))
-               .ifPresent(maxRangeWeapon -> $knowledge.setPlayerReach(maxRangeWeapon.getRange(), oneWeaponLeft));
+               .ifPresent(maxRangeWeapon -> {
+                    System.out.println("max range: " + maxRangeWeapon.getRange());
+                   $knowledge.setPlayerReach(maxRangeWeapon.getRange(), oneWeaponLeft);
+               });
         }
-
-        System.out.println("Knowledge Inference ran");
-        System.out.println("-----------------------");
-
-        modify($knowledgeUpdateSignal) {
-            setRunInference(false)
-        };
-
-        insert(new KnowledgeInferredSignal());
 end
 
