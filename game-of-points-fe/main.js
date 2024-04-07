@@ -68,6 +68,16 @@ function updatePlayerStats(gameState) {
       speed: playerSpd,
       reach: playerReach,
     },
+    agent: {
+      knowledge: {
+        playerHitPoints: { value: perceivedPlayerHp },
+        playerDamage: { value: perceivedPlayerDmg },
+        playerAmmoCapacity: { value: perceivedPlayerAmmo },
+        shotCount: { value: playerShotCount },
+        playerSpeed: { value: perceivedPlayerSpd },
+        playerReach: { value: perceivedPlayerReach },
+      },
+    },
   } = gameState;
 
   document.querySelector(".player-score").innerText = `Player: ${playerPoints}`;
@@ -76,14 +86,22 @@ function updatePlayerStats(gameState) {
   document.querySelector("#player-ammo-real").innerText = playerAmmo;
   document.querySelector("#player-spd-real").innerText = playerSpd.toFixed(2);
   document.querySelector("#player-reach-real").innerText = playerReach;
+
+  document.querySelector("#player-hp-perceived").innerText = perceivedPlayerHp;
+  document.querySelector("#player-dmg-perceived").innerText =
+    perceivedPlayerDmg;
+  document.querySelector("#player-ammo-perceived").innerText =
+    perceivedPlayerAmmo - playerShotCount;
+  document.querySelector("#player-spd-perceived").innerText =
+    perceivedPlayerSpd;
+  document.querySelector("#player-reach-perceived").innerText =
+    perceivedPlayerReach;
+
   gameState.player.reach;
 }
 
-function updateAgentPoints(gameState) {
-  if (!gameState) return;
-
-  document.querySelector(".ai-score").innerText =
-    `${gameState.agent.points}: AI`;
+function updateAgentPoints(points) {
+  document.querySelector(".ai-score").innerText = `${points}: AI`;
 }
 
 const sketch = (p) => {
@@ -127,6 +145,8 @@ const sketch = (p) => {
     addToUnappliedStateChanges(cloneDeep(p.gameState), updatedGameState);
     reconcileWithServerState(updatedGameState);
     updatePlayerStats(p.gameState);
+    document.getElementById("game-time").innerText =
+      `Time: ${p.gameState.time}s`;
   };
 
   const reconcileWithServerState = (gameState) => {
@@ -305,14 +325,13 @@ const sketch = (p) => {
       drawPlayerAim(
         player,
         agent.knowledge.playerReach.value,
-        [255, 0, 0, 191],
+        [255, 0, 0, 69],
         20,
       );
-      drawPlayerAim(player, player.reach, [255, 0, 0, 69], 6);
+      drawPlayerAim(player, player.reach, [255, 0, 0, 191], 6);
     }
 
     if (agent) {
-      console.log(agent);
       p.ellipse(agent.x, agent.y, agent.hitBox.width, agent.hitBox.height);
       drawAgentAim(agent);
     }
@@ -321,7 +340,6 @@ const sketch = (p) => {
       const unappliedResources = unappliedStateChanges.flatMap(
         (state) => state.resources,
       );
-      console.log(unappliedResources);
       resources.concat(unappliedResources).forEach((resourse) => {
         p.stroke("purple");
         p.strokeWeight(resourse.hitBox.width);
@@ -366,12 +384,13 @@ const sketch = (p) => {
 
       // Check if the agent has reached the target position
       if (distance <= stepSize) {
-        console.log("Agent reached target position");
         p.gameState.agent.x = targetPos.x;
         p.gameState.agent.y = targetPos.y;
 
-        unappliedStateChanges.shift();
-        updateAgentPoints(p.gameState);
+        let {
+          agent: { points },
+        } = unappliedStateChanges.shift();
+        updateAgentPoints(points);
       }
     }
   }
@@ -417,7 +436,7 @@ const sketch = (p) => {
     let endY = entity.y + (radius + lineLength) * p.sin(angle);
 
     // Draw the line
-    p.stroke(255, 0, 0, 69);
+    p.stroke(color);
     p.strokeWeight(strokeWidth);
     p.line(startX, startY, endX, endY);
     p.strokeWeight(1);
