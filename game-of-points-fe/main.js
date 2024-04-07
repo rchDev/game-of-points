@@ -68,16 +68,6 @@ function updatePlayerStats(gameState) {
       speed: playerSpd,
       reach: playerReach,
     },
-    agent: {
-      knowledge: {
-        playerHitPoints: { value: perceivedPlayerHp },
-        playerDamage: { value: perceivedPlayerDmg },
-        playerAmmoCapacity: { value: perceivedPlayerAmmo },
-        shotCount: { value: playerShotCount },
-        playerSpeed: { value: perceivedPlayerSpd },
-        playerReach: { value: perceivedPlayerReach },
-      },
-    },
   } = gameState;
 
   document.querySelector(".player-score").innerText = `Player: ${playerPoints}`;
@@ -86,18 +76,6 @@ function updatePlayerStats(gameState) {
   document.querySelector("#player-ammo-real").innerText = playerAmmo;
   document.querySelector("#player-spd-real").innerText = playerSpd.toFixed(2);
   document.querySelector("#player-reach-real").innerText = playerReach;
-
-  document.querySelector("#player-hp-perceived").innerText = perceivedPlayerHp;
-  document.querySelector("#player-dmg-perceived").innerText =
-    perceivedPlayerDmg;
-  document.querySelector("#player-ammo-perceived").innerText =
-    perceivedPlayerAmmo - playerShotCount;
-  document.querySelector("#player-spd-perceived").innerText =
-    perceivedPlayerSpd;
-  document.querySelector("#player-reach-perceived").innerText =
-    perceivedPlayerReach;
-
-  gameState.player.reach;
 }
 
 function updateAgentPoints(points) {
@@ -144,6 +122,7 @@ const sketch = (p) => {
 
     addToUnappliedStateChanges(cloneDeep(p.gameState), updatedGameState);
     reconcileWithServerState(updatedGameState);
+    console.log("Server update received:", updatedGameState);
     updatePlayerStats(p.gameState);
     document.getElementById("game-time").innerText =
       `Time: ${p.gameState.time}s`;
@@ -387,13 +366,38 @@ const sketch = (p) => {
         p.gameState.agent.x = targetPos.x;
         p.gameState.agent.y = targetPos.y;
 
-        let {
-          agent: { points },
-        } = unappliedStateChanges.shift();
-        updateAgentPoints(points);
+        updateAgentInfo(unappliedStateChanges.shift());
       }
     }
   }
+
+  const updateAgentInfo = (update) => {
+    let { agent } = unappliedStateChanges.shift();
+    updateAgentPoints(agent.points);
+    updatePerceivedInfo(agent.knowledge);
+  };
+
+  const updatePerceivedInfo = (knowledge) => {
+    const {
+      playerHitPoints: { value: perceivedPlayerHp },
+      playerDamage: { value: perceivedPlayerDmg },
+      playerAmmoCapacity: { value: perceivedPlayerAmmo },
+      shotCount: { value: playerShotCount },
+      playerSpeed: { value: perceivedPlayerSpd },
+      playerReach: { value: perceivedPlayerReach },
+    } = knowledge;
+
+    document.querySelector("#player-hp-perceived").innerText =
+      perceivedPlayerHp;
+    document.querySelector("#player-dmg-perceived").innerText =
+      perceivedPlayerDmg;
+    document.querySelector("#player-ammo-perceived").innerText =
+      perceivedPlayerAmmo - playerShotCount;
+    document.querySelector("#player-spd-perceived").innerText =
+      perceivedPlayerSpd.toFixed(2);
+    document.querySelector("#player-reach-perceived").innerText =
+      perceivedPlayerReach;
+  };
 
   // TODO: fix this
   function checkCollisionWithResources(player, resources) {
