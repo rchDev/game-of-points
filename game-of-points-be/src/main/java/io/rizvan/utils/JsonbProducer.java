@@ -7,7 +7,6 @@ import jakarta.json.bind.JsonbBuilder;
 
 @ApplicationScoped
 public class JsonbProducer {
-
     @Produces
     @ApplicationScoped
     public Jsonb createJsonb() {

@@ -28,6 +28,7 @@ public class DroolsBrain implements AgentsBrain {
 
     @Override
     public void reason(GameState gameState) {
+        knowledge.setPlayerHitBoxKnowledge(gameState.getPlayer().getHitBox(), true);
         KieSession kieSession = kieContainer.newKieSession("myKsession");
         System.out.println("gameState: " +   gameState);
         kieSession.insert(gameState);

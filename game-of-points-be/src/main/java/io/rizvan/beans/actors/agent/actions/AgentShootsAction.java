@@ -1,14 +1,19 @@
 package io.rizvan.beans.actors.agent.actions;
 
 import io.rizvan.beans.GameState;
+import io.rizvan.beans.facts.PlayerHPChangeFact;
 
 public class AgentShootsAction extends AgentAction {
     @Override
     public void apply(GameState gameState) {
-        var damage = gameState.getAgent().shoot();
+        var agent = gameState.getAgent();
+        var player = gameState.getPlayer();
 
-        var playerX = gameState.getPlayer().getX();
-        var playerY = gameState.getPlayer().getY();
-        var playerHitBox = gameState.getPlayer().getHitBox();
+        var damage = agent.shoot();
+        if (agent.canReach(player) && damage > 0) {
+            var playerHp = player.getHitPoints();
+            player.setHitPoints(playerHp - damage);
+            gameState.registerFact(new PlayerHPChangeFact(player.getPoints()));
+        }
     }
 }

@@ -25,6 +25,7 @@ when
 then
     System.out.println("agent kill - can reach");
     $gameState.applyAction(new AgentAimsAction());
+    $gameState.applyAction(new AgentShootsAction());
 end
 
 rule "agent-chose-kill-and-cannot-reach-player"

@@ -1,5 +1,6 @@
 package io.rizvan.beans.knowledge;
 
+import io.rizvan.beans.HitBox;
 import io.rizvan.beans.RangedWeapon;
 import io.rizvan.beans.ResourcePoint;
 import io.rizvan.beans.WeaponCache;
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class AgentKnowledge {
     private PlayerPositionKnowledge playerPosition;
+    private PlayerHitBoxKnowledge playerHitBox;
     private PlayerAimKnowledge playerAim;
     private ShotCountKnowledge shotCount;
     private PlayerAmmoCapacityKnowledge playerAmmoCapacity;
@@ -38,6 +40,7 @@ public class AgentKnowledge {
         this.possibleWeapons = new WeaponCache();
         this.playerAmmoCapacity = new PlayerAmmoCapacityKnowledge();
         this.playerReach = new PlayerReachKnowledge();
+        this.playerHitBox = new PlayerHitBoxKnowledge();
 
         this.shotCount.setKnown(true);
     }
@@ -49,6 +52,16 @@ public class AgentKnowledge {
     public void setPlayerPosition(Double x, Double y, boolean isKnown) {
         playerPosition.setValue(new Coord<>(x, y));
         playerPosition.setKnown(isKnown);
+    }
+
+    public PlayerHitBoxKnowledge getPlayerHitBox() {
+        return playerHitBox;
+    }
+
+    public void setPlayerHitBoxKnowledge(HitBox playerHitBox, boolean isKnown) {
+        this.playerHitBox = new PlayerHitBoxKnowledge();
+        this.playerHitBox.setValue(playerHitBox);
+        this.playerHitBox.setKnown(isKnown);
     }
 
     public PlayerAimKnowledge getPlayerAim() {

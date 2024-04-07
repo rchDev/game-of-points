@@ -1,5 +1,6 @@
 package io.rizvan.beans.actors;
 
+import io.rizvan.beans.HitBox;
 import io.rizvan.beans.RangedWeapon;
 
 public class CompetingEntity extends GameEntity {
@@ -50,7 +51,7 @@ public class CompetingEntity extends GameEntity {
     }
 
     public void setHitPoints(int hitPoints) {
-        this.hitPoints = hitPoints;
+        this.hitPoints = Math.max(hitPoints, 0);
     }
 
     public void setSpeed(double speed) {
@@ -91,5 +92,48 @@ public class CompetingEntity extends GameEntity {
 
     public int shoot() {
         return weapon.shoot();
+    }
+
+    public boolean canReach(CompetingEntity other) {
+        return canReach(other.getX(), other.getY(), other.getHitBox());
+    }
+
+    public boolean canReach(double x, double y, HitBox hitBox) {
+        var entityEdges = calculateEdges(this);
+        var otherEdges = calculateEdges(x, y, hitBox);
+
+        var entityLeftReach = entityEdges.left - getReach();
+        var entityRightReach = entityEdges.right +getReach();
+        var entityTopReach = entityEdges.top - getReach();
+        var entityBottomReach = entityEdges.bottom + getReach();
+
+        boolean horizontalOverlap = entityRightReach > otherEdges.left || entityLeftReach < otherEdges.right;
+        boolean verticalOverlap = entityBottomReach > otherEdges.top && entityTopReach < otherEdges.bottom;
+
+        return horizontalOverlap && verticalOverlap;
+    }
+
+    private EntityEdges calculateEdges(CompetingEntity entity) {
+        return calculateEdges(entity.getX(), entity.getY(), entity.getHitBox());
+    }
+
+    private EntityEdges calculateEdges(double x, double y, HitBox hitBox) {
+        double left = x - hitBox.getWidth() / 2.0;
+        double right = x + hitBox.getWidth() / 2.0;
+        double top = y - hitBox.getHeight() / 2.0;
+        double bottom = y + hitBox.getHeight() / 2.0;
+
+        return new EntityEdges(left, right, top, bottom);
+    }
+
+    private class EntityEdges {
+        double left, right, top, bottom;
+
+        EntityEdges(double left, double right, double top, double bottom) {
+            this.left = left;
+            this.right = right;
+            this.top = top;
+            this.bottom = bottom;
+        }
     }
 }

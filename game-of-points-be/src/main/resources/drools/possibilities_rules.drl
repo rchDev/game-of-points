@@ -4,7 +4,8 @@ import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.KnowledgeInferredSignal
 import io.rizvan.beans.actors.agent.Agent
 import io.rizvan.beans.knowledge.AgentPossibilities
-import io.rizvan.beans.GameState;
+import io.rizvan.beans.GameState
+import io.rizvan.utils.Coord;
 
 rule "Determine if agent can kill a player"
 agenda-group "possibilities-group"
@@ -94,16 +95,13 @@ rule "Determine if agent can reach player"
 agenda-group "possibilities-group"
 no-loop true
     when
-        $agent : Agent($x : getX(), $y : getY(), $reach : getReach())
-        $knowledge : AgentKnowledge($playerPosition : getPlayerPosition())
+        $agent : Agent($x : getX(), $y : getY())
+        $knowledge : AgentKnowledge($playerPosition : getPlayerPosition(), $playerHitBox : getPlayerHitBox())
         $possibilities : AgentPossibilities()
     then
-        Double playerX = $playerPosition.getValue().getX();
-        Double playerY = $playerPosition.getValue().getY();
+        Coord<Double> playerPosition = $playerPosition.getValue();
 
-        Double distance = Math.sqrt(Math.pow($x - playerX, 2) + Math.pow($y - playerY, 2));
-
-        boolean canReach = $reach >= distance;
+        boolean canReach = $agent.canReach(playerPosition.getX(), playerPosition.getY(), $playerHitBox.getValue());
         modify($possibilities) {
             setCanReachPlayer(canReach)
         }

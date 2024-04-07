@@ -160,6 +160,10 @@ public class GameState {
         }
     }
 
+    public void registerFact(Fact fact) {
+        factStorage.add(fact);
+    }
+
     private void registerFact(PlayerAction action, boolean success) {
         switch (action.getType()) {
             case "shoot" -> {
