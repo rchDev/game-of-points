@@ -110,7 +110,6 @@ const sketch = (p) => {
     const diff = gameState.resources.filter(
       ({ id }) => !gameStateUpdate.resources.some((item) => item.id === id),
     );
-
     unappliedStateChanges.push({
       agent: gameStateUpdate.agent,
       resources: diff,
@@ -122,7 +121,6 @@ const sketch = (p) => {
 
     addToUnappliedStateChanges(cloneDeep(p.gameState), updatedGameState);
     reconcileWithServerState(updatedGameState);
-    console.log("Server update received:", updatedGameState);
     updatePlayerStats(p.gameState);
     document.getElementById("game-time").innerText =
       `Time: ${p.gameState.time}s`;
@@ -301,18 +299,31 @@ const sketch = (p) => {
 
     if (player) {
       p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
-      drawPlayerAim(
+      drawAimLine(
         player,
+        { x: p.mouseX, y: p.mouseY },
         agent.knowledge.playerReach.value,
         [255, 0, 0, 69],
         20,
       );
-      drawPlayerAim(player, player.reach, [255, 0, 0, 191], 6);
+      drawAimLine(
+        player,
+        { x: p.mouseX, y: p.mouseY },
+        player.reach,
+        [255, 0, 0, 191],
+        6,
+      );
     }
 
     if (agent) {
       p.ellipse(agent.x, agent.y, agent.hitBox.width, agent.hitBox.height);
-      drawAgentAim(agent);
+      drawAimLine(
+        agent,
+        { x: agent.mouseX, y: agent.mouseY },
+        agent.reach,
+        [0, 0, 255, 191],
+        6,
+      );
     }
 
     if (resources) {
@@ -360,19 +371,20 @@ const sketch = (p) => {
 
       p.gameState.agent.x = newAgentX;
       p.gameState.agent.y = newAgentY;
+      p.gameState.agent.mouseX = update.agent.mouseX;
+      p.gameState.agent.mouseY = update.agent.mouseY;
 
       // Check if the agent has reached the target position
       if (distance <= stepSize) {
         p.gameState.agent.x = targetPos.x;
         p.gameState.agent.y = targetPos.y;
-
         updateAgentInfo(unappliedStateChanges.shift());
       }
     }
   }
 
   const updateAgentInfo = (update) => {
-    let { agent } = unappliedStateChanges.shift();
+    let { agent } = update;
     updateAgentPoints(agent.points);
     updatePerceivedInfo(agent.knowledge);
   };
@@ -420,14 +432,15 @@ const sketch = (p) => {
     }
   }
 
-  function drawPlayerAim(
+  function drawAimLine(
     entity,
+    target,
     lineLength,
     color = [255, 0, 0, 255],
     strokeWidth = 4,
   ) {
     // Calculate angle between player position and mouse position
-    let angle = p.atan2(p.mouseY - entity.y, p.mouseX - entity.x);
+    let angle = p.atan2(target.y - entity.y, target.x - entity.x);
 
     let radius = entity.hitBox.width / 2; // Assuming hitBox.width is the diameter
 
@@ -445,49 +458,6 @@ const sketch = (p) => {
     p.line(startX, startY, endX, endY);
     p.strokeWeight(1);
     p.stroke("black");
-  }
-
-  function drawAgentAim(entity, deltaTime) {
-    if (unappliedStateChanges.length > 0) {
-      const nextUpdate = unappliedStateChanges[0];
-      const targetPos = { x: nextUpdate.agent.x, y: nextUpdate.agent.y };
-
-      // Calculate angle between agent position and interpolated mouse (target) position
-      let angle = p.atan2(targetPos.y - entity.y, targetPos.x - entity.x);
-
-      // Calculate the start point of the line based on the agent's edge
-      let startX = entity.x + p.cos(angle) * entity.hitBox.width;
-      let startY = entity.y + p.sin(angle) * entity.hitBox.height;
-
-      // Future position interpolation for a smoother aim line
-      const dtSeconds = Math.floor(deltaTime);
-      const directionX = targetPos.x - entity.x;
-      const directionY = targetPos.y - entity.y;
-      const distance = Math.sqrt(
-        directionX * directionX + directionY * directionY,
-      );
-      const dirX = directionX / distance || 0;
-      const dirY = directionY / distance || 0;
-      const stepSize = entity.speed * dtSeconds;
-
-      // Calculate a future position based on the current interpolation
-      // This is useful if you want the aim line to predict where the agent is aiming, not just point to its current target.
-      let futureX = entity.x + dirX * stepSize * 5; // Multiplying stepSize to extend the aim further than just the next step
-      let futureY = entity.y + dirY * stepSize * 5;
-
-      // Calculate the end point of the line
-      let endX =
-        startX + p.cos(angle) * (Math.min(stepSize, distance) + entity.reach);
-      let endY =
-        startY + p.sin(angle) * (Math.min(stepSize, distance) + entity.reach);
-
-      // Draw the aim line
-      p.stroke("blue"); // Different color to distinguish agent's aim
-      p.strokeWeight(4);
-      p.line(startX, startY, futureX, futureY); // Drawing the line to the future position for visualizing aim direction
-      p.strokeWeight(1);
-      p.stroke("black");
-    }
   }
 
   // Draw loop
