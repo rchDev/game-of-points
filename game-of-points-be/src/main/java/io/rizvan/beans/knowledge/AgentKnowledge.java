@@ -140,7 +140,6 @@ public class AgentKnowledge {
     public void setPlayerReach(Double playerReach, boolean isKnown) {
         this.playerReach.setValue(playerReach);
         this.playerReach.setKnown(isKnown);
-        System.out.println(this.playerReach.getValue());
     }
 
     public boolean isPlayerClose(Double agentX, Double agentY) {

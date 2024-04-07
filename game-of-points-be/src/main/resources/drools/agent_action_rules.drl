@@ -12,16 +12,19 @@ import io.rizvan.beans.actors.agent.actions.AgentMovesAction
 import java.time.Instant
 import io.rizvan.beans.ResourcePoint
 import io.rizvan.beans.actors.agent.actions.AgentCollectsAction
+import io.rizvan.beans.actors.agent.actions.AgentAimsAction
 
 rule "agent-chose-kill-and-can-reach-player"
 agenda-group "agent-actions-group"
 when
+    $gameState : GameState()
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
     $possibilities : AgentPossibilities($agentCanReach : canReachPlayer() == true)
     eval($choice instanceof KillChoice)
 then
     System.out.println("agent kill - can reach");
+    $gameState.applyAction(new AgentAimsAction());
 end
 
 rule "agent-chose-kill-and-cannot-reach-player"
@@ -35,6 +38,7 @@ when
 then
     System.out.println("agent kill - cannot reach");
     $gameState.applyAction(new AgentMovesAction($gameState.getPlayer()));
+    $gameState.applyAction(new AgentAimsAction());
 end
 
 rule "agent-chose-collect-can-reach"
@@ -77,17 +81,19 @@ then
     if(closest != null) {
         $gameState.applyAction(new AgentMovesAction(closest));
     }
-
+    $gameState.applyAction(new AgentAimsAction());
     insertLogical(closest);
 end
 
 rule "agent-chose-avoid"
 agenda-group "agent-actions-group"
 when
+    $gameState : GameState()
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
     $possibilities : AgentPossibilities()
     eval($choice instanceof AvoidChoice)
 then
+    $gameState.applyAction(new AgentAimsAction());
     System.out.println("agent avoid");
 end
