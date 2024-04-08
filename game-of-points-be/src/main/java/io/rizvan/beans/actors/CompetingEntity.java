@@ -94,6 +94,10 @@ public class CompetingEntity extends GameEntity {
         return weapon.shoot();
     }
 
+    public boolean isAlive() {
+        return hitPoints > 0;
+    }
+
     public boolean canReach(CompetingEntity other) {
         return canReach(other.getX(), other.getY(), other.getHitBox());
     }
@@ -107,8 +111,8 @@ public class CompetingEntity extends GameEntity {
         var entityTopReach = entityEdges.top - getReach();
         var entityBottomReach = entityEdges.bottom + getReach();
 
-        boolean horizontalOverlap = entityRightReach > otherEdges.left || entityLeftReach < otherEdges.right;
-        boolean verticalOverlap = entityBottomReach > otherEdges.top && entityTopReach < otherEdges.bottom;
+        boolean horizontalOverlap = entityRightReach >= otherEdges.left && entityLeftReach <= otherEdges.right;
+        boolean verticalOverlap = entityBottomReach >= otherEdges.top && entityTopReach <= otherEdges.bottom;
 
         return horizontalOverlap && verticalOverlap;
     }

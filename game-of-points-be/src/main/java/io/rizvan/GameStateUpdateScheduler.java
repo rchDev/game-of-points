@@ -38,6 +38,11 @@ public class GameStateUpdateScheduler {
 
             if (gameState == null) continue;
 
+            if (gameState.hasGameEnded()) {
+                eventBus.publish("game.closed", id);
+                continue;
+            }
+
             var now = Instant.now().toEpochMilli();
             gameState.setDeltaBetweenUpdates(now - gameState.getLastUpdateTime());
             gameState.setLastUpdateTime(now);
@@ -67,6 +72,12 @@ public class GameStateUpdateScheduler {
         vertx.setTimer(50, id -> updateGameState(sessionId));
     }
 
+    @ConsumeEvent("game.created")
+    public void scheduleRPCreation(String sessionId) {
+        int time = rng.getInteger(2, 5);
+        vertx.setTimer(time * 1000L, id -> createNewResourcePoint(sessionId));
+    }
+
     private void createNewResourcePoint(String sessionId) {
         if (sessionStorage.getSession(sessionId) == null) return;
 
@@ -82,12 +93,6 @@ public class GameStateUpdateScheduler {
 
         gameState.addResource(x, y);
         scheduleRPCreation(sessionId);
-    }
-
-    @ConsumeEvent("game.created")
-    public void scheduleRPCreation(String sessionId) {
-        int time = rng.getInteger(2, 5);
-        vertx.setTimer(time * 1000L, id -> createNewResourcePoint(sessionId));
     }
 
     @ConsumeEvent("game.created")

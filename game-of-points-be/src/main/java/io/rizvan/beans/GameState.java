@@ -54,6 +54,10 @@ public class GameState {
         return player;
     }
 
+    public boolean hasGameEnded() {
+        return time <= 0 || !player.isAlive() || !agent.isAlive();
+    }
+
     public void setPlayer(Player player) {
         this.player = player;
     }

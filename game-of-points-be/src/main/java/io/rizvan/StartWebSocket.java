@@ -2,16 +2,13 @@ package io.rizvan;
 
 import io.quarkus.vertx.ConsumeEvent;
 import io.rizvan.beans.SessionStorage;
+import io.rizvan.beans.dtos.responses.GameEndedResponse;
 import io.rizvan.beans.playerActions.PlayerActionDeserializer;
 import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
-import jakarta.websocket.OnClose;
-import jakarta.websocket.OnError;
-import jakarta.websocket.OnMessage;
-import jakarta.websocket.OnOpen;
-import jakarta.websocket.Session;
+import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 
@@ -54,16 +51,56 @@ public class StartWebSocket {
         sessionStorage.addPlayerAction(sessionId, playerAction);
     }
 
+    @ConsumeEvent("game.closed")
+    public void closeGame(String sessionId) {
+        var session = sessionStorage.getSession(sessionId);
+        if (session.isOpen()) {
+            try {
+                System.out.println("Game Closed got called");
+                var gameState = sessionStorage.getGameState(sessionId);
+                if (gameState == null || !gameState.hasGameEnded()) {
+                    return;
+                }
+                var agent = gameState.getAgent();
+                var player = gameState.getPlayer();
+                var gameEndedResponse = jsonb.toJson(
+                        new GameEndedResponse(
+                                agent,
+                                player,
+                                gameState.getTime(),
+                                true
+                        )
+                );
+                session.getAsyncRemote().sendText(gameEndedResponse);
+                session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "Game has ended"));
+            } catch (Exception e) {
+                System.err.println("Failed to close session: " + e.getMessage());
+                try {
+                    session.close(new CloseReason(CloseReason.CloseCodes.UNEXPECTED_CONDITION, "Error occurred"));
+                } catch (Exception closeException) {
+                    System.err.println("Failed to close session: " + closeException.getMessage());
+                }
+            }
+        }
+    }
+
     @ConsumeEvent("game.update")
     public void broadcast(String sessionId) {
         var session = sessionStorage.getSession(sessionId);
         if (session.isOpen()) {
             try {
                 var gameState = sessionStorage.getGameState(sessionId);
+                if (gameState == null) return;
+
                 var gameStateJson = jsonb.toJson(gameState);
                 session.getAsyncRemote().sendText(gameStateJson);
             } catch (Exception e) {
                 System.err.println("Failed to send message: " + e.getMessage());
+                try {
+                    session.close(new CloseReason(CloseReason.CloseCodes.UNEXPECTED_CONDITION, "Error occurred"));
+                } catch (Exception closeException) {
+                    System.err.println("Failed to close session: " + closeException.getMessage());
+                }
             }
         }
     }
