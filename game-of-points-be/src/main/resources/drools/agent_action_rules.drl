@@ -13,6 +13,7 @@ import java.time.Instant
 import io.rizvan.beans.ResourcePoint
 import io.rizvan.beans.actors.agent.actions.AgentCollectsAction
 import io.rizvan.beans.actors.agent.actions.AgentAimsAction
+import io.rizvan.beans.actors.agent.actions.AgentAvoidsAction
 
 rule "agent-chose-kill-and-can-reach-player"
 agenda-group "agent-actions-group"
@@ -95,6 +96,7 @@ when
     $possibilities : AgentPossibilities()
     eval($choice instanceof AvoidChoice)
 then
+    $gameState.applyAction(new AgentAvoidsAction());
     $gameState.applyAction(new AgentAimsAction());
     System.out.println("agent avoid");
 end

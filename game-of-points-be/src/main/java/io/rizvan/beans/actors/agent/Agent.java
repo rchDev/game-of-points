@@ -2,10 +2,12 @@ package io.rizvan.beans.actors.agent;
 
 import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.CompetingEntity;
+import io.rizvan.beans.actors.GameEntity;
 import io.rizvan.beans.facts.Fact;
 import io.rizvan.beans.RangedWeapon;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;

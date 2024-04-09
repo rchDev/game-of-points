@@ -2,25 +2,65 @@ package io.rizvan.beans.actors.agent.actions;
 
 import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.GameEntity;
+import io.rizvan.beans.actors.agent.Agent;
 
 import java.time.Instant;
 
 public class AgentMovesAction extends AgentAction {
-    private GameEntity destination;
+    private Double destinationX;
+    private Double destinationY;
+    private Integer angle;
 
     public AgentMovesAction(GameEntity destination) {
-        this.destination = destination;
+        this.destinationX = destination.getX();
+        this.destinationY = destination.getY();
+        this.angle = null;
+    }
+
+    public AgentMovesAction(double x, double y) {
+        this.destinationX = x;
+        this.destinationY = y;
+        this.angle = null;
+    }
+
+    public AgentMovesAction(int angle) {
+        this.destinationX = null;
+        this.destinationY = null;
+        this.angle = angle;
     }
 
     @Override
     public void apply(GameState gameState) {
-        var destinationX = destination.getX();
-        var destinationY = destination.getY();
-        var destinationHitBox = destination.getHitBox();
+        if (destinationX != null && destinationY != null && angle == null) {
+            moveToAnEntity(gameState, destinationX, destinationY);
+        } else {
+            moveAtAnAngle(gameState, angle);
+        }
+    }
 
+    public void moveAtAnAngle(GameState gameState, int angleDegrees) {
+        var agent = gameState.getAgent();
+
+        // Convert angle to radians
+        double angleRadians = Math.toRadians(angleDegrees);
+
+        // Calculate direction vector based on the angle
+        double directionX = Math.cos(angleRadians);
+        double directionY = Math.sin(angleRadians);
+
+        var delta = gameState.getDeltaBetweenUpdates();
+        var deltaBetweenUpdateAndNow = Instant.now().toEpochMilli() - gameState.getLastUpdateTime();
+        var combinedDelta = delta + deltaBetweenUpdateAndNow;
+
+        // Calculate the move distance
+        double moveDistance = agent.getSpeed() * combinedDelta;
+
+        move(gameState, directionX, directionY, moveDistance);
+    }
+
+    public void moveToAnEntity(GameState gameState, double destinationX, double destinationY) {
         var agentX = gameState.getAgent().getX();
         var agentY = gameState.getAgent().getY();
-        var agentHitBox = gameState.getAgent().getHitBox();
 
         double directionX = destinationX - agentX;
         double directionY = destinationY - agentY;
@@ -41,21 +81,35 @@ public class AgentMovesAction extends AgentAction {
             moveDistance = magnitude;
         }
 
+        move(gameState, directionX, directionY, moveDistance);
+    }
+
+    private void move(GameState gameState, double directionX, double directionY, double moveDistance) {
+        var agent = gameState.getAgent();
+
         double moveX = directionX * moveDistance;
         double moveY = directionY * moveDistance;
 
-        double agentNewX = Math.max(0, Math.min(gameState.getZone().getWidth(), agentX + moveX));
-        double agentNewY = Math.max(0, Math.min(gameState.getZone().getHeight(), agentY + moveY));
+        double agentNewX = Math.max(0, Math.min(gameState.getZone().getWidth(), agent.getX() + moveX));
+        double agentNewY = Math.max(0, Math.min(gameState.getZone().getHeight(), agent.getY() + moveY));
 
-        gameState.getAgent().setX(agentNewX);
-        gameState.getAgent().setY(agentNewY);
+        agent.setX(agentNewX);
+        agent.setY(agentNewY);
     }
 
-    public GameEntity getDestination() {
-        return destination;
+    public double getDestinationX() {
+        return destinationX;
     }
 
-    public void setDestination(GameEntity destination) {
-        this.destination = destination;
+    public void setDestinationX(double destinationX) {
+        this.destinationX = destinationX;
+    }
+
+    public double getDestinationY() {
+        return destinationY;
+    }
+
+    public void setDestinationY(double destinationY) {
+        this.destinationY = destinationY;
     }
 }
