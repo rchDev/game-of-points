@@ -12,9 +12,9 @@ import io.rizvan.beans.actors.agent.CollectChoice;
 rule "Agent Kills Player"
 agenda-group "agent-choices-group"
 when
-    $agent : Agent($x : getX(), $y : getY())
+    $agent : Agent($x : getX(), $y : getY(), $hitBox : getHitBox())
     $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
-    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y)
+    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y, $hitBox)
     $possibilities : AgentPossibilities(
         $agentCanKill : canKillPlayer(),
         $playerCanKill : isKilledByPlayer(),
@@ -47,9 +47,9 @@ end
 rule "Agent Avoids Player"
 agenda-group "agent-choices-group"
 when
-    $agent : Agent($x : getX(), $y : getY())
+    $agent : Agent($x : getX(), $y : getY(), $hitBox : getHitBox())
     $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
-    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y)
+    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y, $hitBox)
     $possibilities : AgentPossibilities(
         $agentCanKill : canKillPlayer(),
         $playerCanKill : isKilledByPlayer(),
@@ -90,9 +90,9 @@ end
 rule "Agent Collects Points"
 agenda-group "agent-choices-group"
 when
-    $agent : Agent($x : getX(), $y : getY())
+    $agent : Agent($x : getX(), $y : getY(), $hitBox : getHitBox())
     $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
-    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y)
+    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y, $hitBox)
     $possibilities : AgentPossibilities(
         $agentCanKill : canKillPlayer(),
         $playerCanKill : isKilledByPlayer(),

@@ -4,6 +4,7 @@ import io.rizvan.beans.HitBox;
 import io.rizvan.beans.RangedWeapon;
 import io.rizvan.beans.ResourcePoint;
 import io.rizvan.beans.WeaponCache;
+import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.actors.agent.AgentChoice;
 import io.rizvan.utils.Coord;
 
@@ -155,15 +156,12 @@ public class AgentKnowledge {
         this.playerReach.setKnown(isKnown);
     }
 
-    public boolean isPlayerClose(Double agentX, Double agentY) {
+    public boolean isPlayerClose(Double agentX, Double agentY, HitBox hitBox) {
         Double playerX = playerPosition.getValue().getX();
         Double playerY = playerPosition.getValue().getY();
 
-        var agentDistanceToPlayer = Math.sqrt(Math.pow(agentX - playerX, 2) + Math.pow(agentY - playerY, 2));
-        var confrontationalDistance = playerReach.getValue(); // + AgentKnowledge.REACH_DISTANCE_OFFSET;
-        System.out.println("playerX: " + playerX + ", playerY: " + playerY);
-        System.out.println("agent-to-player: " + agentDistanceToPlayer + " player-reach: " + confrontationalDistance);
-        return agentDistanceToPlayer <= confrontationalDistance;
+        var unsafeDistance = playerReach.getValue() + REACH_DISTANCE_OFFSET;
+        return CompetingEntity.touchesReachCircle(playerX, playerY, unsafeDistance, agentX, agentY, hitBox);
     }
 
     public List<RangedWeapon> getPossibleWeapons() {

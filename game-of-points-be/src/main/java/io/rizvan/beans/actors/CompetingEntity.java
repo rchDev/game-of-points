@@ -107,6 +107,10 @@ public class CompetingEntity extends GameEntity {
         double circleCenterY = this.getY();
         double circleRadius = this.getReach();
 
+        return touchesReachCircle(circleCenterX, circleCenterY, circleRadius, x, y, hitBox);
+    }
+
+    public static boolean touchesReachCircle(double circleX, double circleY, double circleRadius, double x, double y, HitBox hitBox) {
         double halfWidth = hitBox.getWidth() / 2.0;
         double halfHeight = hitBox.getHeight() / 2.0;
 
@@ -120,13 +124,13 @@ public class CompetingEntity extends GameEntity {
         double corner4Y = y + halfHeight;
 
         // Check if all corners are within the circle's reach
-        return isPointWithinCircle(corner1X, corner1Y, circleCenterX, circleCenterY, circleRadius) &&
-                isPointWithinCircle(corner2X, corner2Y, circleCenterX, circleCenterY, circleRadius) &&
-                isPointWithinCircle(corner3X, corner3Y, circleCenterX, circleCenterY, circleRadius) &&
-                isPointWithinCircle(corner4X, corner4Y, circleCenterX, circleCenterY, circleRadius);
+        return isPointWithinCircle(corner1X, corner1Y, circleX, circleY, circleRadius) ||
+                isPointWithinCircle(corner2X, corner2Y, circleX, circleY, circleRadius) ||
+                isPointWithinCircle(corner3X, corner3Y, circleX, circleY, circleRadius) ||
+                isPointWithinCircle(corner4X, corner4Y, circleX, circleY, circleRadius);
     }
 
-    private boolean isPointWithinCircle(double pointX, double pointY, double centerX, double centerY, double radius) {
+    private static boolean isPointWithinCircle(double pointX, double pointY, double centerX, double centerY, double radius) {
         // Calculate the distance from the point to the circle's center
         double distanceSquared = (pointX - centerX) * (pointX - centerX) + (pointY - centerY) * (pointY - centerY);
         // Check if the distance is less than or equal to the radius
