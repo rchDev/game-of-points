@@ -103,41 +103,33 @@ public class CompetingEntity extends GameEntity {
     }
 
     public boolean canReach(double x, double y, HitBox hitBox) {
-        var entityEdges = calculateEdges(this);
-        var otherEdges = calculateEdges(x, y, hitBox);
+        double circleCenterX = this.getX();
+        double circleCenterY = this.getY();
+        double circleRadius = this.getReach();
 
-        var entityLeftReach = entityEdges.left - getReach();
-        var entityRightReach = entityEdges.right +getReach();
-        var entityTopReach = entityEdges.top - getReach();
-        var entityBottomReach = entityEdges.bottom + getReach();
+        double halfWidth = hitBox.getWidth() / 2.0;
+        double halfHeight = hitBox.getHeight() / 2.0;
 
-        boolean horizontalOverlap = entityRightReach >= otherEdges.left && entityLeftReach <= otherEdges.right;
-        boolean verticalOverlap = entityBottomReach >= otherEdges.top && entityTopReach <= otherEdges.bottom;
+        double corner1X = x - halfWidth;
+        double corner1Y = y - halfHeight;
+        double corner2X = x + halfWidth;
+        double corner2Y = y - halfHeight;
+        double corner3X = x + halfWidth;
+        double corner3Y = y + halfHeight;
+        double corner4X = x - halfWidth;
+        double corner4Y = y + halfHeight;
 
-        return horizontalOverlap && verticalOverlap;
+        // Check if all corners are within the circle's reach
+        return isPointWithinCircle(corner1X, corner1Y, circleCenterX, circleCenterY, circleRadius) &&
+                isPointWithinCircle(corner2X, corner2Y, circleCenterX, circleCenterY, circleRadius) &&
+                isPointWithinCircle(corner3X, corner3Y, circleCenterX, circleCenterY, circleRadius) &&
+                isPointWithinCircle(corner4X, corner4Y, circleCenterX, circleCenterY, circleRadius);
     }
 
-    private EntityEdges calculateEdges(CompetingEntity entity) {
-        return calculateEdges(entity.getX(), entity.getY(), entity.getHitBox());
-    }
-
-    private EntityEdges calculateEdges(double x, double y, HitBox hitBox) {
-        double left = x - hitBox.getWidth() / 2.0;
-        double right = x + hitBox.getWidth() / 2.0;
-        double top = y - hitBox.getHeight() / 2.0;
-        double bottom = y + hitBox.getHeight() / 2.0;
-
-        return new EntityEdges(left, right, top, bottom);
-    }
-
-    private class EntityEdges {
-        double left, right, top, bottom;
-
-        EntityEdges(double left, double right, double top, double bottom) {
-            this.left = left;
-            this.right = right;
-            this.top = top;
-            this.bottom = bottom;
-        }
+    private boolean isPointWithinCircle(double pointX, double pointY, double centerX, double centerY, double radius) {
+        // Calculate the distance from the point to the circle's center
+        double distanceSquared = (pointX - centerX) * (pointX - centerX) + (pointY - centerY) * (pointY - centerY);
+        // Check if the distance is less than or equal to the radius
+        return distanceSquared <= radius * radius;
     }
 }
