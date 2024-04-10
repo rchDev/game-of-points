@@ -300,13 +300,18 @@ const sketch = (p) => {
     if (player) {
       p.fill("red");
       p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
-      renderReach(player);
+      renderReach({ x: player.x, y: player.y }, player.reach, [255, 0, 0, 191]);
+      renderReach(
+        { x: player.x, y: player.y },
+        agent.knowledge.playerReach.value,
+        [255, 0, 0, 69],
+      );
     }
 
     if (agent) {
       p.fill("blue");
       p.ellipse(agent.x, agent.y, agent.hitBox.width, agent.hitBox.height);
-      renderReach(agent, [0, 0, 255, 69]);
+      renderReach({ x: agent.x, y: agent.y }, agent.reach, [0, 0, 255, 69]);
     }
 
     if (resources) {
@@ -323,11 +328,11 @@ const sketch = (p) => {
     }
   }
 
-  function renderReach(entity, color = [255, 0, 0, 69]) {
+  function renderReach(position, reach, color = [255, 0, 0, 69]) {
     p.stroke(color);
     p.strokeWeight(6);
     p.noFill();
-    p.ellipse(entity.x, entity.y, entity.reach * 2);
+    p.ellipse(position.x, position.y, reach * 2);
     p.fill(255, 0, 0);
     p.stroke("black");
     p.strokeWeight(1);
