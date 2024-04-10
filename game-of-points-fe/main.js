@@ -298,32 +298,15 @@ const sketch = (p) => {
     p.clear();
 
     if (player) {
+      p.fill("red");
       p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
-      drawAimLine(
-        player,
-        { x: p.mouseX, y: p.mouseY },
-        agent.knowledge.playerReach.value,
-        [255, 0, 0, 69],
-        20,
-      );
-      drawAimLine(
-        player,
-        { x: p.mouseX, y: p.mouseY },
-        player.reach,
-        [255, 0, 0, 191],
-        6,
-      );
+      renderReach(player);
     }
 
     if (agent) {
+      p.fill("blue");
       p.ellipse(agent.x, agent.y, agent.hitBox.width, agent.hitBox.height);
-      drawAimLine(
-        agent,
-        { x: agent.mouseX, y: agent.mouseY },
-        agent.reach,
-        [0, 0, 255, 191],
-        6,
-      );
+      renderReach(agent, [0, 0, 255, 69]);
     }
 
     if (resources) {
@@ -338,6 +321,16 @@ const sketch = (p) => {
         p.strokeWeight(1);
       });
     }
+  }
+
+  function renderReach(entity, color = [255, 0, 0, 69]) {
+    p.stroke(color);
+    p.strokeWeight(6);
+    p.noFill();
+    p.ellipse(entity.x, entity.y, entity.reach * 2);
+    p.fill(255, 0, 0);
+    p.stroke("black");
+    p.strokeWeight(1);
   }
 
   function interpolateAgentPosition(deltaTime) {
@@ -430,34 +423,6 @@ const sketch = (p) => {
         );
       }
     }
-  }
-
-  function drawAimLine(
-    entity,
-    target,
-    lineLength,
-    color = [255, 0, 0, 255],
-    strokeWidth = 4,
-  ) {
-    // Calculate angle between player position and mouse position
-    let angle = p.atan2(target.y - entity.y, target.x - entity.x);
-
-    let radius = entity.hitBox.width / 2; // Assuming hitBox.width is the diameter
-
-    // Calculate the start point of the line at the edge of the player's hitbox
-    let startX = entity.x + radius * p.cos(angle);
-    let startY = entity.y + radius * p.sin(angle);
-
-    // Calculate the end point of the line based on the player's reach
-    let endX = entity.x + (radius + lineLength) * p.cos(angle);
-    let endY = entity.y + (radius + lineLength) * p.sin(angle);
-
-    // Draw the line
-    p.stroke(color);
-    p.strokeWeight(strokeWidth);
-    p.line(startX, startY, endX, endY);
-    p.strokeWeight(1);
-    p.stroke("black");
   }
 
   // Draw loop
