@@ -98,7 +98,7 @@ public class CompetingEntity extends GameEntity {
         return hitPoints > 0;
     }
 
-    public boolean canReach(CompetingEntity other) {
+    public boolean canReach(GameEntity other) {
         return canReach(other.getX(), other.getY(), other.getHitBox());
     }
 
@@ -108,6 +108,27 @@ public class CompetingEntity extends GameEntity {
         double circleRadius = this.getReach();
 
         return touchesReachCircle(circleCenterX, circleCenterY, circleRadius, x, y, hitBox);
+    }
+
+    public boolean collidesWith(GameEntity other) {
+        int halfWidth = hitBox.getWidth() / 2;
+        int halfHeight = hitBox.getHeight() / 2;
+        int otherHalfWidth = other.getHitBox().getWidth() / 2;
+        int otherHalfHeight = other.getHitBox().getHeight() / 2;
+
+        double thisLeft = this.x - (double) halfWidth;
+        double thisRight = this.x + (double) halfWidth;
+        double thisTop = this.y - (double) halfHeight;
+        double thisBottom = this.y + (double) halfHeight;
+
+        double otherLeft = other.x - (double) otherHalfWidth;
+        double otherRight = other.x + (double) otherHalfWidth;
+        double otherTop = other.y - (double) otherHalfHeight;
+        double otherBottom = other.y + (double) otherHalfHeight;
+
+        // Check if there is any overlap between the two rectangles
+        return !(thisRight < otherLeft) && !(thisLeft > otherRight) &&
+                !(thisBottom < otherTop) && !(thisTop > otherBottom);
     }
 
     public static boolean touchesReachCircle(double circleX, double circleY, double circleRadius, double x, double y, HitBox hitBox) {
@@ -130,7 +151,7 @@ public class CompetingEntity extends GameEntity {
                 isPointWithinCircle(corner4X, corner4Y, circleX, circleY, circleRadius);
     }
 
-    private static boolean isPointWithinCircle(double pointX, double pointY, double centerX, double centerY, double radius) {
+    public static boolean isPointWithinCircle(double pointX, double pointY, double centerX, double centerY, double radius) {
         // Calculate the distance from the point to the circle's center
         double distanceSquared = (pointX - centerX) * (pointX - centerX) + (pointY - centerY) * (pointY - centerY);
         // Check if the distance is less than or equal to the radius

@@ -5,7 +5,7 @@ import io.rizvan.beans.knowledge.AgentKnowledge
 import io.rizvan.beans.knowledge.AgentPossibilities
 import io.rizvan.beans.GameState
 import io.rizvan.beans.actors.agent.AvoidChoice
-import io.rizvan.beans.actors.agent.CollectChoice
+import io.rizvan.beans.actors.agent.SafeCollectChoice
 import io.rizvan.beans.actors.agent.KillChoice
 import io.rizvan.beans.actors.agent.actions.AgentShootsAction
 import io.rizvan.beans.actors.agent.actions.AgentMovesAction
@@ -13,6 +13,8 @@ import java.time.Instant
 import io.rizvan.beans.ResourcePoint
 import io.rizvan.beans.actors.agent.actions.AgentCollectsAction
 import io.rizvan.beans.actors.agent.actions.AgentAvoidsAction
+import io.rizvan.beans.actors.agent.AggressiveCollectChoice
+import io.rizvan.beans.actors.CompetingEntity
 
 rule "agent-chose-kill-and-can-reach-player"
 agenda-group "agent-actions-group"
@@ -40,7 +42,7 @@ then
     $gameState.applyAction(new AgentMovesAction($gameState.getPlayer()));
 end
 
-rule "agent-chose-collect-can-reach"
+rule "agent-collect-can-reach"
 agenda-group "agent-actions-group"
 when
     $gameState : GameState()
@@ -48,27 +50,62 @@ when
     $knowledge : AgentKnowledge($choice : getAgentChoice())
     $possibilities : AgentPossibilities()
     $resource : ResourcePoint($resourceX : getX(), $resourceY : getY())
-    eval($choice instanceof CollectChoice && Math.sqrt(Math.pow($resourceX - $x, 2) + Math.pow($resourceY - $y, 2)) == 0)
+    eval($choice instanceof SafeCollectChoice && $agent.collidesWith($resource))
 then
     System.out.println("collect - can reach");
     $gameState.applyAction(new AgentCollectsAction($resource));
     retract($resource);
 end
 
-rule "agent-chose-collect-cannot-reach"
+rule "agent-chose-collect-cannot-reach-aggresive"
 agenda-group "agent-actions-group"
 when
     $gameState : GameState()
     $agent : Agent($x : getX(), $y : getY())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
     $possibilities : AgentPossibilities()
-    eval($choice instanceof CollectChoice)
+    eval($choice instanceof AggressiveCollectChoice)
+then
+    ResourcePoint closest = null;
+    double closestDistance = Double.MAX_VALUE;
+
+    for(ResourcePoint resource : $knowledge.getResourcePoints().getValue()) {
+        double currentDistance = Math.hypot(resource.getX() - $x, resource.getY() - $y);
+        if(currentDistance < closestDistance) {
+            closest = resource;
+            closestDistance = currentDistance;
+        }
+    }
+
+    // Assuming there's a method to act based on the closest resource found
+    if(closest != null) {
+        $gameState.applyAction(new AgentMovesAction(closest));
+    }
+    insertLogical(closest);
+end
+
+rule "agent-chose-collect-cannot-reach-safe"
+agenda-group "agent-actions-group"
+when
+    $gameState : GameState()
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($choice : getAgentChoice(), $playerPos : getPlayerPosition(), $playerReach : getPlayerReach())
+    $possibilities : AgentPossibilities()
+    eval($choice instanceof SafeCollectChoice)
 then
     ResourcePoint closest = null;
     double closestDistance = Double.MAX_VALUE;
 
     // Directly iterate over $resources.getValue() without extra braces
     for(ResourcePoint resource : $knowledge.getResourcePoints().getValue()) {
+        boolean withinPlayerReach = CompetingEntity.isPointWithinCircle(
+                resource.getX(),
+                resource.getY(),
+                $playerPos.getValue().getX(),
+                $playerPos.getValue().getY(),
+                $playerReach.getValue()
+        );
+        if (withinPlayerReach) continue;
         double currentDistance = Math.hypot(resource.getX() - $x, resource.getY() - $y);
         if(currentDistance < closestDistance) {
             closest = resource;
