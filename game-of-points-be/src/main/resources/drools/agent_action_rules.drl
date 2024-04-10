@@ -12,7 +12,6 @@ import io.rizvan.beans.actors.agent.actions.AgentMovesAction
 import java.time.Instant
 import io.rizvan.beans.ResourcePoint
 import io.rizvan.beans.actors.agent.actions.AgentCollectsAction
-import io.rizvan.beans.actors.agent.actions.AgentAimsAction
 import io.rizvan.beans.actors.agent.actions.AgentAvoidsAction
 
 rule "agent-chose-kill-and-can-reach-player"
@@ -25,7 +24,6 @@ when
     eval($choice instanceof KillChoice)
 then
     System.out.println("agent kill - can reach");
-    $gameState.applyAction(new AgentAimsAction());
     $gameState.applyAction(new AgentShootsAction());
 end
 
@@ -40,7 +38,6 @@ when
 then
     System.out.println("agent kill - cannot reach");
     $gameState.applyAction(new AgentMovesAction($gameState.getPlayer()));
-    $gameState.applyAction(new AgentAimsAction());
 end
 
 rule "agent-chose-collect-can-reach"
@@ -83,7 +80,6 @@ then
     if(closest != null) {
         $gameState.applyAction(new AgentMovesAction(closest));
     }
-    $gameState.applyAction(new AgentAimsAction());
     insertLogical(closest);
 end
 
@@ -97,6 +93,5 @@ when
     eval($choice instanceof AvoidChoice)
 then
     $gameState.applyAction(new AgentAvoidsAction());
-    $gameState.applyAction(new AgentAimsAction());
     System.out.println("agent avoid");
 end
