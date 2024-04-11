@@ -15,7 +15,7 @@ import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.CompetingEntity;
 import java.util.stream.Collectors;
 import java.util.Comparator;
-import io.rizvan.beans.RangedWeapon;
+import io.rizvan.beans.Weapon;
 import java.util.Optional;
 import java.util.stream.Stream
 import java.util.List
@@ -120,10 +120,7 @@ salience -100
         boolean isPlayerReachKnown = $knowledge.getPlayerReach().isKnown();
         if (!isPlayerDamageKnown || !isPlayerSpeedKnown || !isPlayerReachKnown || !isAmmoCapacityKnown) {
 
-            System.out.println("Knowledge Inference ran");
-            System.out.println("-----------------------");
-
-            List<RangedWeapon> weapons = $knowledge.getPossibleWeapons()
+            List<Weapon> weapons = $knowledge.getPossibleWeapons()
             .stream()
             .filter(wep ->
                 ((!isShotCountKnown || wep.getAmmoCapacity() >= $knowledge.getShotCount().getValue()) &&
@@ -132,31 +129,25 @@ salience -100
                 (!isPlayerReachKnown || wep.getRange() == $knowledge.getPlayerReach().getValue()))
             ).toList();
 
-            System.out.println("possible weapons");
-            weapons.forEach(wp -> System.out.println(wp.getId()));
             boolean oneWeaponLeft = weapons.size() == 1;
 
-            weapons.stream().max(Comparator.comparingInt(RangedWeapon::getAmmoCapacity))
+            weapons.stream().max(Comparator.comparingInt(Weapon::getAmmoCapacity))
                 .ifPresent(maxCapacityWeapon -> {
-                    System.out.println("max capacity: " + maxCapacityWeapon.getAmmoCapacity());
                     $knowledge.setPlayerAmmoCapacity(maxCapacityWeapon.getAmmoCapacity(), oneWeaponLeft);
                 });
 
-            weapons.stream().max(Comparator.comparingInt(RangedWeapon::getDamage))
+            weapons.stream().max(Comparator.comparingInt(Weapon::getDamage))
                 .ifPresent(maxDamageWeapon -> {
-                    System.out.println("max damage: " + maxDamageWeapon.getDamage());
                     $knowledge.setPlayerDamage(maxDamageWeapon.getDamage(), oneWeaponLeft);
                 });
 
-            weapons.stream().max(Comparator.comparingDouble(RangedWeapon::getSpeedModifier))
+            weapons.stream().max(Comparator.comparingDouble(Weapon::getSpeedModifier))
                .ifPresent(maxSpeedWeapon -> {
-                    System.out.println("max speed: " + maxSpeedWeapon.getSpeedModifier());
                    $knowledge.setPlayerSpeed(maxSpeedWeapon.getSpeedModifier() * CompetingEntity.BASE_SPEED, oneWeaponLeft);
                });
 
-            weapons.stream().max(Comparator.comparingDouble(RangedWeapon::getRange))
+            weapons.stream().max(Comparator.comparingDouble(Weapon::getRange))
                .ifPresent(maxRangeWeapon -> {
-                    System.out.println("max range: " + maxRangeWeapon.getRange());
                    $knowledge.setPlayerReach(maxRangeWeapon.getRange(), oneWeaponLeft);
                });
         }

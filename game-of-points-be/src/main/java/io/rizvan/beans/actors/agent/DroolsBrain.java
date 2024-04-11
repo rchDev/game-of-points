@@ -35,7 +35,6 @@ public class DroolsBrain implements AgentsBrain {
         kieSession.insert(gameState.getAgent());
         kieSession.insert(knowledge);
         kieSession.insert(possibilities);
-        kieSession.insert(new KnowledgeUpdateSignal());
 
         try {
             gameState.getFacts().forEach(kieSession::insert);

@@ -8,7 +8,7 @@ public class AgentShootsAction extends AgentAction {
     public void apply(GameState gameState) {
         var agent = gameState.getAgent();
         var player = gameState.getPlayer();
-
+        System.out.println("AgentShootsAction ran");
         var damage = agent.shoot();
         if (agent.canReach(player) && damage > 0) {
             var playerHp = player.getHitPoints();

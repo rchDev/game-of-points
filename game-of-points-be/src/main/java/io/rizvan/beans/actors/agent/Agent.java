@@ -2,12 +2,9 @@ package io.rizvan.beans.actors.agent;
 
 import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.CompetingEntity;
-import io.rizvan.beans.actors.GameEntity;
-import io.rizvan.beans.facts.Fact;
-import io.rizvan.beans.RangedWeapon;
+import io.rizvan.beans.Weapon;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -17,14 +14,14 @@ public class Agent extends CompetingEntity {
     public AgentsBrain brain;
 
     public enum Type {
-        SNIPER(3, 0, 0, 50, 50, 1.0, 0, RangedWeapon.Type.SNIPER.get()),
-        SOLDIER(3, 0, 0, 50, 50, 1.0, 0, RangedWeapon.Type.CARBINE.get()),
-        SCOUT(3, 0, 0, 50, 50, 1.0, 0, RangedWeapon.Type.SUB_MACHINE.get()),
-        SPEED_DEMON(3, 0, 0, 50, 50, 1.0, 0, RangedWeapon.Type.PISTOL.get());
+        SNIPER(3, 0, 0, 50, 50, 1.0, 0, Weapon.Type.SNIPER.get()),
+        SOLDIER(3, 0, 0, 50, 50, 1.0, 0, Weapon.Type.CARBINE.get()),
+        SCOUT(3, 0, 0, 50, 50, 1.0, 0, Weapon.Type.SUB_MACHINE.get()),
+        SPEED_DEMON(3, 0, 0, 50, 50, 1.0, 0, Weapon.Type.PISTOL.get());
 
         private final Agent agent;
 
-        Type(int hp, double x, double y, int width, int height, double speed, int points, RangedWeapon weapon) {
+        Type(int hp, double x, double y, int width, int height, double speed, int points, Weapon weapon) {
             this.agent = new Agent(hp, x, y, width, height, speed, points, weapon);
         }
 
@@ -33,7 +30,7 @@ public class Agent extends CompetingEntity {
         }
     }
 
-    public Agent(int hitPoints, double x, double y, int width, int height, double speed, int points, RangedWeapon weapon) {
+    public Agent(int hitPoints, double x, double y, int width, int height, double speed, int points, Weapon weapon) {
         super(hitPoints, x, y, width, height, speed, points, weapon);
         this.brain = new DroolsBrain();
     }

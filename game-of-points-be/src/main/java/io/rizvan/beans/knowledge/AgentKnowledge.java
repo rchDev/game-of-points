@@ -1,11 +1,12 @@
 package io.rizvan.beans.knowledge;
 
 import io.rizvan.beans.HitBox;
-import io.rizvan.beans.RangedWeapon;
+import io.rizvan.beans.Weapon;
 import io.rizvan.beans.ResourcePoint;
 import io.rizvan.beans.WeaponCache;
 import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.actors.agent.AgentChoice;
+import io.rizvan.beans.actors.agent.actions.AgentAction;
 import io.rizvan.utils.Coord;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class AgentKnowledge {
     private PlayerReachKnowledge playerReach;
     private AgentChoice agentChoice;
     private WeaponCache possibleWeapons;
+    private AgentAction currentAction;
 
     public static double REACH_DISTANCE_OFFSET = 50.0;
 
@@ -160,11 +162,11 @@ public class AgentKnowledge {
         Double playerX = playerPosition.getValue().getX();
         Double playerY = playerPosition.getValue().getY();
 
-        var unsafeDistance = playerReach.getValue() + REACH_DISTANCE_OFFSET;
+        var unsafeDistance = playerReach.getValue();
         return CompetingEntity.touchesReachCircle(playerX, playerY, unsafeDistance, agentX, agentY, hitBox);
     }
 
-    public List<RangedWeapon> getPossibleWeapons() {
+    public List<Weapon> getPossibleWeapons() {
         return possibleWeapons.getWeapons();
     }
 
@@ -178,6 +180,14 @@ public class AgentKnowledge {
 
     public AgentChoice getAgentChoice() {
         return agentChoice;
+    }
+
+    public AgentAction getCurrentAction() {
+        return currentAction;
+    }
+
+    public void setCurrentAction(AgentAction currentAction) {
+        this.currentAction = currentAction;
     }
 
     @Override

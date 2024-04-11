@@ -1,6 +1,6 @@
 package io.rizvan.resources;
 
-import io.rizvan.beans.RangedWeapon;
+import io.rizvan.beans.Weapon;
 import io.rizvan.beans.WeaponCache;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -18,7 +18,7 @@ public class WeaponsResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<RangedWeapon> getWeaponList() {
+    public List<Weapon> getWeaponList() {
         return weaponCache.getWeapons();
     }
 }

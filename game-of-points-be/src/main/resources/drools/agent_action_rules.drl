@@ -20,10 +20,10 @@ rule "agent-chose-kill-and-can-reach-player"
 agenda-group "agent-actions-group"
 when
     $gameState : GameState()
-    $agent : Agent($x : getX(), $y : getY())
+    $agent : Agent($x : getX(), $y : getY(), $isRecharging : isRecharging())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
     $possibilities : AgentPossibilities($agentCanReach : canReachPlayer() == true)
-    eval($choice instanceof KillChoice)
+    eval($choice instanceof KillChoice && !$isRecharging)
 then
     System.out.println("agent kill - can reach");
     $gameState.applyAction(new AgentShootsAction());
@@ -33,10 +33,10 @@ rule "agent-chose-kill-and-cannot-reach-player"
 agenda-group "agent-actions-group"
 when
     $gameState : GameState()
-    $agent : Agent($x : getX(), $y : getY())
+    $agent : Agent($x : getX(), $y : getY(), $isRecharging: isRecharging())
     $knowledge : AgentKnowledge($choice : getAgentChoice())
     $possibilities : AgentPossibilities($agentCanReach : canReachPlayer() == false)
-    eval($choice instanceof KillChoice)
+    eval($choice instanceof KillChoice && !$isRecharging)
 then
     System.out.println("agent kill - cannot reach");
     $gameState.applyAction(new AgentMovesAction($gameState.getPlayer()));

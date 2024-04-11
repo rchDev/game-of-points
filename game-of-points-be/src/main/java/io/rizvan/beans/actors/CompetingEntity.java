@@ -1,10 +1,13 @@
 package io.rizvan.beans.actors;
 
 import io.rizvan.beans.HitBox;
-import io.rizvan.beans.RangedWeapon;
+import io.rizvan.beans.Weapon;
+import jakarta.json.bind.annotation.JsonbTransient;
+
+import java.beans.Transient;
 
 public class CompetingEntity extends GameEntity {
-    private RangedWeapon weapon;
+    private Weapon weapon;
     private int hitPoints;
     private double speed;
     private int points;
@@ -16,7 +19,7 @@ public class CompetingEntity extends GameEntity {
 
     public CompetingEntity() {}
 
-    public CompetingEntity(int hitPoints, double x, double y, int width, int height, double speed, int points, RangedWeapon weapon) {
+    public CompetingEntity(int hitPoints, double x, double y, int width, int height, double speed, int points, Weapon weapon) {
         super(x, y, width, height);
         this.weapon = weapon;
         this.hitPoints = hitPoints;
@@ -86,12 +89,17 @@ public class CompetingEntity extends GameEntity {
         this.mouseY = mouseY;
     }
 
-    public void setWeapon(RangedWeapon weapon) {
+    public void setWeapon(Weapon weapon) {
         this.weapon = weapon;
     }
 
     public int shoot() {
         return weapon.shoot();
+    }
+
+    @JsonbTransient
+    public boolean isRecharging() {
+        return weapon.isRecharging();
     }
 
     public boolean isAlive() {
