@@ -53,7 +53,7 @@ no-loop true
         $shootingFact : PlayerShootingFact()
         $knowledge : AgentKnowledge($shotCount : getShotCount())
     then
-        boolean damageFelt = $shootingFact.getDamage() >= 0;
+        boolean damageFelt = $shootingFact.getDamage() > 0;
         int updatedShotCount = $shootingFact.actionSucceeded() ? $shotCount.getValue() + 1 : $shotCount.getValue();
         modify($knowledge) {
             setPlayerDamage($shootingFact.getDamage(), damageFelt),
@@ -132,35 +132,33 @@ salience -100
                 (!isPlayerReachKnown || wep.getRange() == $knowledge.getPlayerReach().getValue()))
             ).toList();
 
-            System.out.println(weapons.size() + ", shotCount: " + $knowledge.getShotCount().getValue());
+            System.out.println("weapons: " + weapons.size() + ", shotCount: " + $knowledge.getShotCount().getValue());
 
             weapons.stream().max(Comparator.comparingInt(Weapon::getAmmoCapacity))
                 .ifPresent(maxCapacityWeapon -> {
-                    boolean ammoIsKnown = $knowledge.getPlayerAmmoCapacity().isKnown();
-                    $knowledge.setPlayerAmmoCapacity(maxCapacityWeapon.getAmmoCapacity(), ammoIsKnown);
+                    if (!isAmmoCapacityKnown) {
+                        $knowledge.setPlayerAmmoCapacity(maxCapacityWeapon.getAmmoCapacity(), isAmmoCapacityKnown);
+                    }
                 });
 
             weapons.stream().max(Comparator.comparingInt(Weapon::getDamage))
                 .ifPresent(maxDamageWeapon -> {
-                    boolean dmgIsKnown = $knowledge.getPlayerDamage().isKnown();
-                    if (!dmgIsKnown) {
-                        $knowledge.setPlayerDamage(maxDamageWeapon.getDamage(), dmgIsKnown);
+                    if (!isPlayerDamageKnown) {
+                        $knowledge.setPlayerDamage(maxDamageWeapon.getDamage(), isPlayerDamageKnown);
                     }
                 });
 
             weapons.stream().max(Comparator.comparingDouble(Weapon::getSpeedModifier))
                .ifPresent(maxSpeedWeapon -> {
-                   boolean speedIsKnown = $knowledge.getPlayerSpeed().isKnown();
-                   if (!speedIsKnown) {
-                       $knowledge.setPlayerSpeed(maxSpeedWeapon.getSpeedModifier() * CompetingEntity.BASE_SPEED, speedIsKnown);
+                   if (!isPlayerSpeedKnown) {
+                       $knowledge.setPlayerSpeed(maxSpeedWeapon.getSpeedModifier() * CompetingEntity.BASE_SPEED, isPlayerSpeedKnown);
                    }
                });
 
             weapons.stream().max(Comparator.comparingDouble(Weapon::getRange))
                .ifPresent(maxRangeWeapon -> {
-                   boolean rangeIsKnown = $knowledge.getPlayerReach().isKnown();
-                   if (!rangeIsKnown) {
-                       $knowledge.setPlayerReach(maxRangeWeapon.getRange(), rangeIsKnown);
+                   if (!isPlayerReachKnown) {
+                       $knowledge.setPlayerReach(maxRangeWeapon.getRange(), isPlayerReachKnown);
                    }
                });
         }

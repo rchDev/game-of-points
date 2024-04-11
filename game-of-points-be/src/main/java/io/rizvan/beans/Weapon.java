@@ -9,7 +9,7 @@ public class Weapon {
         SNIPER(0, "Sniper", 3, 0.85f, 2, 400, 3000),
         CARBINE(1, "Carbine", 1, 0.95f, 5, 300, 1500),
         SUB_MACHINE(2, "Sub-machine", 1, 1.0f, 10, 150, 500),
-        PISTOL(3, "Pistol", 1, 1.25f, 5, 200, 1000);
+        PISTOL(3, "Pistol", 1, 1.25f, 7, 200, 1000);
 
         private final Weapon weapon;
         Type(int id, String name, int damage, double speedModifier, int ammo, double range, int rechargeTimeMs) {
