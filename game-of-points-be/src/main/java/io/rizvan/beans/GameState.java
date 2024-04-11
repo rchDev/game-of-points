@@ -101,7 +101,7 @@ public class GameState {
 
     public void addResource(double x, double y) {
         resources.add(new ResourcePoint(x, y, RESOURCE_SIZE, RESOURCE_SIZE, POINTS_PER_RESOURCE));
-        factStorage.add(new ResourcesChangeFact(resources));
+        factStorage.add(new ResourcesChangeFact(resources, true));
     }
 
     public List<Fact> getFacts() {
@@ -119,7 +119,7 @@ public class GameState {
     public void removeResource(String id) {
         synchronized (resources) {
             resources.removeIf(rp -> rp.getId().equals(id));
-            factStorage.add(new ResourcesChangeFact(resources));
+            factStorage.add(new ResourcesChangeFact(resources, true));
         }
     }
 
@@ -172,16 +172,16 @@ public class GameState {
         switch (action.getType()) {
             case "shoot" -> {
                 var damage = success ? ((PlayerShootingAction) action).getDamage() : 0;
-                factStorage.add(new PlayerShootingFact(damage));
+                factStorage.add(new PlayerShootingFact(damage, success));
             }
             case "aim" -> {
                 var aimingAction = (PlayerAimingAction) action;
                 var mouseX = aimingAction.getMouseX();
                 var mouseY = aimingAction.getMouseY();
-                factStorage.add(new PlayerAimFact(mouseX, mouseY));
+                factStorage.add(new PlayerAimFact(mouseX, mouseY, success));
             }
-            case "move" -> factStorage.add(new PlayerMovementFact(player.getX(), player.getY()));
-            case "collect" -> factStorage.add(new PlayerCollectionFact(player.getPoints()));
+            case "move" -> factStorage.add(new PlayerMovementFact(player.getX(), player.getY(), success));
+            case "collect" -> factStorage.add(new PlayerCollectionFact(player.getPoints(), success));
             default -> {
                 // do nothing
             }
@@ -194,7 +194,7 @@ public class GameState {
 
     public void setTime(int time) {
         this.time = time;
-        factStorage.add(new GameTimeChangeFact(time));
+        factStorage.add(new GameTimeChangeFact(time, true));
     }
 
     @JsonbTransient

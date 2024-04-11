@@ -268,6 +268,10 @@ const sketch = (p) => {
     }
   }
 
+  p.mouseClicked = () => {
+    sendPlayerActionToServer("shoot", { damage: p.gameState.player.damage });
+  };
+
   function updateMovement(keyCode, isPressed) {
     switch (keyCode) {
       case 87: // W
@@ -392,7 +396,6 @@ const sketch = (p) => {
       playerHitPoints: { value: perceivedPlayerHp },
       playerDamage: { value: perceivedPlayerDmg },
       playerAmmoCapacity: { value: perceivedPlayerAmmo },
-      shotCount: { value: playerShotCount },
       playerSpeed: { value: perceivedPlayerSpd },
       playerReach: { value: perceivedPlayerReach },
     } = knowledge;
@@ -402,7 +405,7 @@ const sketch = (p) => {
     document.querySelector("#player-dmg-perceived").innerText =
       perceivedPlayerDmg;
     document.querySelector("#player-ammo-perceived").innerText =
-      perceivedPlayerAmmo - playerShotCount;
+      perceivedPlayerAmmo;
     document.querySelector("#player-spd-perceived").innerText =
       perceivedPlayerSpd.toFixed(2);
     document.querySelector("#player-reach-perceived").innerText =

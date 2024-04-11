@@ -25,7 +25,8 @@ public class PlayerShootingAction extends PlayerAction {
             agent.setHitPoints(agentHp - damage);
             this.damage = damage;
         }
-        return true;
+
+        return damage > 0;
     }
 
     @Override

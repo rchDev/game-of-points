@@ -2,7 +2,6 @@ package io.rizvan.beans;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 
-import java.beans.Transient;
 import java.time.Instant;
 
 public class Weapon {
@@ -123,7 +122,6 @@ public class Weapon {
 
     @JsonbTransient
     public boolean isRecharging() {
-        System.out.println("id: " + id + " time passed: " + (Instant.now().toEpochMilli() - shotTime) + ", rechargeTime: " + rechargeTimeMs);
         return (Instant.now().toEpochMilli() - shotTime) < rechargeTimeMs;
     }
 

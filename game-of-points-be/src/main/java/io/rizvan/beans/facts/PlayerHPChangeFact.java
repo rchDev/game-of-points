@@ -1,17 +1,20 @@
 package io.rizvan.beans.facts;
 
 public class PlayerHPChangeFact implements Fact {
-    private int hp;
+    private final int hp;
+    private final boolean success;
 
-    public PlayerHPChangeFact(int hp) {
+    public PlayerHPChangeFact(int hp, boolean success) {
         this.hp = hp;
+        this.success = success;
     }
 
     public int getHP() {
         return hp;
     }
 
-    public void setHP(int hp) {
-        this.hp = hp;
+    @Override
+    public boolean actionSucceeded() {
+        return success;
     }
 }

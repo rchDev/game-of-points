@@ -13,7 +13,7 @@ public class AgentShootsAction extends AgentAction {
         if (agent.canReach(player) && damage > 0) {
             var playerHp = player.getHitPoints();
             player.setHitPoints(playerHp - damage);
-            gameState.registerFact(new PlayerHPChangeFact(player.getPoints()));
+            gameState.registerFact(new PlayerHPChangeFact(player.getPoints(), true));
         }
     }
 }

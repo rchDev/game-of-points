@@ -1,17 +1,20 @@
 package io.rizvan.beans.facts;
 
 public class GameTimeChangeFact implements Fact {
-    private int timeLeft;
+    private final int timeLeft;
+    private final boolean success;
 
-    public GameTimeChangeFact(int timeLeft) {
+    public GameTimeChangeFact(int timeLeft, boolean success) {
         this.timeLeft = timeLeft;
+        this.success = success;
     }
 
     public int getTimeLeft() {
         return timeLeft;
     }
 
-    public void setTimeLeft(int timeLeft) {
-        this.timeLeft = timeLeft;
+    @Override
+    public boolean actionSucceeded() {
+        return success;
     }
 }
