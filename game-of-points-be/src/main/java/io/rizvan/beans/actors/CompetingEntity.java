@@ -45,10 +45,6 @@ public class CompetingEntity extends GameEntity {
         return weapon.getAmmo();
     }
 
-    public void dealDamage(GameEntity entity) {
-        return;
-    }
-
     public int getHitPoints() {
         return hitPoints;
     }

@@ -96,8 +96,7 @@ public class Weapon {
     }
 
     public int shoot() {
-        System.out.println("SHOOT RAN");
-        if (ammo <= 0 && isRecharging()) {
+        if (ammo <= 0 || isRecharging()) {
             return 0;
         }
 
