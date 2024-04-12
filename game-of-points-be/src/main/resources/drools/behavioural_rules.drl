@@ -4,10 +4,10 @@ import io.rizvan.beans.actors.agent.Agent;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.knowledge.AgentPossibilities;
 import io.rizvan.beans.GameState
-import io.rizvan.beans.actors.agent.AvoidChoice
-import io.rizvan.beans.actors.agent.KillChoice
-import io.rizvan.beans.actors.agent.SafeCollectChoice
-import io.rizvan.beans.actors.agent.AggressiveCollectChoice;
+import io.rizvan.beans.actors.agent.choices.AvoidChoice
+import io.rizvan.beans.actors.agent.choices.KillChoice
+import io.rizvan.beans.actors.agent.choices.SafeCollectChoice
+import io.rizvan.beans.actors.agent.choices.AggressiveCollectChoice;
 
 rule "agent-kill-player"
 agenda-group "agent-choices-group"

@@ -1,5 +1,6 @@
 package io.rizvan.beans;
 
+import io.rizvan.beans.actors.agent.AgentChoice;
 import io.rizvan.beans.actors.agent.actions.ActionType;
 import io.rizvan.beans.actors.agent.actions.AgentAction;
 import io.rizvan.beans.facts.*;

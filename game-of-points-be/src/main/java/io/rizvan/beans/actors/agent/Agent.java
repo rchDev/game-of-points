@@ -3,6 +3,7 @@ package io.rizvan.beans.actors.agent;
 import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.Weapon;
+import io.rizvan.beans.actors.agent.choices.ChoiceType;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 
 import java.util.Arrays;
@@ -12,6 +13,16 @@ import java.util.Random;
 public class Agent extends CompetingEntity {
 
     public AgentsBrain brain;
+
+    private AgentChoice currentChoice;
+
+    public void setCurrentChoice(AgentChoice choice) {
+        this.currentChoice = choice;
+    }
+
+    public AgentChoice getCurrentChoice() {
+        return currentChoice;
+    }
 
     public enum Type {
         SNIPER(3, 0, 0, 50, 50, 1.0, 0, Weapon.Type.SNIPER.get()),
