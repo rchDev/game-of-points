@@ -8,6 +8,7 @@ import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.actors.agent.AgentChoice;
 import io.rizvan.beans.actors.agent.actions.AgentAction;
 import io.rizvan.utils.Coord;
+import jakarta.json.bind.annotation.JsonbTransient;
 
 import java.util.List;
 
@@ -107,10 +108,10 @@ public class AgentKnowledge {
         return playerDamage;
     }
 
+    @JsonbTransient
     public void setPlayerDamage(Integer damage, boolean isKnown) {
-
         this.playerDamage.setValue(damage);
-        this.playerSpeed.setKnown(isKnown);
+        this.playerDamage.setKnown(isKnown);
     }
 
     public PlayerHPKnowledge getPlayerHitPoints() {

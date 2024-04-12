@@ -2,15 +2,12 @@ package io.rizvan.beans.actors.agent;
 
 import io.rizvan.beans.GameState;
 import io.rizvan.beans.knowledge.AgentKnowledge;
-import io.rizvan.beans.KnowledgeUpdateSignal;
-import io.rizvan.beans.facts.Fact;
 import io.rizvan.beans.knowledge.AgentPossibilities;
 import jakarta.annotation.PreDestroy;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
-import java.util.List;
 
 public class DroolsBrain implements AgentsBrain {
 
@@ -30,7 +27,6 @@ public class DroolsBrain implements AgentsBrain {
     public void reason(GameState gameState) {
         knowledge.setPlayerHitBoxKnowledge(gameState.getPlayer().getHitBox(), true);
         KieSession kieSession = kieContainer.newKieSession("myKsession");
-        System.out.println("gameState: " +   gameState);
         kieSession.insert(gameState);
         kieSession.insert(gameState.getAgent());
         kieSession.insert(knowledge);

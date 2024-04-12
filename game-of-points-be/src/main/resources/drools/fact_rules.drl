@@ -50,15 +50,17 @@ rule "Player shot"
 agenda-group "inference-group"
 no-loop true
     when
-        $shootingFact : PlayerShootingFact()
+        $shootingFact : PlayerShootingFact($success : actionSucceeded(), $damage : getDamage())
         $knowledge : AgentKnowledge($shotCount : getShotCount())
     then
-        boolean damageFelt = $shootingFact.getDamage() > 0;
-        int updatedShotCount = $shootingFact.actionSucceeded() ? $shotCount.getValue() + 1 : $shotCount.getValue();
-        modify($knowledge) {
-            setPlayerDamage($shootingFact.getDamage(), damageFelt),
+        System.out.println("Player Shot ran");
+        boolean damageFelt = $damage > 0;
+        int updatedShotCount = $success ? $shotCount.getValue() + 1 : $shotCount.getValue();
+        modify($knowledge){
+            setPlayerDamage($damage, damageFelt),
             setShotCount(updatedShotCount, true)
-        };
+        }
+        update($knowledge);
 end
 
 rule "Player collected resource"
@@ -121,6 +123,7 @@ salience -100
         boolean isPlayerDamageKnown = $knowledge.getPlayerDamage().isKnown();
         boolean isPlayerSpeedKnown = $knowledge.getPlayerSpeed().isKnown();
         boolean isPlayerReachKnown = $knowledge.getPlayerReach().isKnown();
+
         if (!isPlayerDamageKnown || !isPlayerSpeedKnown || !isPlayerReachKnown || !isAmmoCapacityKnown) {
             List<Weapon> weapons = $knowledge.getPossibleWeapons()
             .stream()
