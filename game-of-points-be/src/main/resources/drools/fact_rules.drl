@@ -122,7 +122,6 @@ salience -100
         boolean isPlayerSpeedKnown = $knowledge.getPlayerSpeed().isKnown();
         boolean isPlayerReachKnown = $knowledge.getPlayerReach().isKnown();
         if (!isPlayerDamageKnown || !isPlayerSpeedKnown || !isPlayerReachKnown || !isAmmoCapacityKnown) {
-            System.out.println("isShotCountKnown: " + isShotCountKnown + ", isAmmoCapacityKnown: " + isAmmoCapacityKnown + ", isPlayerDamageKnown: " + isPlayerDamageKnown + ", isPlayerSpeedKnown" + isPlayerDamageKnown + ", isPlayerReachKnown: " + isPlayerReachKnown);
             List<Weapon> weapons = $knowledge.getPossibleWeapons()
             .stream()
             .filter(wep ->
@@ -132,7 +131,6 @@ salience -100
                 (!isPlayerReachKnown || wep.getRange() == $knowledge.getPlayerReach().getValue()))
             ).toList();
 
-            System.out.println("weapons: " + weapons.size() + ", shotCount: " + $knowledge.getShotCount().getValue());
 
             weapons.stream().max(Comparator.comparingInt(Weapon::getAmmoCapacity))
                 .ifPresent(maxCapacityWeapon -> {

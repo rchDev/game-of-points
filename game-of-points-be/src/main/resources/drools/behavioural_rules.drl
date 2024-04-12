@@ -37,6 +37,7 @@ when
          !$worthCollectingPoints)
     )
 then
+    System.out.println("AGENT - KILL - CHOICE");
     modify($knowledge){
         setAgentChoice(new KillChoice())
     }
@@ -72,6 +73,7 @@ when
          $worthCollectingPoints && $playerIsClose)
     )
 then
+    System.out.println("AGENT - AVOID - CHOICE");
     modify($knowledge){
         setAgentChoice(new AvoidChoice())
     }
@@ -106,6 +108,7 @@ when
          $worthCollectingPoints)
     )
 then
+    System.out.println("AGENT - SAFE_COLLECT - CHOICE");
     modify($knowledge){
         setAgentChoice(new SafeCollectChoice())
     }
@@ -136,6 +139,7 @@ when
          !$agentOneShots && $shotCount.getValue() <= 0)
     )
 then
+    System.out.println("AGENT - AGGRESSIVE_COLLECT - CHOICE");
     modify($knowledge){
         setAgentChoice(new AggressiveCollectChoice())
     }

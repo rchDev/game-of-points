@@ -96,6 +96,12 @@ const sketch = (p) => {
   let mousePositionSendTimer;
   let predictions = [];
   let unappliedStateChanges = [];
+  const emotions = {
+    AVOID: "😱",
+    SAFE_COLLECT: "🤗",
+    AGGRESSIVE_COLLECT: "🤑",
+    KILL: "🤬",
+  };
 
   const sendPlayerActionToServer = (type, details) => {
     if (!p.ws) return;
@@ -303,7 +309,13 @@ const sketch = (p) => {
 
     if (player) {
       p.fill("red");
-      p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
+      // p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
+      p.textSize(player.hitBox.width);
+      p.text(
+        emotions["AGGRESSIVE_COLLECT"],
+        player.x - player.hitBox.width / 2,
+        player.y + player.hitBox.height / 2,
+      );
       renderReach({ x: player.x, y: player.y }, player.reach, [255, 0, 0, 191]);
       renderReach(
         { x: player.x, y: player.y },
@@ -314,7 +326,16 @@ const sketch = (p) => {
 
     if (agent) {
       p.fill("blue");
-      p.ellipse(agent.x, agent.y, agent.hitBox.width, agent.hitBox.height);
+      p.textSize(agent.hitBox.width);
+      const agentChoice = agent.knowledge.agentChoice ?? {
+        type: "SAFE_COLLECT",
+      };
+      console.log(agentChoice.type, ":", emotions[agentChoice.type]);
+      p.text(
+        emotions[agentChoice.type],
+        agent.x - agent.hitBox.width / 2,
+        agent.y + agent.hitBox.height / 2,
+      );
       renderReach({ x: agent.x, y: agent.y }, agent.reach, [0, 0, 255, 69]);
     }
 
