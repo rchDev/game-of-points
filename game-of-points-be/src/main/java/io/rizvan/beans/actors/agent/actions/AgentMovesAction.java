@@ -6,10 +6,11 @@ import io.rizvan.beans.actors.agent.Agent;
 
 import java.time.Instant;
 
-public class AgentMovesAction extends AgentAction {
-    private Double destinationX;
-    private Double destinationY;
-    private Integer angle;
+public class AgentMovesAction implements AgentAction {
+    private final Double destinationX;
+    private final Double destinationY;
+    private final Integer angle;
+    private final ActionType actionType = ActionType.MOVE;
 
     public AgentMovesAction(GameEntity destination) {
         this.destinationX = destination.getX();
@@ -36,6 +37,11 @@ public class AgentMovesAction extends AgentAction {
         } else {
             moveAtAnAngle(gameState, angle);
         }
+    }
+
+    @Override
+    public ActionType getType() {
+        return actionType;
     }
 
     public void moveAtAnAngle(GameState gameState, int angleDegrees) {
@@ -95,21 +101,5 @@ public class AgentMovesAction extends AgentAction {
 
         agent.setX(agentNewX);
         agent.setY(agentNewY);
-    }
-
-    public double getDestinationX() {
-        return destinationX;
-    }
-
-    public void setDestinationX(double destinationX) {
-        this.destinationX = destinationX;
-    }
-
-    public double getDestinationY() {
-        return destinationY;
-    }
-
-    public void setDestinationY(double destinationY) {
-        this.destinationY = destinationY;
     }
 }

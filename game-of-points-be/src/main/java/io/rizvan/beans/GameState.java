@@ -1,5 +1,6 @@
 package io.rizvan.beans;
 
+import io.rizvan.beans.actors.agent.actions.ActionType;
 import io.rizvan.beans.actors.agent.actions.AgentAction;
 import io.rizvan.beans.facts.*;
 import io.rizvan.beans.actors.agent.Agent;
@@ -33,6 +34,8 @@ public class GameState {
     private PlayerAimingAction lastAppliedPlayerAim = null;
     private PlayerCollectingAction lastAppliedPlayerCollection = null;
     private PlayerShootingAction lastAppliedPlayerShot = null;
+
+    private ActionType lastAgentAction = null;
 
     private final FactStorage factStorage;
 
@@ -152,6 +155,7 @@ public class GameState {
     }
 
     public void applyAction(AgentAction action) {
+        this.lastAgentAction = action.getType();
         action.apply(this);
     }
 
@@ -195,6 +199,10 @@ public class GameState {
     public void setTime(int time) {
         this.time = time;
         factStorage.add(new GameTimeChangeFact(time, true));
+    }
+
+    public ActionType getLastAgentAction() {
+        return lastAgentAction;
     }
 
     @JsonbTransient

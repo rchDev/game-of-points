@@ -6,13 +6,23 @@ import io.rizvan.beans.actors.agent.Agent;
 
 import java.util.List;
 
-public class AgentAvoidsAction extends AgentAction {
+public class AgentAvoidsAction implements AgentAction {
     private static final double DEG_TO_RAD = Math.PI / 180.0;
+    private final ActionType actionType;
+
+    public AgentAvoidsAction() {
+        actionType = ActionType.AVOID;
+    }
 
     @Override
     public void apply(GameState gameState) {
         int movementAngle = chooseBestMovementAngle(gameState);
         gameState.applyAction(new AgentMovesAction(movementAngle));
+    }
+
+    @Override
+    public ActionType getType() {
+        return actionType;
     }
 
     private int chooseBestMovementAngle(GameState gameState) {
