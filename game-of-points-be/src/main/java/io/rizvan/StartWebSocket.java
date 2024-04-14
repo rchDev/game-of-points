@@ -74,8 +74,6 @@ public class StartWebSocket {
 
                 sessionStorage.removeSession(sessionId);
                 sessionStorage.removeGameStates(sessionId);
-                sessionStorage.removeLatestGameState(sessionId);
-
                 session.getAsyncRemote().sendText(gameEndedResponse);
                 session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "Game has ended"));
             } catch (Exception e) {

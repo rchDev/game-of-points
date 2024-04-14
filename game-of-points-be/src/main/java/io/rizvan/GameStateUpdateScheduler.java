@@ -35,7 +35,6 @@ public class GameStateUpdateScheduler {
 
         for (var id : sessionStorage.getSessionIds()) {
             var gameState = sessionStorage.getLatestGameState(id);
-
             if (gameState == null) continue;
 
             if (gameState.hasGameEnded()) {
@@ -43,9 +42,10 @@ public class GameStateUpdateScheduler {
                 continue;
             }
 
+            var clonedGameState = new GameState(gameState);
             var now = Instant.now().toEpochMilli();
-            gameState.setDeltaBetweenUpdates(now - gameState.getLastUpdateTime());
-            gameState.setLastUpdateTime(now);
+            clonedGameState.setDeltaBetweenUpdates(now - clonedGameState.getLastUpdateTime());
+            clonedGameState.setLastUpdateTime(now);
 
             var playerActions = sessionStorage.getPlayerActions(id);
             if (playerActions == null) continue;
@@ -54,11 +54,13 @@ public class GameStateUpdateScheduler {
             playerActions.drainTo(actionsToProcess, MAX_ACTIONS_PER_TICK);
 
             for (var playerAction : actionsToProcess) {
-                gameState.applyAction(playerAction);
+                clonedGameState.applyAction(playerAction);
             }
-            var agent = gameState.getAgent();
-            agent.reason(gameState);
-            gameState.clearFacts();
+            var agent = clonedGameState.getAgent();
+            agent.reason(clonedGameState);
+            clonedGameState.clearFacts();
+
+            sessionStorage.addGameState(id, clonedGameState);
         }
 
         for (var id : sessionStorage.getSessionIds()) {

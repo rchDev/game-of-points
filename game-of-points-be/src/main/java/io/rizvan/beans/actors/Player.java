@@ -25,16 +25,7 @@ public class Player extends CompetingEntity {
     }
 
     public Player(Player other) {
-        super(
-                other.getHitPoints(),
-                other.getX(),
-                other.getY(),
-                other.getHitBox().getWidth(),
-                other.getHitBox().getHeight(),
-                other.getSpeed() / BASE_SPEED,
-                other.getPoints(),
-                new Weapon(other.getWeapon())
-        );
+        super(other);
     }
 
     public static Player fromWeapon(Weapon weapon) {

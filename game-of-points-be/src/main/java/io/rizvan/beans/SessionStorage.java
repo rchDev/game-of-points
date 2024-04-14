@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.websocket.Session;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -13,9 +14,11 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class SessionStorage {
     @Inject PlayerActionQueue actionQueue;
     private final ConcurrentHashMap<String, ConcurrentHashMap<Long, GameState>> gameStates = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, GameState> latestGameStates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, List<GameState>> gameStateLists = new ConcurrentHashMap<>();
 
+
+    public static final int GAME_STATE_HISTORY_SIZE = 1000;
     public void addSession(String sessionId, Session session) {
         sessions.put(sessionId, session);
     }
@@ -28,27 +31,36 @@ public class SessionStorage {
         if (!gameStates.containsKey(sessionId)) {
             gameStates.put(sessionId, new ConcurrentHashMap<>());
         }
+
+        if (!gameStateLists.containsKey(sessionId)) {
+            gameStateLists.put(sessionId, new CopyOnWriteArrayList<>());
+        }
+
+        var gameStateList = gameStateLists.get(sessionId);
+        if (gameStateList.size() > GAME_STATE_HISTORY_SIZE) {
+            var removedGameState = gameStateList.remove(0);
+            gameStates.get(sessionId).remove(removedGameState.getLastUpdateTime());
+        }
+
         gameStates.get(sessionId).put(state.getLastUpdateTime(), state);
+        gameStateList.add(state);
     }
 
     public void removeGameStates(String sessionId) {
         gameStates.remove(sessionId);
+        gameStateLists.remove(sessionId);
     }
 
     public GameState getLatestGameState(String sessionId) {
-        if (latestGameStates.containsKey(sessionId)) {
+        if (!gameStateLists.containsKey(sessionId)) {
             return null;
         }
-        return latestGameStates.get(sessionId);
-    }
-    public void removeGameState(String sessionId, long timeStamp) {
-        if (gameStates.containsKey(sessionId)) {
-            gameStates.get(sessionId).remove(timeStamp);
-        }
-    }
+        var gameStateHistory  = gameStateLists.get(sessionId);
+        System.out.println(gameStateHistory.isEmpty() ? null : gameStateHistory.get(gameStateHistory.size() - 1).getPlayer().getX());
 
-    public GameState getGameState(String sessionId, long timeStamp) {
-        return gameStates.get(sessionId).get(timeStamp);
+        return gameStateHistory.isEmpty() ?
+                null :
+                gameStateHistory.get(gameStateHistory.size() - 1);
     }
 
     public Session getSession(String sessionId) {
@@ -76,13 +88,5 @@ public class SessionStorage {
 
     public void addPlayerAction(String sessionId, PlayerAction action) {
         actionQueue.add(sessionId, action);
-    }
-
-    public void setLatestGameState(String sessionId, GameState gameState) {
-        latestGameStates.put(sessionId, gameState);
-    }
-
-    public void removeLatestGameState(String sessionId) {
-        latestGameStates.remove(sessionId);
     }
 }
