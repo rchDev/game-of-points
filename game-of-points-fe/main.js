@@ -118,6 +118,7 @@ const sketch = (p) => {
     );
     unappliedStateChanges.push({
       agent: gameStateUpdate.agent,
+      deltaBetweenUpdates: gameStateUpdate.deltaBetweenUpdates,
       resources: diff,
     });
   };
@@ -369,7 +370,7 @@ const sketch = (p) => {
     // Check if there are any updates to interpolate towards
     if (unappliedStateChanges.length > 0) {
       // Get the next update
-      const update = unappliedStateChanges[0];
+      const update = unappliedStateChanges[unappliedStateChanges.length - 1];
       const agent = p.gameState.agent;
       const targetPos = { x: update.agent.x, y: update.agent.y };
       // Calculate the step based on agent's speed and deltaTime
@@ -401,7 +402,10 @@ const sketch = (p) => {
       if (distance <= stepSize) {
         p.gameState.agent.x = targetPos.x;
         p.gameState.agent.y = targetPos.y;
-        updateAgentInfo(unappliedStateChanges.shift());
+        var stateChange =
+          unappliedStateChanges[unappliedStateChanges.length - 1];
+        unappliedStateChanges = [];
+        updateAgentInfo(stateChange);
       }
     }
   }
