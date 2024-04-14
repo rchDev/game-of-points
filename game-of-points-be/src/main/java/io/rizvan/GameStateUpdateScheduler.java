@@ -34,7 +34,7 @@ public class GameStateUpdateScheduler {
         if (sessionStorage.getSessionIds().isEmpty()) return;
 
         for (var id : sessionStorage.getSessionIds()) {
-            var gameState = sessionStorage.getGameState(id);
+            var gameState = sessionStorage.getLatestGameState(id);
 
             if (gameState == null) continue;
 
@@ -81,7 +81,7 @@ public class GameStateUpdateScheduler {
     private void createNewResourcePoint(String sessionId) {
         if (sessionStorage.getSession(sessionId) == null) return;
 
-        var gameState = sessionStorage.getGameState(sessionId);
+        var gameState = sessionStorage.getLatestGameState(sessionId);
 
         var x = rng.getInteger(
                 GameState.RESOURCE_SIZE / 2,
@@ -98,7 +98,7 @@ public class GameStateUpdateScheduler {
     @ConsumeEvent("game.created")
     public void scheduleGameTimer(String sessionId) {
         timerId = vertx.setPeriodic(1000L, id -> {
-            var gameState = sessionStorage.getGameState(sessionId);
+            var gameState = sessionStorage.getLatestGameState(sessionId);
             if (gameState == null) return;
 
             var time = gameState.getTime();

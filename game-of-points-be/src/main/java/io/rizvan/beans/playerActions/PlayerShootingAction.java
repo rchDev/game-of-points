@@ -14,6 +14,11 @@ public class PlayerShootingAction extends PlayerAction {
         this.damage = damage;
     }
 
+    public PlayerShootingAction(PlayerShootingAction other) {
+        super(other);
+        this.damage = other.damage;
+    }
+
     @Override
     public boolean apply(GameState gameState) {
         var agent = gameState.getAgent();

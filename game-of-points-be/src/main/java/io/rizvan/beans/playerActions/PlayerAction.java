@@ -7,6 +7,14 @@ public abstract class PlayerAction implements Comparable<PlayerAction> {
     protected long clientTimestamp = 0;
     protected long serverTimestamp = 0;
 
+    public PlayerAction() {}
+
+    public PlayerAction(PlayerAction other) {
+        this.type = other.type;
+        this.clientTimestamp = other.clientTimestamp;
+        this.serverTimestamp = other.serverTimestamp;
+    }
+
     public abstract boolean apply(GameState gameState);
 
     public abstract boolean isLegal(GameState gameState);

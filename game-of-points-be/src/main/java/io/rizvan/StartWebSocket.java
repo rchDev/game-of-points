@@ -35,7 +35,7 @@ public class StartWebSocket {
     @OnClose
     public void onClose(Session session, @PathParam("sessionId") String sessionId) {
         sessionStorage.removeSession(sessionId);
-        sessionStorage.removeGameState(sessionId);
+        sessionStorage.removeGameStates(sessionId);
     }
 
     @OnError
@@ -57,20 +57,25 @@ public class StartWebSocket {
         if (session.isOpen()) {
             try {
                 System.out.println("Game Closed got called");
-                var gameState = sessionStorage.getGameState(sessionId);
-                if (gameState == null || !gameState.hasGameEnded()) {
+                var latestGameState = sessionStorage.getLatestGameState(sessionId);
+                if (latestGameState == null || !latestGameState.hasGameEnded()) {
                     return;
                 }
-                var agent = gameState.getAgent();
-                var player = gameState.getPlayer();
+                var agent = latestGameState.getAgent();
+                var player = latestGameState.getPlayer();
                 var gameEndedResponse = jsonb.toJson(
                         new GameEndedResponse(
                                 agent,
                                 player,
-                                gameState.getTime(),
+                                latestGameState.getTime(),
                                 true
                         )
                 );
+
+                sessionStorage.removeSession(sessionId);
+                sessionStorage.removeGameStates(sessionId);
+                sessionStorage.removeLatestGameState(sessionId);
+
                 session.getAsyncRemote().sendText(gameEndedResponse);
                 session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "Game has ended"));
             } catch (Exception e) {
@@ -89,7 +94,7 @@ public class StartWebSocket {
         var session = sessionStorage.getSession(sessionId);
         if (session.isOpen()) {
             try {
-                var gameState = sessionStorage.getGameState(sessionId);
+                var gameState = sessionStorage.getLatestGameState(sessionId);
                 if (gameState == null) return;
 
                 var gameStateJson = jsonb.toJson(gameState);

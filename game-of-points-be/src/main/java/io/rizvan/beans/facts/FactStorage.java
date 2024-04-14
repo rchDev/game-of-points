@@ -12,7 +12,18 @@ public class FactStorage {
     private PlayerAimFact latestPlayerAimFact;
     private PlayerCollectionFact latestPlayerCollectionFact;
     private ResourcesChangeFact latestResourcesChangeFact;
-    private final List<Fact> otherFacts = new CopyOnWriteArrayList<>();
+    private List<Fact> otherFacts = new CopyOnWriteArrayList<>();
+
+    public FactStorage() {}
+
+    public FactStorage(FactStorage other) {
+        this.latestMovementFact = other.latestMovementFact;
+        this.latestGameTimeChangeFact = other.latestGameTimeChangeFact;
+        this.latestPlayerAimFact = other.latestPlayerAimFact;
+        this.latestPlayerCollectionFact = other.latestPlayerCollectionFact;
+        this.latestResourcesChangeFact = other.latestResourcesChangeFact;
+        this.otherFacts = new CopyOnWriteArrayList<>(other.otherFacts);
+    }
 
     public void add(Fact fact) {
         if (fact instanceof PlayerMovementFact) {

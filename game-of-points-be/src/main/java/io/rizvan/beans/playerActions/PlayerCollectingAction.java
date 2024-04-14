@@ -16,6 +16,14 @@ public class PlayerCollectingAction extends PlayerAction {
         this.id = id;
     }
 
+    public PlayerCollectingAction() {
+    }
+
+    public PlayerCollectingAction(PlayerCollectingAction otherAction) {
+        super(otherAction);
+        this.id = otherAction.id;
+    }
+
     @Override
     public boolean apply(GameState gameState) {
         var points = gameState.getResources()

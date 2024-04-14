@@ -7,4 +7,7 @@ public class AggressiveCollectChoice implements AgentChoice {
     public ChoiceType getType() {
         return ChoiceType.AGGRESSIVE_COLLECT;
     }
+
+
+
 }

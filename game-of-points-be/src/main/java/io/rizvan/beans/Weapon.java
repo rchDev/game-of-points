@@ -58,6 +58,18 @@ public class Weapon {
         this.rechargeTimeMs = rechargeTimeMs;
     }
 
+    public Weapon(Weapon original) {
+        this.id = original.id;
+        this.name = original.name;
+        this.damage = original.damage;
+        this.speedModifier = original.speedModifier;
+        this.ammo = original.ammo;
+        this.ammoCapacity = original.ammoCapacity;
+        this.range = original.range;
+        this.shotTime = original.shotTime;
+        this.rechargeTimeMs = original.rechargeTimeMs;
+    }
+
     public int getId() {
         return id;
     }

@@ -7,6 +7,11 @@ public class Zone {
     public Zone() {
     }
 
+    public Zone(Zone zone) {
+        this.width = zone.width;
+        this.height = zone.height;
+    }
+
     public Zone(int width, int height) {
         this.width = width;
         this.height = height;

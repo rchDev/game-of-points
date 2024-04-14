@@ -17,6 +17,13 @@ public abstract class GameEntity {
         this.hitBox = new HitBox(width, height);
     }
 
+    public GameEntity(GameEntity other) {
+        this.id = other.id;
+        this.x = other.x;
+        this.y = other.y;
+        this.hitBox = new HitBox(other.hitBox.getWidth(), other.hitBox.getHeight());
+    }
+
     public double getX() {
         return x;
     }

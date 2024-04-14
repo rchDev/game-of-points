@@ -29,6 +29,16 @@ public class CompetingEntity extends GameEntity {
         this.mouseY = 0.0;
     }
 
+    public CompetingEntity(CompetingEntity other) {
+        super(other);
+        this.weapon = new Weapon(other.weapon);
+        this.hitPoints = other.hitPoints;
+        this.speed = other.speed;
+        this.points = other.points;
+        this.mouseX = other.mouseX;
+        this.mouseY = other.mouseY;
+    }
+
     public double getReach() {
         return weapon.getRange();
     }
@@ -83,6 +93,10 @@ public class CompetingEntity extends GameEntity {
 
     public void setMouseY(double mouseY) {
         this.mouseY = mouseY;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
     }
 
     public void setWeapon(Weapon weapon) {

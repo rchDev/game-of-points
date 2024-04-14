@@ -3,7 +3,6 @@ package io.rizvan.beans.actors.agent;
 import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.Weapon;
-import io.rizvan.beans.actors.agent.choices.ChoiceType;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 
 import java.util.Arrays;
@@ -44,6 +43,12 @@ public class Agent extends CompetingEntity {
     public Agent(int hitPoints, double x, double y, int width, int height, double speed, int points, Weapon weapon) {
         super(hitPoints, x, y, width, height, speed, points, weapon);
         this.brain = new DroolsBrain();
+    }
+
+    public Agent(Agent other) {
+        super(other);
+        this.brain = other.brain;
+        this.currentChoice = other.currentChoice;
     }
 
     public static Agent getRandom() {

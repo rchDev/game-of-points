@@ -12,6 +12,11 @@ public class ResourcePoint extends GameEntity {
         this.hitbox = new HitBox(width, height);
     }
 
+    public ResourcePoint(ResourcePoint other) {
+        this.points = other.points;
+        this.hitbox = new HitBox(other.hitbox);
+    }
+
     public HitBox getHitbox() {
         return hitbox;
     }

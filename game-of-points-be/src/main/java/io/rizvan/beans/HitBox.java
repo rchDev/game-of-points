@@ -10,6 +10,12 @@ public class HitBox {
         this.height = height;
     }
 
+    public HitBox(HitBox other) {
+        this.id = other.id;
+        this.width = other.width;
+        this.height = other.height;
+    }
+
     public int getWidth() {
         return width;
     }

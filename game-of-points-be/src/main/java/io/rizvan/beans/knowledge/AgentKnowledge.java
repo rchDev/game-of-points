@@ -13,21 +13,21 @@ import jakarta.json.bind.annotation.JsonbTransient;
 import java.util.List;
 
 public class AgentKnowledge {
-    private PlayerPositionKnowledge playerPosition;
-    private PlayerHitBoxKnowledge playerHitBox;
-    private PlayerAimKnowledge playerAim;
-    private ShotCountKnowledge shotCount;
-    private PlayerAmmoCapacityKnowledge playerAmmoCapacity;
-    private PlayerSpeedKnowledge playerSpeed;
-    private PlayerDamageKnowledge playerDamage;
-    private PlayerHPKnowledge playerHitPoints;
-    private PlayerPointsKnowledge playerPoints;
-    private ResourcePointKnowledge resourcePoints;
-    private GameTimeKnowledge timeLeft;
-    private PlayerReachKnowledge playerReach;
+    private final PlayerPositionKnowledge playerPosition;
+    private final PlayerAimKnowledge playerAim;
+    private final ShotCountKnowledge shotCount;
+    private final PlayerAmmoCapacityKnowledge playerAmmoCapacity;
+    private final PlayerSpeedKnowledge playerSpeed;
+    private final PlayerDamageKnowledge playerDamage;
+    private final PlayerHPKnowledge playerHitPoints;
+    private final PlayerPointsKnowledge playerPoints;
+    private final ResourcePointKnowledge resourcePoints;
+    private final GameTimeKnowledge timeLeft;
+    private final PlayerReachKnowledge playerReach;
     private AgentChoice agentChoice;
     private WeaponCache possibleWeapons;
     private AgentAction currentAction;
+    private PlayerHitBoxKnowledge playerHitBox;
 
     public static double REACH_DISTANCE_OFFSET = 50.0;
 
@@ -45,7 +45,6 @@ public class AgentKnowledge {
         this.playerAmmoCapacity = new PlayerAmmoCapacityKnowledge();
         this.playerReach = new PlayerReachKnowledge();
         this.playerHitBox = new PlayerHitBoxKnowledge();
-
         this.shotCount.setKnown(true);
     }
 

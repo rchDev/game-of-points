@@ -1,6 +1,5 @@
 package io.rizvan.beans;
 
-import io.rizvan.beans.actors.agent.AgentChoice;
 import io.rizvan.beans.actors.agent.actions.ActionType;
 import io.rizvan.beans.actors.agent.actions.AgentAction;
 import io.rizvan.beans.facts.*;
@@ -52,6 +51,31 @@ public class GameState {
 
         setRandomPosition(this.player);
         setRandomPosition(this.agent);
+    }
+
+
+    public GameState(GameState other) {
+        this.player = new Player(other.player);
+        this.agent = new Agent(other.agent);
+        this.zone = new Zone(other.zone);
+        this.time = other.time;
+        this.lastUpdateTime = other.lastUpdateTime;
+        this.deltaBetweenUpdates = other.deltaBetweenUpdates;
+        this.rng = other.rng;
+        // Manual deep copy for List with new ResourcePoint objects
+        for (ResourcePoint res : other.resources) {
+            this.resources.add(new ResourcePoint(res));
+        }
+        this.lastAppliedPlayerMovement = other.lastAppliedPlayerMovement != null
+                ? new PlayerMovementAction(other.lastAppliedPlayerMovement) : null;
+        this.lastAppliedPlayerAim = other.lastAppliedPlayerAim != null
+                ? new PlayerAimingAction(other.lastAppliedPlayerAim) : null;
+        this.lastAppliedPlayerCollection = other.lastAppliedPlayerCollection != null
+                ? new PlayerCollectingAction(other.lastAppliedPlayerCollection) : null;
+        this.lastAppliedPlayerShot = other.lastAppliedPlayerShot != null
+                ? new PlayerShootingAction(other.lastAppliedPlayerShot) : null;
+        this.lastAgentAction = other.lastAgentAction;
+        this.factStorage = new FactStorage(other.factStorage);
     }
 
     public Player getPlayer() {
