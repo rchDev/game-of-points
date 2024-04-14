@@ -7,6 +7,7 @@ import io.rizvan.beans.playerActions.PlayerAction;
 import io.rizvan.utils.RandomNumberGenerator;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -28,6 +29,23 @@ public class GameStateUpdateScheduler {
     private long timerId = -1;
 
     public static final int MAX_ACTIONS_PER_TICK = 1000;
+
+    @PostConstruct
+    public void init() {
+        if (sessionStorage.getSessionIds().isEmpty()) return;
+        for (var id : sessionStorage.getSessionIds()) {
+            var gameState = sessionStorage.getLatestGameState(id);
+
+            if (gameState == null) continue;
+
+            if (gameState.hasGameEnded()) {
+                eventBus.publish("game.closed", id);
+                continue;
+            }
+
+            gameState.setLastUpdateTime(Instant.now().toEpochMilli());
+        }
+    }
 
     @ConsumeEvent("game.created")
     public void updateGameState(String sessionId) {
