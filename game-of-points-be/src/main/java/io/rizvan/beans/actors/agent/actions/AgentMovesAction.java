@@ -2,7 +2,6 @@ package io.rizvan.beans.actors.agent.actions;
 
 import io.rizvan.beans.GameState;
 import io.rizvan.beans.actors.GameEntity;
-import io.rizvan.beans.actors.agent.Agent;
 
 import java.time.Instant;
 
@@ -32,6 +31,7 @@ public class AgentMovesAction implements AgentAction {
 
     @Override
     public void apply(GameState gameState) {
+        System.out.println("player - move");
         if (destinationX != null && destinationY != null && angle == null) {
             moveToAnEntity(gameState, destinationX, destinationY);
         } else {

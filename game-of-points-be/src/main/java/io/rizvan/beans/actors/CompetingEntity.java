@@ -4,8 +4,6 @@ import io.rizvan.beans.HitBox;
 import io.rizvan.beans.Weapon;
 import jakarta.json.bind.annotation.JsonbTransient;
 
-import java.beans.Transient;
-
 public class CompetingEntity extends GameEntity {
     private Weapon weapon;
     private int hitPoints;

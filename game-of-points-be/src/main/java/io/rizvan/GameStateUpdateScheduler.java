@@ -76,7 +76,6 @@ public class GameStateUpdateScheduler {
             }
             var agent = clonedGameState.getAgent();
             agent.reason(clonedGameState);
-            clonedGameState.clearFacts();
 
             sessionStorage.addGameState(id, clonedGameState);
         }

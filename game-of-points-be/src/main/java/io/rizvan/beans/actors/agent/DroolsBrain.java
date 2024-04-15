@@ -34,6 +34,7 @@ public class DroolsBrain implements AgentsBrain {
 
         try {
             gameState.getFacts().forEach(kieSession::insert);
+            gameState.clearFacts();
 
             kieSession.getAgenda().getAgendaGroup("inference-group").setFocus();
             kieSession.fireAllRules();
@@ -46,6 +47,8 @@ public class DroolsBrain implements AgentsBrain {
 
             kieSession.getAgenda().getAgendaGroup("agent-actions-group").setFocus();
             kieSession.fireAllRules();
+
+            System.out.println("--------------------------");
         } finally {
             kieSession.dispose();
         }

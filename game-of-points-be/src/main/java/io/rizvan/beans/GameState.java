@@ -144,10 +144,15 @@ public class GameState {
         return resources;
     }
 
-    public void removeResource(String id) {
+    public ResourcePoint removeResource(String id) {
         synchronized (resources) {
-            resources.removeIf(rp -> rp.getId().equals(id));
-            factStorage.add(new ResourcesChangeFact(resources, true));
+            Optional<ResourcePoint> removedResource = resources.stream()
+                    .filter(resource -> resource.getId().equals(id))
+                    .findFirst();
+
+            removedResource.ifPresent(resources::remove);
+            factStorage.add(new ResourcesChangeFact(resources, removedResource.isPresent()));
+            return removedResource.orElse(null);
         }
     }
 

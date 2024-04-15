@@ -44,6 +44,7 @@ end
 
 rule "agent-collect-can-reach"
 agenda-group "agent-actions-group"
+no-loop true
 when
     $gameState : GameState()
     $agent : Agent($x : getX(), $y : getY())
@@ -52,9 +53,26 @@ when
     $resource : ResourcePoint($resourceX : getX(), $resourceY : getY())
     eval($choice instanceof SafeCollectChoice && $agent.collidesWith($resource))
 then
-    System.out.println("collect - can reach");
+    System.out.println("collect - can reach - x,y: " + $agent.getX() + ", " + $agent.getY() + "rp.x, rp.y: " + $resourceX + ", " + $resourceY);
     $gameState.applyAction(new AgentCollectsAction($resource));
     retract($resource);
+end
+
+rule "agent-chose-collect-cannot-reach-target-selected"
+agenda-group "agent-actions-group"
+no-loop true
+when
+    $gameState : GameState()
+    $agent : Agent($x : getX(), $y : getY())
+    $resource : ResourcePoint()
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities()
+    eval(!$agent.collidesWith($resource))
+then
+    System.out.println("collect - target selected");
+    if ($resource != null) {
+        $gameState.applyAction(new AgentMovesAction($resource));
+    }
 end
 
 rule "agent-chose-collect-cannot-reach-aggresive"
@@ -66,6 +84,7 @@ when
     $possibilities : AgentPossibilities()
     eval($choice instanceof AggressiveCollectChoice)
 then
+    System.out.println("collect - aggresive");
     ResourcePoint closest = null;
     double closestDistance = Double.MAX_VALUE;
 
@@ -77,24 +96,28 @@ then
         }
     }
 
-    // Assuming there's a method to act based on the closest resource found
-    if(closest != null) {
-        $gameState.applyAction(new AgentMovesAction(closest));
+    if (closest == null) {
+        System.out.println("RESOURCE NOT FOUND");
+    } else {
+        System.out.println("FOUND RESOURCE AT: " + closest.getX() + ", " + closest.getY());
     }
+
     insertLogical(closest);
 end
 
 rule "agent-chose-collect-cannot-reach-safe"
 agenda-group "agent-actions-group"
 when
-    $gameState : GameState()
-    $agent : Agent($x : getX(), $y : getY())
-    $knowledge : AgentKnowledge($choice : getAgentChoice(), $playerPos : getPlayerPosition(), $playerReach : getPlayerReach())
+    $gameState : GameState() and
+    $agent : Agent($x : getX(), $y : getY()) and
+    $knowledge : AgentKnowledge($choice : getAgentChoice(), $playerPos : getPlayerPosition(), $playerReach : getPlayerReach()) and
     $possibilities : AgentPossibilities()
     eval($choice instanceof SafeCollectChoice)
 then
     ResourcePoint closest = null;
     double closestDistance = Double.MAX_VALUE;
+
+    System.out.println("collect - safe");
 
     // Directly iterate over $resources.getValue() without extra braces
     for(ResourcePoint resource : $knowledge.getResourcePoints().getValue()) {
@@ -113,11 +136,12 @@ then
         }
     }
 
-    // Assuming there's a method to act based on the closest resource found
-    if(closest != null) {
-        $gameState.applyAction(new AgentMovesAction(closest));
+    if (closest == null) {
+        System.out.println("RESOURCE NOT FOUND");
+    } else {
+        System.out.println("FOUND RESOURCE AT: " + closest.getX() + ", " + closest.getY());
+        insertLogical(closest);
     }
-    insertLogical(closest);
 end
 
 rule "agent-chose-avoid"
@@ -130,5 +154,4 @@ when
     eval($choice instanceof AvoidChoice)
 then
     $gameState.applyAction(new AgentAvoidsAction());
-    System.out.println("agent avoid");
 end

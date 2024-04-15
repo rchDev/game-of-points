@@ -56,7 +56,6 @@ public class SessionStorage {
             return null;
         }
         var gameStateHistory  = gameStateLists.get(sessionId);
-        System.out.println(gameStateHistory.isEmpty() ? null : gameStateHistory.get(gameStateHistory.size() - 1).getPlayer().getX());
 
         return gameStateHistory.isEmpty() ?
                 null :

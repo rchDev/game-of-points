@@ -20,7 +20,12 @@ public class AgentCollectsAction implements AgentAction {
     @Override
     public void apply(GameState gameState) {
         var agent = gameState.getAgent();
-        agent.setPoints(agent.getPoints() + resource.getPoints());
-        gameState.removeResource(resource.getId());
+        System.out.println("collecting...");
+        System.out.println("resources before:" + gameState.getResources().size());
+        ResourcePoint rp = gameState.removeResource(resource.getId());
+        System.out.println("resources after:" + gameState.getResources().size());
+        if (rp != null) {
+            agent.setPoints(agent.getPoints() + rp.getPoints());
+        }
     }
 }
