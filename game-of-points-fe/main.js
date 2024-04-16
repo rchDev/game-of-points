@@ -123,6 +123,32 @@ const sketch = (p) => {
     });
   };
 
+  const renderHealthBar = (entity) => {
+    const entityHP = entity.hitPoints;
+    const barWidth = 20;
+    const spaceBetween = 8;
+    const healthBarHeight = 10;
+    const healthBarWidth = 3 * (barWidth + spaceBetween) - spaceBetween;
+    console.log(healthBarWidth);
+    p.stroke("red");
+    p.strokeWeight(4);
+    p.fill(255, 0, 0);
+    for (let i = 0; i < 3; i++) {
+      if (i < entityHP) {
+        p.fill(255, 0, 0);
+      } else {
+        p.noFill();
+      }
+      p.rect(
+        entity.x - healthBarWidth / 2 + i * (barWidth + spaceBetween),
+        entity.y - entity.hitBox.height / 2 - 10,
+        barWidth,
+        healthBarHeight,
+      );
+    }
+    p.stroke("black");
+    p.strokeWeight(1);
+  };
   const onServerUpdate = (message) => {
     var updatedGameState = JSON.parse(message.data);
 
@@ -322,6 +348,8 @@ const sketch = (p) => {
     if (player) {
       p.fill("red");
       // p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
+
+      renderHealthBar(player);
       p.textSize(player.hitBox.width);
       p.text(
         emotions["AGGRESSIVE_COLLECT"],
@@ -337,6 +365,7 @@ const sketch = (p) => {
     }
 
     if (agent) {
+      renderHealthBar(agent);
       p.fill("blue");
       p.textSize(agent.hitBox.width);
       const agentChoice = agent.knowledge.agentChoice ?? {
@@ -408,6 +437,7 @@ const sketch = (p) => {
       p.gameState.agent.y = newAgentY;
       p.gameState.agent.mouseX = update.agent.mouseX;
       p.gameState.agent.mouseY = update.agent.mouseY;
+      p.gameState.agent.hitPoints = update.agent.hitPoints;
 
       // Check if the agent has reached the target position
       if (distance <= stepSize) {
