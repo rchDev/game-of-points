@@ -220,7 +220,7 @@ const sketch = (p) => {
       sendPlayerActionToServer("aim", {
         mouseX: p.mouseX,
         mouseY: p.mouseY,
-        gameStateTimeStamp: p.gameState.lastUpdatedTime,
+        gameStateTimeStap: p.gameState.lastUpdateTime,
       });
     }
   };
@@ -278,7 +278,7 @@ const sketch = (p) => {
       sendPlayerActionToServer("move", {
         dx,
         dy,
-        gameStateTimeStamp: p.gameState.lastUpdatedTime,
+        gameStateTimeStap: p.gameState.lastUpdateTime,
       });
     }
   }
@@ -286,7 +286,7 @@ const sketch = (p) => {
   p.mouseClicked = () => {
     sendPlayerActionToServer("shoot", {
       damage: p.gameState.player.damage,
-      gameStateTimeStamp: p.gameState.lastUpdatedTime,
+      gameStateTimeStamp: p.gameState.lastUpdateTime,
     });
   };
 
@@ -463,7 +463,7 @@ const sketch = (p) => {
       ) {
         sendPlayerActionToServer("collect", {
           ...resource,
-          gameStateTimeStamp: p.gameState.lastUpdatedTime,
+          gameStateTimeStamp: p.gameState.lastUpdateTime,
         });
         p.gameState.resources = p.gameState.resources.filter(
           (r) => r.id !== resource.id,

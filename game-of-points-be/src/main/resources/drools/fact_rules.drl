@@ -40,7 +40,6 @@ no-loop true
         $aimFact : PlayerAimFact()
         $knowledge : AgentKnowledge()
     then
-        System.out.println("Player aimed ran");
         modify($knowledge) {
             setPlayerAim($aimFact.getMouseX(), $aimFact.getMouseY(), true)
         };

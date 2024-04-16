@@ -25,7 +25,6 @@ when
     $possibilities : AgentPossibilities($agentCanReach : canReachPlayer() == true)
     eval($choice instanceof KillChoice && !$isRecharging)
 then
-    System.out.println("agent kill - can reach");
     $gameState.applyAction(new AgentShootsAction());
 end
 
@@ -38,7 +37,6 @@ when
     $possibilities : AgentPossibilities($agentCanReach : canReachPlayer() == false)
     eval($choice instanceof KillChoice && !$isRecharging)
 then
-    System.out.println("agent kill - cannot reach");
     $gameState.applyAction(new AgentMovesAction($gameState.getPlayer()));
 end
 
@@ -53,7 +51,6 @@ when
     $resource : ResourcePoint($resourceX : getX(), $resourceY : getY())
     eval($choice instanceof SafeCollectChoice && $agent.collidesWith($resource))
 then
-    System.out.println("collect - can reach - x,y: " + $agent.getX() + ", " + $agent.getY() + "rp.x, rp.y: " + $resourceX + ", " + $resourceY);
     $gameState.applyAction(new AgentCollectsAction($resource));
     retract($resource);
 end
@@ -69,7 +66,6 @@ when
     $possibilities : AgentPossibilities()
     eval(!$agent.collidesWith($resource))
 then
-    System.out.println("collect - target selected");
     if ($resource != null) {
         $gameState.applyAction(new AgentMovesAction($resource));
     }
@@ -84,7 +80,6 @@ when
     $possibilities : AgentPossibilities()
     eval($choice instanceof AggressiveCollectChoice)
 then
-    System.out.println("collect - aggresive");
     ResourcePoint closest = null;
     double closestDistance = Double.MAX_VALUE;
 
@@ -94,12 +89,6 @@ then
             closest = resource;
             closestDistance = currentDistance;
         }
-    }
-
-    if (closest == null) {
-        System.out.println("RESOURCE NOT FOUND");
-    } else {
-        System.out.println("FOUND RESOURCE AT: " + closest.getX() + ", " + closest.getY());
     }
 
     insertLogical(closest);
@@ -116,8 +105,6 @@ when
 then
     ResourcePoint closest = null;
     double closestDistance = Double.MAX_VALUE;
-
-    System.out.println("collect - safe");
 
     // Directly iterate over $resources.getValue() without extra braces
     for(ResourcePoint resource : $knowledge.getResourcePoints().getValue()) {
@@ -136,10 +123,7 @@ then
         }
     }
 
-    if (closest == null) {
-        System.out.println("RESOURCE NOT FOUND");
-    } else {
-        System.out.println("FOUND RESOURCE AT: " + closest.getX() + ", " + closest.getY());
+    if (closest != null) {
         insertLogical(closest);
     }
 end

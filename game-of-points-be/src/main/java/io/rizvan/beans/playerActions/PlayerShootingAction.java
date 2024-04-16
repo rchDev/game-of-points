@@ -5,6 +5,10 @@ import io.rizvan.beans.GameState;
 public class PlayerShootingAction extends PlayerAction {
     private int damage;
 
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
     public int getDamage() {
         return damage;
     }
@@ -18,15 +22,14 @@ public class PlayerShootingAction extends PlayerAction {
 
     @Override
     public boolean apply(GameState gameState) {
-        var agent = gameState.getAgent();
+        var agentSeenByPlayer = playerGameState.getAgent();
+        var currentAgent = gameState.getAgent();
         var player = gameState.getPlayer();
 
-        System.out.println("gameStateTimeStamp: " + gameStateTimeStamp);
-
         int damage = player.shoot();
-        if (player.canReach(agent) && damage > 0) {
-            int agentHp = agent.getHitPoints();
-            agent.setHitPoints(agentHp - damage);
+        if (player.canReach(agentSeenByPlayer) && damage > 0) {
+            int agentHp = currentAgent.getHitPoints();
+            currentAgent.setHitPoints(agentHp - damage);
             this.damage = damage;
         }
 
