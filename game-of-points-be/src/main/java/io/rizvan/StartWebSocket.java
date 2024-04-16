@@ -47,7 +47,17 @@ public class StartWebSocket {
     public void onMessage(String message, @PathParam("sessionId") String sessionId) {
         var timestamp = Instant.now().toEpochMilli();
         var playerAction = playerActionDeserializer.deserialize(message);
+        var session = sessionStorage.getSession(sessionId);
+        if (session == null || !session.isOpen()) {
+            return;
+        }
+        var gameState = sessionStorage.getGameState(
+                session.getId(),
+                playerAction.getGameStateTimeStamp());
+
         playerAction.setServerTimestamp(timestamp);
+        playerAction.setPlayerGameState(gameState);
+
         sessionStorage.addPlayerAction(sessionId, playerAction);
     }
 

@@ -83,7 +83,6 @@ no-loop true
         $resourcesChangedFact : ResourcesChangeFact()
         $knowledge : AgentKnowledge()
     then
-        System.out.println("RESOURCE POINTS CHANGED RULE RAN");
         modify($knowledge) {
             setResourcePoints($resourcesChangedFact.getResources(), true)
         };

@@ -62,6 +62,14 @@ public class SessionStorage {
                 gameStateHistory.get(gameStateHistory.size() - 1);
     }
 
+    public GameState getGameState(String sessionId, long lastUpdateTime) {
+        if (!gameStates.containsKey(sessionId)) {
+            return null;
+        }
+
+        return gameStates.get(sessionId).get(lastUpdateTime);
+    }
+
     public Session getSession(String sessionId) {
         return sessions.get(sessionId);
     }

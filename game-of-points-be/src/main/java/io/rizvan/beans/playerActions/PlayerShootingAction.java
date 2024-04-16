@@ -1,7 +1,6 @@
 package io.rizvan.beans.playerActions;
 
 import io.rizvan.beans.GameState;
-import io.rizvan.beans.facts.PlayerShootingFact;
 
 public class PlayerShootingAction extends PlayerAction {
     private int damage;
@@ -10,9 +9,7 @@ public class PlayerShootingAction extends PlayerAction {
         return damage;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
+    public PlayerShootingAction() {}
 
     public PlayerShootingAction(PlayerShootingAction other) {
         super(other);
@@ -23,6 +20,8 @@ public class PlayerShootingAction extends PlayerAction {
     public boolean apply(GameState gameState) {
         var agent = gameState.getAgent();
         var player = gameState.getPlayer();
+
+        System.out.println("gameStateTimeStamp: " + gameStateTimeStamp);
 
         int damage = player.shoot();
         if (player.canReach(agent) && damage > 0) {

@@ -217,7 +217,11 @@ const sketch = (p) => {
       const mousePosition = { x: p.mouseX, y: p.mouseY };
 
       lastSentMousePosition = mousePosition;
-      sendPlayerActionToServer("aim", { mouseX: p.mouseX, mouseY: p.mouseY });
+      sendPlayerActionToServer("aim", {
+        mouseX: p.mouseX,
+        mouseY: p.mouseY,
+        gameStateTimeStamp: p.gameState.lastUpdatedTime,
+      });
     }
   };
 
@@ -271,12 +275,19 @@ const sketch = (p) => {
     );
 
     if (dx !== 0 || dy !== 0) {
-      sendPlayerActionToServer("move", { dx, dy });
+      sendPlayerActionToServer("move", {
+        dx,
+        dy,
+        gameStateTimeStamp: p.gameState.lastUpdatedTime,
+      });
     }
   }
 
   p.mouseClicked = () => {
-    sendPlayerActionToServer("shoot", { damage: p.gameState.player.damage });
+    sendPlayerActionToServer("shoot", {
+      damage: p.gameState.player.damage,
+      gameStateTimeStamp: p.gameState.lastUpdatedTime,
+    });
   };
 
   function updateMovement(keyCode, isPressed) {
@@ -450,7 +461,10 @@ const sketch = (p) => {
         player.y + player.hitBox.height / 2 >=
           resource.y - resource.hitBox.height / 2
       ) {
-        sendPlayerActionToServer("collect", resource);
+        sendPlayerActionToServer("collect", {
+          ...resource,
+          gameStateTimeStamp: p.gameState.lastUpdatedTime,
+        });
         p.gameState.resources = p.gameState.resources.filter(
           (r) => r.id !== resource.id,
         );
