@@ -132,7 +132,6 @@ public class Weapon {
         return rechargeTimeMs;
     }
 
-    @JsonbTransient
     public boolean isRecharging() {
         return (Instant.now().toEpochMilli() - shotTime) < rechargeTimeMs;
     }
