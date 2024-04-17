@@ -129,7 +129,6 @@ const sketch = (p) => {
     const spaceBetween = 8;
     const healthBarHeight = 10;
     const healthBarWidth = 3 * (barWidth + spaceBetween) - spaceBetween;
-    console.log(healthBarWidth);
     p.stroke("red");
     p.strokeWeight(4);
     p.fill(255, 0, 0);
@@ -350,6 +349,7 @@ const sketch = (p) => {
       // p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
 
       renderHealthBar(player);
+      renderReloadTimer(player);
       p.textSize(player.hitBox.width);
       p.text(
         emotions["AGGRESSIVE_COLLECT"],
@@ -371,7 +371,6 @@ const sketch = (p) => {
       const agentChoice = agent.knowledge.agentChoice ?? {
         type: "SAFE_COLLECT",
       };
-      console.log(agentChoice.type, ":", emotions[agentChoice.type]);
       p.text(
         emotions[agentChoice.type],
         agent.x - agent.hitBox.width / 2,
@@ -393,6 +392,33 @@ const sketch = (p) => {
       });
     }
   }
+
+  const renderReloadTimer = (entity) => {
+    const reloadTime = entity.weapon.rechargeTimeMilli;
+    const reloadTimeLeft = entity.weapon.rechargeTimeLeft;
+    const timerBoxWidth = 76;
+    const timerBarWidth = timerBoxWidth * (reloadTimeLeft / reloadTime);
+    const timerBarHeight = 10;
+
+    if (reloadTimeLeft > 0) {
+      p.strokeWeight(4);
+      p.stroke("red");
+      p.fill("white");
+      p.rect(
+        entity.x - timerBoxWidth / 2,
+        entity.y - entity.hitBox.height / 2 - 25,
+        timerBoxWidth,
+        timerBarHeight,
+      );
+      p.fill("red");
+      p.rect(
+        entity.x - timerBoxWidth / 2,
+        entity.y - entity.hitBox.height / 2 - 25,
+        timerBarWidth,
+        timerBarHeight,
+      );
+    }
+  };
 
   function renderReach(position, reach, color = [255, 0, 0, 69]) {
     p.stroke(color);
