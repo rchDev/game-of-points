@@ -39,7 +39,7 @@ async function getInitialGameState(weaponId, windowWidth, windowHeight) {
   return response.json();
 }
 
-function connectToGameSession(sessionId) {
+function connectToGameSession(sessionId, mousePositionSendTimer) {
   const ws = new WebSocket(`ws://localhost:8080/games/${sessionId}`);
 
   ws.onopen = () => {
@@ -52,6 +52,7 @@ function connectToGameSession(sessionId) {
 
   ws.onclose = () => {
     console.log("WebSocket connection closed");
+    mousePositionSendTimer && clearInterval(mousePositionSendTimer);
   };
 
   return ws;
@@ -148,8 +149,12 @@ const sketch = (p) => {
     p.stroke("black");
     p.strokeWeight(1);
   };
-  const onServerUpdate = (message) => {
+  const onServerUpdate = (ws, message) => {
     var updatedGameState = JSON.parse(message.data);
+    if (updatedGameState.gameHasEnded) {
+      ws.close();
+      return;
+    }
 
     addToUnappliedStateChanges(cloneDeep(p.gameState), updatedGameState);
     reconcileWithServerState(updatedGameState);
@@ -213,8 +218,8 @@ const sketch = (p) => {
 
     updatePlayerStats(gameState);
 
-    p.ws = connectToGameSession(sessionId);
-    p.ws.onmessage = (message) => onServerUpdate(message);
+    p.ws = connectToGameSession(sessionId, mousePositionSendTimer);
+    p.ws.onmessage = (message) => onServerUpdate(p.ws, message);
 
     p.gameState = gameState;
     p.gameStateLoaded = true;
@@ -252,18 +257,20 @@ const sketch = (p) => {
     }
   };
 
-  p.mouseMoved = () => {
-    if (
-      p.dist(
-        p.mouseX,
-        p.mouseY,
-        lastSentMousePosition.x,
-        lastSentMousePosition.y,
-      ) > mousePositionSendThreshold
-    ) {
-      sendMousePositionUpdate();
-    }
-  };
+  p.mouseMoved = () =>
+    needsServer(() => {
+      if (
+        p.dist(
+          p.mouseX,
+          p.mouseY,
+          lastSentMousePosition.x,
+          lastSentMousePosition.y,
+        ) > mousePositionSendThreshold
+      ) {
+        console.log("needs server");
+        sendMousePositionUpdate();
+      }
+    });
 
   function getMovementVector(isMoving, entity) {
     const movementVector = { x: 0, y: 0 };
@@ -310,17 +317,29 @@ const sketch = (p) => {
     }
   }
 
-  p.mouseClicked = () => {
-    const player = p.gameState.player;
-    console.log(player);
-    if (player.weapon.ammo <= 0 || player.weapon.recharging) return;
-
-    p.shotTime = Date.now();
-    sendPlayerActionToServer("shoot", {
-      damage: p.gameState.player.damage,
-      gameStateTimeStamp: p.gameState.lastUpdateTime,
-    });
+  const needsServer = (func) => {
+    if (
+      !p.ws ||
+      p.ws.readyState === WebSocket.CLOSING ||
+      p.ws.readyState === WebSocket.CLOSED
+    ) {
+      return;
+    }
+    return func();
   };
+
+  p.mouseClicked = () =>
+    needsServer(() => {
+      const player = p.gameState.player;
+
+      if (player.weapon.ammo <= 0 || player.weapon.recharging) return;
+
+      p.shotTime = Date.now();
+      sendPlayerActionToServer("shoot", {
+        damage: p.gameState.player.damage,
+        gameStateTimeStamp: p.gameState.lastUpdateTime,
+      });
+    });
 
   function updateMovement(keyCode, isPressed) {
     switch (keyCode) {
@@ -341,9 +360,9 @@ const sketch = (p) => {
     }
   }
 
-  p.keyPressed = () => updateMovement(p.keyCode, true);
+  p.keyPressed = () => needsServer(() => updateMovement(p.keyCode, true));
 
-  p.keyReleased = () => updateMovement(p.keyCode, false);
+  p.keyReleased = () => needsServer(() => updateMovement(p.keyCode, false));
 
   // Rendering logic
   function render() {
@@ -420,7 +439,8 @@ const sketch = (p) => {
     if (timeSinceShot > timeTreshhold) return;
 
     const maxCircleDiameter = reach * 2;
-    const circleDiameter = maxCircleDiameter * (timeSinceShot / timeTreshhold);
+    const circleDiameter =
+      maxCircleDiameter - maxCircleDiameter * (timeSinceShot / timeTreshhold);
 
     p.strokeWeight(6);
     p.stroke(...color);
@@ -576,10 +596,13 @@ const sketch = (p) => {
     if (!p.gameStateLoaded) {
       return;
     }
-    interpolateAgent(p.deltaTime);
-    predictMovementAndSendUpdate(p.deltaTime);
-    checkCollisionWithResources(p.gameState.player, p.gameState.resources);
-    render();
+
+    needsServer(() => interpolateAgent(p.deltaTime));
+    needsServer(() => predictMovementAndSendUpdate(p.deltaTime));
+    needsServer(() =>
+      checkCollisionWithResources(p.gameState.player, p.gameState.resources),
+    );
+    needsServer(() => render());
   };
 
   // Resize canvas
