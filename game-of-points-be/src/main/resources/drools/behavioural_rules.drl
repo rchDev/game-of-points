@@ -40,6 +40,7 @@ then
     modify($knowledge){
         setAgentChoice(new KillChoice())
     }
+    System.out.println("agent-choices-group: KILL-PLAYER");
 end
 
 // Rule for "Agent Avoids Player" under specific conditions
@@ -75,6 +76,7 @@ then
     modify($knowledge){
         setAgentChoice(new AvoidChoice())
     }
+    System.out.println("agent-choices-group: AVOID-PLAYER");
 end
 
 rule "agent-safe-collect"
@@ -109,6 +111,7 @@ then
     modify($knowledge){
         setAgentChoice(new SafeCollectChoice())
     }
+    System.out.println("agent-choices-group: SAFE-COLLECT");
 end
 
 // Rule for "Agent Aggressively Collects Points" under specific conditions
@@ -139,4 +142,5 @@ then
     modify($knowledge){
         setAgentChoice(new AggressiveCollectChoice())
     }
+    System.out.println("agent-choices-group: AGGRESSIVE-COLLECT");
 end

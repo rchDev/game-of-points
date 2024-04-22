@@ -26,6 +26,7 @@ when
     eval($choice instanceof KillChoice && !$isRecharging)
 then
     $gameState.applyAction(new AgentShootsAction());
+    System.out.println("agent-action-group: AGENT-CHOSE-KILLING: 🔫, REACH: ✅");
 end
 
 rule "agent-chose-kill-and-cannot-reach-player"
@@ -38,9 +39,10 @@ when
     eval($choice instanceof KillChoice && !$isRecharging)
 then
     $gameState.applyAction(new AgentMovesAction($gameState.getPlayer()));
+    System.out.println("agent-action-group: AGENT-CHOSE-KILLING: 🔫, REACH: ❌");
 end
 
-rule "agent-collect-can-reach"
+rule "agent-safe-collect-can-reach"
 agenda-group "agent-actions-group"
 no-loop true
 when
@@ -53,6 +55,7 @@ when
 then
     $gameState.applyAction(new AgentCollectsAction($resource));
     retract($resource);
+    System.out.println("agent-action-group: AGENT-CHOSE-COLLECTION: 😨, REACH: ✅");
 end
 
 rule "agent-chose-collect-cannot-reach-target-selected"
@@ -69,6 +72,7 @@ then
     if ($resource != null) {
         $gameState.applyAction(new AgentMovesAction($resource));
     }
+    System.out.println("agent-action-group: AGENT-CHOSE-COLLECTION:, TARGET FOUND: ⌖");
 end
 
 rule "agent-chose-collect-cannot-reach-aggresive"
@@ -92,6 +96,7 @@ then
     }
 
     insertLogical(closest);
+    System.out.println("agent-action-group: AGENT-CHOSE-COLLECTING: 🤬, REACH: ❌");
 end
 
 rule "agent-chose-collect-cannot-reach-safe"
@@ -122,10 +127,10 @@ then
             closestDistance = currentDistance;
         }
     }
-
     if (closest != null) {
         insertLogical(closest);
     }
+    System.out.println("agent-action-group: AGENT-CHOSE-COLLECTION: 😨, REACH: ❌");
 end
 
 rule "agent-chose-avoid"
@@ -138,4 +143,5 @@ when
     eval($choice instanceof AvoidChoice)
 then
     $gameState.applyAction(new AgentAvoidsAction());
+    System.out.println("agent-action-group: AGENT-CHOSE-AVOIDING: 😨");
 end

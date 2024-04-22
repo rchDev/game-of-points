@@ -25,10 +25,11 @@ no-loop true
         $moveFact : PlayerMovementFact()
         $knowledge : AgentKnowledge()
     then
-        System.out.println("Player Moved ran");
         modify($knowledge){
             setPlayerPosition($moveFact.getX(), $moveFact.getY(), true)
         };
+        System.out.println("inference-group: player-moved");
+
 end
 
 rule "Player Aimed"
@@ -41,6 +42,7 @@ no-loop true
         modify($knowledge) {
             setPlayerAim($aimFact.getMouseX(), $aimFact.getMouseY(), true)
         };
+        System.out.println("inference-group: player-aimed");
 end
 
 rule "Player shot"
@@ -50,7 +52,6 @@ no-loop true
         $shootingFact : PlayerShootingFact($success : actionSucceeded(), $damage : getDamage())
         $knowledge : AgentKnowledge($shotCount : getShotCount())
     then
-        System.out.println("Player Shot ran");
         boolean damageFelt = $damage > 0;
         int updatedShotCount = $success ? $shotCount.getValue() + 1 : $shotCount.getValue();
         modify($knowledge){
@@ -58,6 +59,7 @@ no-loop true
             setShotCount(updatedShotCount, true)
         }
         update($knowledge);
+        System.out.println("inference-group: player-shot");
 end
 
 rule "Player collected resource"
@@ -71,6 +73,7 @@ no-loop true
         modify($knowledge) {
             setPlayerPoints($collectionFact.getTotalPoints(), true)
         };
+        System.out.println("inference-group: player-collected-resource");
 end
 
 rule "Resource Points Changed"
@@ -160,5 +163,6 @@ salience -100
                    }
                });
         }
+        System.out.println("inference-group: knowledge-inference-ran");
 end
 
