@@ -7,16 +7,16 @@ import java.util.List;
 
 @ApplicationScoped
 public class WeaponCache {
-    private final ConcurrentHashSet<RangedWeapon> weapons = new ConcurrentHashSet<>();
+    private final ConcurrentHashSet<Weapon> weapons = new ConcurrentHashSet<>();
 
     public WeaponCache() {
-        this.weapons.add(RangedWeapon.Type.SNIPER.get());
-        this.weapons.add(RangedWeapon.Type.CARBINE.get());
-        this.weapons.add(RangedWeapon.Type.SUB_MACHINE.get());
-        this.weapons.add(RangedWeapon.Type.PISTOL.get());
+        this.weapons.add(Weapon.Type.SNIPER.get());
+        this.weapons.add(Weapon.Type.CARBINE.get());
+        this.weapons.add(Weapon.Type.SUB_MACHINE.get());
+        this.weapons.add(Weapon.Type.PISTOL.get());
     }
 
-    public List<RangedWeapon> getWeapons() {
+    public List<Weapon> getWeapons() {
         return weapons.stream().toList();
     }
 }

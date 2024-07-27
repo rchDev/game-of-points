@@ -2,19 +2,26 @@ package io.rizvan.beans.actors;
 
 import io.rizvan.beans.HitBox;
 
-import java.util.Objects;
-
 public abstract class GameEntity {
     protected String id;
     protected double x;
     protected double y;
     protected HitBox hitBox;
 
+    public GameEntity() {}
+
     public GameEntity(double x, double y, int width, int height) {
         this.id = java.util.UUID.randomUUID().toString();
         this.x = x;
         this.y = y;
         this.hitBox = new HitBox(width, height);
+    }
+
+    public GameEntity(GameEntity other) {
+        this.id = other.id;
+        this.x = other.x;
+        this.y = other.y;
+        this.hitBox = new HitBox(other.hitBox.getWidth(), other.hitBox.getHeight());
     }
 
     public double getX() {

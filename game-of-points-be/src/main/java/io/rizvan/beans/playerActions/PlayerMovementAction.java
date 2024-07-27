@@ -22,6 +22,15 @@ public class PlayerMovementAction extends PlayerAction {
         this.dy = dy;
     }
 
+    public PlayerMovementAction() {
+    }
+
+    public PlayerMovementAction(PlayerMovementAction other) {
+        super(other);
+        this.dx = other.dx;
+        this.dy = other.dy;
+    }
+
     @Override
     public boolean apply(GameState gameState) {
         var player = gameState.getPlayer();

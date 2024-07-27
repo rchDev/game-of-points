@@ -1,0 +1,147 @@
+package rules
+
+import io.rizvan.beans.actors.agent.Agent
+import io.rizvan.beans.knowledge.AgentKnowledge
+import io.rizvan.beans.knowledge.AgentPossibilities
+import io.rizvan.beans.GameState
+import io.rizvan.beans.actors.agent.choices.AvoidChoice
+import io.rizvan.beans.actors.agent.choices.SafeCollectChoice
+import io.rizvan.beans.actors.agent.choices.AggressiveCollectChoice
+import io.rizvan.beans.actors.agent.choices.KillChoice
+import io.rizvan.beans.actors.agent.actions.AgentShootsAction
+import io.rizvan.beans.actors.agent.actions.AgentMovesAction
+import java.time.Instant
+import io.rizvan.beans.ResourcePoint
+import io.rizvan.beans.actors.agent.actions.AgentCollectsAction
+import io.rizvan.beans.actors.agent.actions.AgentAvoidsAction
+import io.rizvan.beans.actors.CompetingEntity
+
+rule "agent-chose-kill-and-can-reach-player"
+agenda-group "agent-actions-group"
+when
+    $gameState : GameState()
+    $agent : Agent($x : getX(), $y : getY(), $isRecharging : isRecharging())
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities($agentCanReach : canReachPlayer() == true)
+    eval($choice instanceof KillChoice && !$isRecharging)
+then
+    $gameState.applyAction(new AgentShootsAction());
+    System.out.println("agent-action-group: AGENT-CHOSE-KILLING: 🔫, REACH: ✅");
+end
+
+rule "agent-chose-kill-and-cannot-reach-player"
+agenda-group "agent-actions-group"
+when
+    $gameState : GameState()
+    $agent : Agent($x : getX(), $y : getY(), $isRecharging: isRecharging())
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities($agentCanReach : canReachPlayer() == false)
+    eval($choice instanceof KillChoice && !$isRecharging)
+then
+    $gameState.applyAction(new AgentMovesAction($gameState.getPlayer()));
+    System.out.println("agent-action-group: AGENT-CHOSE-KILLING: 🔫, REACH: ❌");
+end
+
+rule "agent-safe-collect-can-reach"
+agenda-group "agent-actions-group"
+no-loop true
+when
+    $gameState : GameState()
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities()
+    $resource : ResourcePoint($resourceX : getX(), $resourceY : getY())
+    eval($choice instanceof SafeCollectChoice && $agent.collidesWith($resource))
+then
+    $gameState.applyAction(new AgentCollectsAction($resource));
+    retract($resource);
+    System.out.println("agent-action-group: AGENT-CHOSE-COLLECTION: 😨, REACH: ✅");
+end
+
+rule "agent-chose-collect-cannot-reach-target-selected"
+agenda-group "agent-actions-group"
+no-loop true
+when
+    $gameState : GameState()
+    $agent : Agent($x : getX(), $y : getY())
+    $resource : ResourcePoint()
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities()
+    eval(!$agent.collidesWith($resource))
+then
+    if ($resource != null) {
+        $gameState.applyAction(new AgentMovesAction($resource));
+    }
+    System.out.println("agent-action-group: AGENT-CHOSE-COLLECTION:, TARGET FOUND: ⌖");
+end
+
+rule "agent-chose-collect-cannot-reach-aggresive"
+agenda-group "agent-actions-group"
+when
+    $gameState : GameState()
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities()
+    eval($choice instanceof AggressiveCollectChoice)
+then
+    ResourcePoint closest = null;
+    double closestDistance = Double.MAX_VALUE;
+
+    for(ResourcePoint resource : $knowledge.getResourcePoints().getValue()) {
+        double currentDistance = Math.hypot(resource.getX() - $x, resource.getY() - $y);
+        if(currentDistance < closestDistance) {
+            closest = resource;
+            closestDistance = currentDistance;
+        }
+    }
+
+    insertLogical(closest);
+    System.out.println("agent-action-group: AGENT-CHOSE-COLLECTING: 🤬, REACH: ❌");
+end
+
+rule "agent-chose-collect-cannot-reach-safe"
+agenda-group "agent-actions-group"
+when
+    $gameState : GameState() and
+    $agent : Agent($x : getX(), $y : getY()) and
+    $knowledge : AgentKnowledge($choice : getAgentChoice(), $playerPos : getPlayerPosition(), $playerReach : getPlayerReach()) and
+    $possibilities : AgentPossibilities()
+    eval($choice instanceof SafeCollectChoice)
+then
+    ResourcePoint closest = null;
+    double closestDistance = Double.MAX_VALUE;
+
+    // Directly iterate over $resources.getValue() without extra braces
+    for(ResourcePoint resource : $knowledge.getResourcePoints().getValue()) {
+        boolean withinPlayerReach = CompetingEntity.isPointWithinCircle(
+                resource.getX(),
+                resource.getY(),
+                $playerPos.getValue().getX(),
+                $playerPos.getValue().getY(),
+                $playerReach.getValue()
+        );
+        if (withinPlayerReach) continue;
+        double currentDistance = Math.hypot(resource.getX() - $x, resource.getY() - $y);
+        if(currentDistance < closestDistance) {
+            closest = resource;
+            closestDistance = currentDistance;
+        }
+    }
+    if (closest != null) {
+        insertLogical(closest);
+    }
+    System.out.println("agent-action-group: AGENT-CHOSE-COLLECTION: 😨, REACH: ❌");
+end
+
+rule "agent-chose-avoid"
+agenda-group "agent-actions-group"
+when
+    $gameState : GameState()
+    $agent : Agent($x : getX(), $y : getY())
+    $knowledge : AgentKnowledge($choice : getAgentChoice())
+    $possibilities : AgentPossibilities()
+    eval($choice instanceof AvoidChoice)
+then
+    $gameState.applyAction(new AgentAvoidsAction());
+    System.out.println("agent-action-group: AGENT-CHOSE-AVOIDING: 😨");
+end

@@ -22,6 +22,15 @@ public class PlayerAimingAction extends PlayerAction {
         this.mouseY = mouseY;
     }
 
+    public PlayerAimingAction() {
+    }
+
+    public PlayerAimingAction(PlayerAimingAction other) {
+        super(other);
+        this.mouseX = other.mouseX;
+        this.mouseY = other.mouseY;
+    }
+
     @Override
     public boolean apply(GameState gameState) {
         gameState.getPlayer().setMouseX(mouseX);

@@ -1,6 +1,9 @@
 package io.rizvan.beans;
 
-import io.rizvan.beans.actors.Agent;
+import io.rizvan.beans.actors.agent.actions.ActionType;
+import io.rizvan.beans.actors.agent.actions.AgentAction;
+import io.rizvan.beans.facts.*;
+import io.rizvan.beans.actors.agent.Agent;
 import io.rizvan.beans.actors.GameEntity;
 import io.rizvan.beans.actors.Player;
 import io.rizvan.beans.playerActions.*;
@@ -17,11 +20,12 @@ public class GameState {
     private Agent agent;
     private Zone zone;
     private int time;
-    private RandomNumberGenerator rng;
+    private long lastUpdateTime;
+    private long deltaBetweenUpdates;
+    private final RandomNumberGenerator rng;
 
     public static final int RESOURCE_SIZE = 20;
     public static final int POINTS_PER_RESOURCE = 10;
-
     public static final int GAME_TIME = 60;
 
     private final List<ResourcePoint> resources = Collections.synchronizedList(new ArrayList<>());
@@ -31,18 +35,55 @@ public class GameState {
     private PlayerCollectingAction lastAppliedPlayerCollection = null;
     private PlayerShootingAction lastAppliedPlayerShot = null;
 
+    private ActionType lastAgentAction = null;
+
+    private final FactStorage factStorage;
+
     public GameState(Player player, Agent agent, int zoneWidth, int zoneHeight, int time, RandomNumberGenerator rng) {
         this.rng = rng;
         this.player = player;
         this.agent = agent;
+        this.lastUpdateTime = 0;
+        this.deltaBetweenUpdates = 0;
         this.zone = new Zone(zoneWidth, zoneHeight);
         this.time = time;
+        this.factStorage = new FactStorage();
+
         setRandomPosition(this.player);
         setRandomPosition(this.agent);
     }
 
+
+    public GameState(GameState other) {
+        this.player = new Player(other.player);
+        this.agent = new Agent(other.agent);
+        this.zone = new Zone(other.zone);
+        this.time = other.time;
+        this.lastUpdateTime = other.lastUpdateTime;
+        this.deltaBetweenUpdates = other.deltaBetweenUpdates;
+        this.rng = other.rng;
+        // Manual deep copy for List with new ResourcePoint objects
+        for (ResourcePoint res : other.resources) {
+            this.resources.add(new ResourcePoint(res));
+        }
+        this.lastAppliedPlayerMovement = other.lastAppliedPlayerMovement != null
+                ? new PlayerMovementAction(other.lastAppliedPlayerMovement) : null;
+        this.lastAppliedPlayerAim = other.lastAppliedPlayerAim != null
+                ? new PlayerAimingAction(other.lastAppliedPlayerAim) : null;
+        this.lastAppliedPlayerCollection = other.lastAppliedPlayerCollection != null
+                ? new PlayerCollectingAction(other.lastAppliedPlayerCollection) : null;
+        this.lastAppliedPlayerShot = other.lastAppliedPlayerShot != null
+                ? new PlayerShootingAction(other.lastAppliedPlayerShot) : null;
+        this.lastAgentAction = other.lastAgentAction;
+        this.factStorage = new FactStorage(other.factStorage);
+    }
+
     public Player getPlayer() {
         return player;
+    }
+
+    public boolean hasGameEnded() {
+        return time <= 0 || !player.isAlive() || !agent.isAlive();
     }
 
     public void setPlayer(Player player) {
@@ -66,21 +107,52 @@ public class GameState {
         this.zone.setHeight(height);
     }
 
+    public long getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(long lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public long getDeltaBetweenUpdates() {
+        return deltaBetweenUpdates;
+    }
+
+    public void setDeltaBetweenUpdates(long delta) {
+        this.deltaBetweenUpdates = delta;
+    }
+
     public void setZone(Zone zone) {
         this.zone = zone;
     }
 
     public void addResource(double x, double y) {
         resources.add(new ResourcePoint(x, y, RESOURCE_SIZE, RESOURCE_SIZE, POINTS_PER_RESOURCE));
+        factStorage.add(new ResourcesChangeFact(resources, true));
+    }
+
+    public List<Fact> getFacts() {
+        return factStorage.getAll();
+    }
+
+    public void clearFacts() {
+        factStorage.clear();
     }
 
     public List<ResourcePoint> getResources() {
         return resources;
     }
 
-    public void removeResource(String id) {
+    public ResourcePoint removeResource(String id) {
         synchronized (resources) {
-            resources.removeIf(rp -> rp.getId().equals(id));
+            Optional<ResourcePoint> removedResource = resources.stream()
+                    .filter(resource -> resource.getId().equals(id))
+                    .findFirst();
+
+            removedResource.ifPresent(resources::remove);
+            factStorage.add(new ResourcesChangeFact(resources, removedResource.isPresent()));
+            return removedResource.orElse(null);
         }
     }
 
@@ -106,7 +178,15 @@ public class GameState {
         var succeeded = action.apply(this);
         if (succeeded) {
             registerAppliedAction(action);
+            registerFact(action, true);
+        } else if (action instanceof PlayerShootingAction) {
+            registerFact(action, false);
         }
+    }
+
+    public void applyAction(AgentAction action) {
+        this.lastAgentAction = action.getType();
+        action.apply(this);
     }
 
     private void registerAppliedAction(PlayerAction action) {
@@ -118,12 +198,41 @@ public class GameState {
         }
     }
 
+    public void registerFact(Fact fact) {
+        factStorage.add(fact);
+    }
+
+    private void registerFact(PlayerAction action, boolean success) {
+        switch (action.getType()) {
+            case "shoot" -> {
+                var damage = success ? ((PlayerShootingAction) action).getDamage() : 0;
+                factStorage.add(new PlayerShootingFact(damage, success));
+            }
+            case "aim" -> {
+                var aimingAction = (PlayerAimingAction) action;
+                var mouseX = aimingAction.getMouseX();
+                var mouseY = aimingAction.getMouseY();
+                factStorage.add(new PlayerAimFact(mouseX, mouseY, success));
+            }
+            case "move" -> factStorage.add(new PlayerMovementFact(player.getX(), player.getY(), success));
+            case "collect" -> factStorage.add(new PlayerCollectionFact(player.getPoints(), success));
+            default -> {
+                // do nothing
+            }
+        }
+    }
+
     public int getTime() {
         return time;
     }
 
     public void setTime(int time) {
         this.time = time;
+        factStorage.add(new GameTimeChangeFact(time, true));
+    }
+
+    public ActionType getLastAgentAction() {
+        return lastAgentAction;
     }
 
     @JsonbTransient

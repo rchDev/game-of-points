@@ -1,0 +1,168 @@
+package rules
+
+import io.rizvan.beans.facts.PlayerAimFact;
+import io.rizvan.beans.facts.PlayerMovementFact;
+import io.rizvan.beans.facts.PlayerShootingFact;
+import io.rizvan.beans.facts.PlayerCollectionFact;
+import io.rizvan.beans.facts.PlayerHPChangeFact;
+import io.rizvan.beans.facts.GameTimeChangeFact;
+import io.rizvan.beans.facts.ResourcesChangeFact;
+import io.rizvan.beans.knowledge.AgentKnowledge;
+import io.rizvan.beans.actors.agent.Agent;
+import io.rizvan.beans.GameState;
+import io.rizvan.beans.actors.CompetingEntity;
+import java.util.stream.Collectors;
+import java.util.Comparator;
+import io.rizvan.beans.Weapon;
+import java.util.Optional;
+import java.util.stream.Stream
+import java.util.List
+
+rule "Player Moved"
+agenda-group "inference-group"
+no-loop true
+    when
+        $moveFact : PlayerMovementFact()
+        $knowledge : AgentKnowledge()
+    then
+        modify($knowledge){
+            setPlayerPosition($moveFact.getX(), $moveFact.getY(), true)
+        };
+        System.out.println("inference-group: player-moved");
+
+end
+
+rule "Player Aimed"
+agenda-group "inference-group"
+no-loop true
+    when
+        $aimFact : PlayerAimFact()
+        $knowledge : AgentKnowledge()
+    then
+        modify($knowledge) {
+            setPlayerAim($aimFact.getMouseX(), $aimFact.getMouseY(), true)
+        };
+        System.out.println("inference-group: player-aimed");
+end
+
+rule "Player shot"
+agenda-group "inference-group"
+no-loop true
+    when
+        $shootingFact : PlayerShootingFact($success : actionSucceeded(), $damage : getDamage())
+        $knowledge : AgentKnowledge($shotCount : getShotCount())
+    then
+        boolean damageFelt = $damage > 0;
+        int updatedShotCount = $success ? $shotCount.getValue() + 1 : $shotCount.getValue();
+        modify($knowledge){
+            setPlayerDamage($damage, damageFelt),
+            setShotCount(updatedShotCount, true)
+        }
+        update($knowledge);
+        System.out.println("inference-group: player-shot");
+end
+
+rule "Player collected resource"
+agenda-group "inference-group"
+no-loop true
+    when
+        $collectionFact : PlayerCollectionFact()
+        $knowledge : AgentKnowledge()
+    then
+        System.out.println("Player collected ran");
+        modify($knowledge) {
+            setPlayerPoints($collectionFact.getTotalPoints(), true)
+        };
+        System.out.println("inference-group: player-collected-resource");
+end
+
+rule "Resource Points Changed"
+agenda-group "inference-group"
+no-loop true
+    when
+        $resourcesChangedFact : ResourcesChangeFact()
+        $knowledge : AgentKnowledge()
+    then
+        modify($knowledge) {
+            setResourcePoints($resourcesChangedFact.getResources(), true)
+        };
+end
+
+rule "Game Time Changed"
+agenda-group "inference-group"
+no-loop true
+    when
+        $timeChangeFact : GameTimeChangeFact()
+        $knowledge : AgentKnowledge()
+    then
+       modify($knowledge) {
+           setTimeLeft($timeChangeFact.getTimeLeft(), true)
+       };
+end
+
+rule "Player HP changed"
+agenda-group "inference-group"
+no-loop true
+    when
+        $hpChangeFact : PlayerHPChangeFact()
+        $knowledge : AgentKnowledge()
+    then
+        modify($knowledge) {
+            setPlayerHitPoints($hpChangeFact.getHP(), true)
+        };
+end
+
+rule "Knowledge Inference"
+agenda-group "inference-group"
+salience -100
+    when
+        $knowledge : AgentKnowledge()
+    then
+        boolean isShotCountKnown = $knowledge.getShotCount().isKnown();
+        boolean isAmmoCapacityKnown = $knowledge.getPlayerAmmoCapacity().isKnown();
+        boolean isPlayerDamageKnown = $knowledge.getPlayerDamage().isKnown();
+        boolean isPlayerSpeedKnown = $knowledge.getPlayerSpeed().isKnown();
+        boolean isPlayerReachKnown = $knowledge.getPlayerReach().isKnown();
+
+        if (!isPlayerDamageKnown || !isPlayerSpeedKnown || !isPlayerReachKnown || !isAmmoCapacityKnown) {
+            List<Weapon> weapons = $knowledge.getPossibleWeapons()
+            .stream()
+            .filter(wep ->
+                ((wep.getAmmoCapacity() >= $knowledge.getShotCount().getValue()) &&
+                (!isPlayerDamageKnown || wep.getDamage() == $knowledge.getPlayerDamage().getValue()) &&
+                (!isPlayerSpeedKnown || wep.getSpeedModifier() * CompetingEntity.BASE_SPEED == $knowledge.getPlayerSpeed().getValue()) &&
+                (!isPlayerReachKnown || wep.getRange() == $knowledge.getPlayerReach().getValue()))
+            ).toList();
+
+
+            weapons.stream().max(Comparator.comparingInt(Weapon::getAmmoCapacity))
+                .ifPresent(maxCapacityWeapon -> {
+                    if (!isAmmoCapacityKnown) {
+                        $knowledge.setPlayerAmmoCapacity(maxCapacityWeapon.getAmmoCapacity(), isAmmoCapacityKnown);
+                    }
+                });
+
+            weapons.stream().max(Comparator.comparingInt(Weapon::getDamage))
+                .ifPresent(maxDamageWeapon -> {
+                    if (!isPlayerDamageKnown) {
+                        $knowledge.setPlayerDamage(maxDamageWeapon.getDamage(), isPlayerDamageKnown);
+                    }
+                });
+
+            weapons.stream().max(Comparator.comparingDouble(Weapon::getSpeedModifier))
+               .ifPresent(maxSpeedWeapon -> {
+                   if (!isPlayerSpeedKnown) {
+                       $knowledge.setPlayerSpeed(maxSpeedWeapon.getSpeedModifier() * CompetingEntity.BASE_SPEED, isPlayerSpeedKnown);
+                   }
+               });
+
+            weapons.stream().max(Comparator.comparingDouble(Weapon::getRange))
+               .ifPresent(maxRangeWeapon -> {
+                   if (!isPlayerReachKnown) {
+                       $knowledge.setPlayerReach(maxRangeWeapon.getRange(), isPlayerReachKnown);
+                   }
+               });
+        }
+        System.out.println("inference-group: knowledge-inference-ran");
+end
+

@@ -39,7 +39,7 @@ async function getInitialGameState(weaponId, windowWidth, windowHeight) {
   return response.json();
 }
 
-function connectToGameSession(sessionId) {
+function connectToGameSession(sessionId, mousePositionSendTimer) {
   const ws = new WebSocket(`ws://localhost:8080/games/${sessionId}`);
 
   ws.onopen = () => {
@@ -52,15 +52,14 @@ function connectToGameSession(sessionId) {
 
   ws.onclose = () => {
     console.log("WebSocket connection closed");
+    mousePositionSendTimer && clearInterval(mousePositionSendTimer);
   };
 
   return ws;
 }
 
-function updateStats(gameState) {
+function updatePlayerStats(gameState) {
   if (!gameState) return;
-  console.log("gameState:", gameState);
-  console.log("player.speed:", gameState.player.speed.toFixed(2));
   const {
     player: {
       points: playerPoints,
@@ -72,15 +71,16 @@ function updateStats(gameState) {
     },
   } = gameState;
 
-  document.querySelector(".ai-score").innerText =
-    `${gameState.agent.points}: AI`;
   document.querySelector(".player-score").innerText = `Player: ${playerPoints}`;
   document.querySelector("#player-hp-real").innerText = playerHp;
   document.querySelector("#player-dmg-real").innerText = playerDmg;
   document.querySelector("#player-ammo-real").innerText = playerAmmo;
   document.querySelector("#player-spd-real").innerText = playerSpd.toFixed(2);
   document.querySelector("#player-reach-real").innerText = playerReach;
-  gameState.player.reach;
+}
+
+function updateAgentPoints(points) {
+  document.querySelector(".ai-score").innerText = `${points}: AI`;
 }
 
 const sketch = (p) => {
@@ -96,6 +96,13 @@ const sketch = (p) => {
   const mousePositionSendInterval = 100; // ms
   let mousePositionSendTimer;
   let predictions = [];
+  let unappliedStateChanges = [];
+  const emotions = {
+    AVOID: "😱",
+    SAFE_COLLECT: "🤗",
+    AGGRESSIVE_COLLECT: "🤑",
+    KILL: "🤬",
+  };
 
   const sendPlayerActionToServer = (type, details) => {
     if (!p.ws) return;
@@ -106,9 +113,54 @@ const sketch = (p) => {
     p.ws.send(JSON.stringify({ type, ...details, clientTimestamp }));
   };
 
-  const onServerUpdate = (message) => {
-    reconcileWithServerState(JSON.parse(message.data));
-    updateStats(p.gameState);
+  const addToUnappliedStateChanges = (gameState, gameStateUpdate) => {
+    const diff = gameState.resources.filter(
+      ({ id }) => !gameStateUpdate.resources.some((item) => item.id === id),
+    );
+    unappliedStateChanges.push({
+      agent: gameStateUpdate.agent,
+      deltaBetweenUpdates: gameStateUpdate.deltaBetweenUpdates,
+      resources: diff,
+    });
+  };
+
+  const renderHealthBar = (entity) => {
+    const entityHP = entity.hitPoints;
+    const barWidth = 20;
+    const spaceBetween = 8;
+    const healthBarHeight = 10;
+    const healthBarWidth = 3 * (barWidth + spaceBetween) - spaceBetween;
+    p.stroke("red");
+    p.strokeWeight(4);
+    p.fill(255, 0, 0);
+    for (let i = 0; i < 3; i++) {
+      if (i < entityHP) {
+        p.fill(255, 0, 0);
+      } else {
+        p.noFill();
+      }
+      p.rect(
+        entity.x - healthBarWidth / 2 + i * (barWidth + spaceBetween),
+        entity.y - entity.hitBox.height / 2 - 10,
+        barWidth,
+        healthBarHeight,
+      );
+    }
+    p.stroke("black");
+    p.strokeWeight(1);
+  };
+  const onServerUpdate = (ws, message) => {
+    var updatedGameState = JSON.parse(message.data);
+    if (updatedGameState.gameHasEnded) {
+      ws.close();
+      return;
+    }
+
+    addToUnappliedStateChanges(cloneDeep(p.gameState), updatedGameState);
+    reconcileWithServerState(updatedGameState);
+    updatePlayerStats(p.gameState);
+    document.getElementById("game-time").innerText =
+      `Time: ${p.gameState.time}s`;
   };
 
   const reconcileWithServerState = (gameState) => {
@@ -121,7 +173,9 @@ const sketch = (p) => {
       applyPrediction(tempGameState, action);
     });
 
+    const agent = p.gameState.agent;
     p.gameState = tempGameState;
+    p.gameState.agent = agent;
   };
 
   const applyPrediction = (gameState, action) => {
@@ -162,10 +216,10 @@ const sketch = (p) => {
       height,
     );
 
-    updateStats(gameState);
+    updatePlayerStats(gameState);
 
-    p.ws = connectToGameSession(sessionId);
-    p.ws.onmessage = (message) => onServerUpdate(message);
+    p.ws = connectToGameSession(sessionId, mousePositionSendTimer);
+    p.ws.onmessage = (message) => onServerUpdate(p.ws, message);
 
     p.gameState = gameState;
     p.gameStateLoaded = true;
@@ -178,6 +232,8 @@ const sketch = (p) => {
     let canvas = p.createCanvas(width, height);
     canvas.parent("game-canvas");
     p.fill(255, 0, 0);
+    p.shotTime = -1;
+    p.agentShotTime = -1;
 
     mousePositionSendTimer = setInterval(
       sendMousePositionUpdate,
@@ -193,22 +249,28 @@ const sketch = (p) => {
       const mousePosition = { x: p.mouseX, y: p.mouseY };
 
       lastSentMousePosition = mousePosition;
-      sendPlayerActionToServer("aim", { mouseX: p.mouseX, mouseY: p.mouseY });
+      sendPlayerActionToServer("aim", {
+        mouseX: p.mouseX,
+        mouseY: p.mouseY,
+        gameStateTimeStap: p.gameState.lastUpdateTime,
+      });
     }
   };
 
-  p.mouseMoved = () => {
-    if (
-      p.dist(
-        p.mouseX,
-        p.mouseY,
-        lastSentMousePosition.x,
-        lastSentMousePosition.y,
-      ) > mousePositionSendThreshold
-    ) {
-      sendMousePositionUpdate();
-    }
-  };
+  p.mouseMoved = () =>
+    needsServer(() => {
+      if (
+        p.dist(
+          p.mouseX,
+          p.mouseY,
+          lastSentMousePosition.x,
+          lastSentMousePosition.y,
+        ) > mousePositionSendThreshold
+      ) {
+        console.log("needs server");
+        sendMousePositionUpdate();
+      }
+    });
 
   function getMovementVector(isMoving, entity) {
     const movementVector = { x: 0, y: 0 };
@@ -247,9 +309,37 @@ const sketch = (p) => {
     );
 
     if (dx !== 0 || dy !== 0) {
-      sendPlayerActionToServer("move", { dx, dy });
+      sendPlayerActionToServer("move", {
+        dx,
+        dy,
+        gameStateTimeStap: p.gameState.lastUpdateTime,
+      });
     }
   }
+
+  const needsServer = (func) => {
+    if (
+      !p.ws ||
+      p.ws.readyState === WebSocket.CLOSING ||
+      p.ws.readyState === WebSocket.CLOSED
+    ) {
+      return;
+    }
+    return func();
+  };
+
+  p.mouseClicked = () =>
+    needsServer(() => {
+      const player = p.gameState.player;
+
+      if (player.weapon.ammo <= 0 || player.weapon.recharging) return;
+
+      p.shotTime = Date.now();
+      sendPlayerActionToServer("shoot", {
+        damage: p.gameState.player.damage,
+        gameStateTimeStamp: p.gameState.lastUpdateTime,
+      });
+    });
 
   function updateMovement(keyCode, isPressed) {
     switch (keyCode) {
@@ -270,9 +360,9 @@ const sketch = (p) => {
     }
   }
 
-  p.keyPressed = () => updateMovement(p.keyCode, true);
+  p.keyPressed = () => needsServer(() => updateMovement(p.keyCode, true));
 
-  p.keyReleased = () => updateMovement(p.keyCode, false);
+  p.keyReleased = () => needsServer(() => updateMovement(p.keyCode, false));
 
   // Rendering logic
   function render() {
@@ -281,16 +371,58 @@ const sketch = (p) => {
     p.clear();
 
     if (player) {
-      p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
-      drawAimLine(player);
+      p.fill("red");
+      // p.ellipse(player.x, player.y, player.hitBox.width, player.hitBox.height);
+
+      renderHealthBar(player);
+      renderReloadTimer(player);
+      p.textSize(player.hitBox.width);
+      p.text(
+        emotions["AGGRESSIVE_COLLECT"],
+        player.x - player.hitBox.width / 2,
+        player.y + player.hitBox.height / 2,
+      );
+      renderReach({ x: player.x, y: player.y }, player.reach, [255, 0, 0, 191]);
+      renderReach(
+        { x: player.x, y: player.y },
+        agent.knowledge.playerReach.value,
+        [255, 0, 0, 69],
+      );
+      renderShot(
+        p.shotTime,
+        { x: player.x, y: player.y },
+        player.reach,
+        [255, 0, 0, 191],
+      );
     }
 
     if (agent) {
-      p.ellipse(agent.x, agent.y, agent.hitBox.width, agent.hitBox.height);
+      renderHealthBar(agent);
+      renderReloadTimer(agent);
+      p.fill("blue");
+      p.textSize(agent.hitBox.width);
+      const agentChoice = agent.knowledge.agentChoice ?? {
+        type: "SAFE_COLLECT",
+      };
+      p.text(
+        emotions[agentChoice.type],
+        agent.x - agent.hitBox.width / 2,
+        agent.y + agent.hitBox.height / 2,
+      );
+      renderReach({ x: agent.x, y: agent.y }, agent.reach, [0, 0, 255, 69]);
+      renderShot(
+        p.agentShotTime,
+        { x: agent.x, y: agent.y },
+        agent.reach,
+        [255, 0, 0, 191],
+      );
     }
 
     if (resources) {
-      resources.forEach((resourse) => {
+      const unappliedResources = unappliedStateChanges.flatMap(
+        (state) => state.resources,
+      );
+      resources.concat(unappliedResources).forEach((resourse) => {
         p.stroke("purple");
         p.strokeWeight(resourse.hitBox.width);
         p.point(resourse.x, resourse.y);
@@ -299,6 +431,141 @@ const sketch = (p) => {
       });
     }
   }
+
+  const renderShot = (shotTime, position, reach, color = [255, 0, 0, 69]) => {
+    const timeSinceShot = Date.now() - shotTime;
+    const timeTreshhold = 100;
+
+    if (timeSinceShot > timeTreshhold) return;
+
+    const maxCircleDiameter = reach * 2;
+    const circleDiameter =
+      maxCircleDiameter - maxCircleDiameter * (timeSinceShot / timeTreshhold);
+
+    p.strokeWeight(6);
+    p.stroke(...color);
+    p.fill(...color);
+    p.ellipse(position.x, position.y, circleDiameter);
+    p.fill(255, 0, 0);
+  };
+
+  const renderReloadTimer = (entity) => {
+    const reloadTime = entity.weapon.rechargeTimeMilli;
+    const reloadTimeLeft = entity.weapon.rechargeTimeLeft;
+    const timerBoxWidth = 76;
+    const timerBarWidth = timerBoxWidth * (reloadTimeLeft / reloadTime);
+    const timerBarHeight = 10;
+
+    if (reloadTimeLeft > 0) {
+      p.strokeWeight(4);
+      p.stroke("red");
+      p.fill("white");
+      p.rect(
+        entity.x - timerBoxWidth / 2,
+        entity.y - entity.hitBox.height / 2 - 25,
+        timerBoxWidth,
+        timerBarHeight,
+      );
+      p.fill("red");
+      p.rect(
+        entity.x - timerBoxWidth / 2,
+        entity.y - entity.hitBox.height / 2 - 25,
+        timerBarWidth,
+        timerBarHeight,
+      );
+    }
+  };
+
+  function renderReach(position, reach, color = [255, 0, 0, 69]) {
+    p.stroke(color);
+    p.strokeWeight(6);
+    p.noFill();
+    p.ellipse(position.x, position.y, reach * 2);
+    p.fill(255, 0, 0);
+    p.stroke("black");
+    p.strokeWeight(1);
+  }
+
+  function interpolateAgent(deltaTime) {
+    // Convert deltaTime to seconds if needed
+    const dtSeconds = Math.floor(deltaTime);
+    // Check if there are any updates to interpolate towards
+    if (unappliedStateChanges.length > 0) {
+      // Get the next update
+      const update = unappliedStateChanges[unappliedStateChanges.length - 1];
+      const agent = p.gameState.agent;
+      const targetPos = { x: update.agent.x, y: update.agent.y };
+      // Calculate the step based on agent's speed and deltaTime
+      const directionX = targetPos.x - agent.x;
+      const directionY = targetPos.y - agent.y;
+
+      // Calculate the distance to the target position
+      const distance = Math.sqrt(
+        directionX * directionX + directionY * directionY,
+      );
+
+      // Normalize the direction vector
+      const dirX = directionX / distance || 0;
+      const dirY = directionY / distance || 0;
+
+      // Calculate the step size based on the agent's speed and deltaTime
+      const stepSize = agent.speed * dtSeconds;
+
+      // Update the agent's position towards the target
+      let newAgentX = agent.x + dirX * stepSize;
+      let newAgentY = agent.y + dirY * stepSize;
+
+      p.gameState.agent.x = newAgentX;
+      p.gameState.agent.y = newAgentY;
+      p.gameState.agent.mouseX = update.agent.mouseX;
+      p.gameState.agent.mouseY = update.agent.mouseY;
+      p.gameState.agent.hitPoints = update.agent.hitPoints;
+      p.gameState.agent.isReloading = update.agent.isReloading;
+      p.agentShotTime =
+        p.gameState.agent.weapon.ammo < update.agent.weapon.ammo
+          ? Date.now()
+          : -1;
+      p.gameState.agent.weapon.ammo = update.agent.weapon.ammo;
+      p.gameState.agent.weapon.ammoCapacity = update.agent.weapon.ammoCapacity;
+
+      // Check if the agent has reached the target position
+      if (distance <= stepSize) {
+        p.gameState.agent.x = targetPos.x;
+        p.gameState.agent.y = targetPos.y;
+        var stateChange =
+          unappliedStateChanges[unappliedStateChanges.length - 1];
+        unappliedStateChanges = [];
+        updateAgentInfo(stateChange);
+      }
+    }
+  }
+
+  const updateAgentInfo = (update) => {
+    let { agent } = update;
+    updateAgentPoints(agent.points);
+    updatePerceivedInfo(agent.knowledge);
+  };
+
+  const updatePerceivedInfo = (knowledge) => {
+    const {
+      playerHitPoints: { value: perceivedPlayerHp },
+      playerDamage: { value: perceivedPlayerDmg },
+      playerAmmoCapacity: { value: perceivedPlayerAmmo },
+      playerSpeed: { value: perceivedPlayerSpd },
+      playerReach: { value: perceivedPlayerReach },
+    } = knowledge;
+
+    document.querySelector("#player-hp-perceived").innerText =
+      perceivedPlayerHp;
+    document.querySelector("#player-dmg-perceived").innerText =
+      perceivedPlayerDmg;
+    document.querySelector("#player-ammo-perceived").innerText =
+      perceivedPlayerAmmo;
+    document.querySelector("#player-spd-perceived").innerText =
+      perceivedPlayerSpd.toFixed(2);
+    document.querySelector("#player-reach-perceived").innerText =
+      perceivedPlayerReach;
+  };
 
   // TODO: fix this
   function checkCollisionWithResources(player, resources) {
@@ -313,7 +580,10 @@ const sketch = (p) => {
         player.y + player.hitBox.height / 2 >=
           resource.y - resource.hitBox.height / 2
       ) {
-        sendPlayerActionToServer("collect", resource);
+        sendPlayerActionToServer("collect", {
+          ...resource,
+          gameStateTimeStamp: p.gameState.lastUpdateTime,
+        });
         p.gameState.resources = p.gameState.resources.filter(
           (r) => r.id !== resource.id,
         );
@@ -321,34 +591,18 @@ const sketch = (p) => {
     }
   }
 
-  function drawAimLine(entity) {
-    // Calculate angle between player position and mouse position
-    let angle = p.atan2(p.mouseY - entity.y, p.mouseX - entity.x);
-
-    // Calculate the start point of the line based on the player's edge
-    let startX = entity.x + p.cos(angle) * entity.hitBox.width;
-    let startY = entity.y + p.sin(angle) * entity.hitBox.height;
-
-    // Calculate the end point of the line based on the player's reach
-    let endX = entity.x + p.cos(angle) * entity.reach;
-    let endY = entity.y + p.sin(angle) * entity.reach;
-
-    // Draw the line
-    p.stroke("red");
-    p.strokeWeight(4);
-    p.line(startX, startY, endX, endY);
-    p.strokeWeight(1);
-    p.stroke("black");
-  }
-
   // Draw loop
   p.draw = async () => {
     if (!p.gameStateLoaded) {
       return;
     }
-    predictMovementAndSendUpdate(p.deltaTime);
-    checkCollisionWithResources(p.gameState.player, p.gameState.resources);
-    render();
+
+    needsServer(() => interpolateAgent(p.deltaTime));
+    needsServer(() => predictMovementAndSendUpdate(p.deltaTime));
+    needsServer(() =>
+      checkCollisionWithResources(p.gameState.player, p.gameState.resources),
+    );
+    needsServer(() => render());
   };
 
   // Resize canvas

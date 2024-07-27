@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.websocket.Session;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -12,9 +13,12 @@ import java.util.concurrent.PriorityBlockingQueue;
 @ApplicationScoped
 public class SessionStorage {
     @Inject PlayerActionQueue actionQueue;
-    private final ConcurrentHashMap<String, GameState> gameStates = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Long, GameState>> gameStates = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, List<GameState>> gameStateLists = new ConcurrentHashMap<>();
 
+
+    public static final int GAME_STATE_HISTORY_SIZE = 1000;
     public void addSession(String sessionId, Session session) {
         sessions.put(sessionId, session);
     }
@@ -24,23 +28,57 @@ public class SessionStorage {
     }
 
     public void addGameState(String sessionId, GameState state) {
-        gameStates.put(sessionId, state);
+        if (!gameStates.containsKey(sessionId)) {
+            gameStates.put(sessionId, new ConcurrentHashMap<>());
+        }
+
+        if (!gameStateLists.containsKey(sessionId)) {
+            gameStateLists.put(sessionId, new CopyOnWriteArrayList<>());
+        }
+
+        var gameStateList = gameStateLists.get(sessionId);
+        if (gameStateList.size() > GAME_STATE_HISTORY_SIZE) {
+            var removedGameState = gameStateList.remove(0);
+            gameStates.get(sessionId).remove(removedGameState.getLastUpdateTime());
+        }
+
+        gameStates.get(sessionId).put(state.getLastUpdateTime(), state);
+        gameStateList.add(state);
     }
 
-    public void removeGameState(String sessionId) {
+    public void removeGameStates(String sessionId) {
         gameStates.remove(sessionId);
+        gameStateLists.remove(sessionId);
     }
 
-    public GameState getGameState(String sessionId) {
-        return gameStates.get(sessionId);
+    public GameState getLatestGameState(String sessionId) {
+        if (!gameStateLists.containsKey(sessionId)) {
+            return null;
+        }
+        var gameStateHistory  = gameStateLists.get(sessionId);
+
+        return gameStateHistory.isEmpty() ?
+                null :
+                gameStateHistory.get(gameStateHistory.size() - 1);
+    }
+
+    public GameState getGameState(String sessionId, long lastUpdateTime) {
+        if (!gameStates.containsKey(sessionId)) {
+            return null;
+        }
+
+        return gameStates.get(sessionId).get(lastUpdateTime);
     }
 
     public Session getSession(String sessionId) {
         return sessions.get(sessionId);
     }
 
-    public CopyOnWriteArrayList<GameState> getGameStates() {
-        return new CopyOnWriteArrayList<>(gameStates.values());
+    public CopyOnWriteArrayList<GameState> getGameStates(String sessionId) {
+        if (!gameStates.containsKey(sessionId)) {
+            return new CopyOnWriteArrayList<>();
+        }
+        return new CopyOnWriteArrayList<>(gameStates.get(sessionId).values());
     }
 
     public CopyOnWriteArrayList<Session> getSessions() {

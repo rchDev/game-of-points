@@ -1,0 +1,146 @@
+package rules;
+
+import io.rizvan.beans.actors.agent.Agent;
+import io.rizvan.beans.knowledge.AgentKnowledge;
+import io.rizvan.beans.knowledge.AgentPossibilities;
+import io.rizvan.beans.GameState
+import io.rizvan.beans.actors.agent.choices.AvoidChoice
+import io.rizvan.beans.actors.agent.choices.KillChoice
+import io.rizvan.beans.actors.agent.choices.SafeCollectChoice
+import io.rizvan.beans.actors.agent.choices.AggressiveCollectChoice;
+
+rule "agent-kill-player"
+agenda-group "agent-choices-group"
+when
+    $agent : Agent($x : getX(), $y : getY(), $hitBox : getHitBox())
+    $knowledge : AgentKnowledge($timeLeft : getTimeLeft(), $shotCount : getShotCount())
+    $possibilities : AgentPossibilities(
+        $agentCanKill : canKillPlayer(),
+        $playerCanKill : isKilledByPlayer(),
+        $agentOneShots : canOneShootPlayer(),
+        $playerOneShots : isOneShotByPlayer(),
+        $worthCollectingPoints : canWinByPointCollection() == false
+    )
+    eval(
+        // Scenario 1: Agent can kill and player cannot
+        ($agentCanKill && !$playerCanKill) ||
+        // Scenario 2: Both can kill, game time is between 50% and 15%, not worth collecting,
+        // player can't one-shot, and either agent can one-shot or player has shot at agent
+        ($agentCanKill && $playerCanKill &&
+         $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.15 &&
+         !$worthCollectingPoints && !$playerOneShots &&
+         ($agentOneShots || $shotCount.getValue() > 0)) ||
+        // Scenario 3: Endgame scenario where both can kill, less than 15% game time remaining, and not worth collecting
+        ($agentCanKill && $playerCanKill &&
+         $timeLeft.getValue() <= GameState.GAME_TIME * 0.15 &&
+         !$worthCollectingPoints)
+    )
+then
+    modify($knowledge){
+        setAgentChoice(new KillChoice())
+    }
+    System.out.println("agent-choices-group: KILL-PLAYER");
+end
+
+// Rule for "Agent Avoids Player" under specific conditions
+rule "agent-avoid-player"
+agenda-group "agent-choices-group"
+when
+    $agent : Agent($x : getX(), $y : getY(), $hitBox : getHitBox())
+    $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
+    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y, $hitBox)
+    $possibilities : AgentPossibilities(
+        $agentCanKill : canKillPlayer(),
+        $playerCanKill : isKilledByPlayer(),
+        $playerOneShots : isOneShotByPlayer(),
+        $worthCollectingPoints : canWinByPointCollection()
+    )
+    eval(
+        // Scenario 1: Agent can't kill, player can kill, and player is close
+        (!$agentCanKill && $playerCanKill && $playerIsClose) ||
+        // Scenario 2: Both can kill, game time > 50%, and player is close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() > GameState.GAME_TIME * 0.50 && $playerIsClose) ||
+        // Scenario 3: Both can kill, game time <= 50% and > 15%, worth collecting, and player is close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.15 && $worthCollectingPoints && $playerIsClose) ||
+        // Scenario 4: Both can kill, game time <= 50% and > 15%, not worth collecting, player can one-shot, and player is close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.15 && !$worthCollectingPoints &&
+         $playerOneShots && $playerIsClose) ||
+        // Scenario 5: Both can kill, game time <= 15%, worth collecting, and player is close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.15 &&
+         $worthCollectingPoints && $playerIsClose)
+    )
+then
+    modify($knowledge){
+        setAgentChoice(new AvoidChoice())
+    }
+    System.out.println("agent-choices-group: AVOID-PLAYER");
+end
+
+rule "agent-safe-collect"
+agenda-group "agent-choices-group"
+when
+    $agent : Agent($x : getX(), $y : getY(), $hitBox : getHitBox())
+    $knowledge : AgentKnowledge($timeLeft : getTimeLeft())
+    $playerIsClose : Boolean() from $knowledge.isPlayerClose($x, $y, $hitBox)
+    $possibilities : AgentPossibilities(
+        $agentCanKill : canKillPlayer(),
+        $playerCanKill : isKilledByPlayer(),
+        $playerOneShots : isOneShotByPlayer(),
+        $worthCollectingPoints : canWinByPointCollection()
+    )
+    eval(
+        // Scenario 1: Agent can't kill, player can kill, and player is not close
+        (!$agentCanKill && $playerCanKill && !$playerIsClose) ||
+        // Scenario 2: Both can kill, game time > 50%, and player is not close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() > GameState.GAME_TIME * 0.50 && !$playerIsClose) ||
+        // Scenario 3: Both can kill, game time <= 50% and > 15%, worth collecting, and player is not close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.15 && $worthCollectingPoints && !$playerIsClose) ||
+        // Scenario 4: Both can kill, game time <= 50% and > 15%, not worth collecting, player can one-shot, and player is not close
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.15 && !$worthCollectingPoints &&
+         $playerOneShots && !$playerIsClose) ||
+        // Scenario 5: Both can kill, game time <= 15%, worth collecting, regardless of player proximity
+        ($agentCanKill && $playerCanKill && $timeLeft.getValue() <= GameState.GAME_TIME * 0.15 &&
+         $worthCollectingPoints)
+    )
+then
+    modify($knowledge){
+        setAgentChoice(new SafeCollectChoice())
+    }
+    System.out.println("agent-choices-group: SAFE-COLLECT");
+end
+
+// Rule for "Agent Aggressively Collects Points" under specific conditions
+rule "agent-aggressive-collect"
+agenda-group "agent-choices-group"
+when
+    $agent : Agent($x : getX(), $y : getY(), $hitBox : getHitBox())
+    $knowledge : AgentKnowledge($timeLeft : getTimeLeft(), $shotCount : getShotCount())
+    $possibilities : AgentPossibilities(
+        $agentCanKill : canKillPlayer(),
+        $playerCanKill : isKilledByPlayer(),
+        $agentOneShots : canOneShootPlayer(),
+        $playerOneShots : isOneShotByPlayer(),
+        $worthCollectingPoints : canWinByPointCollection() == false
+    )
+    eval(
+        // Scenario 1: Neither agent nor player can kill each other
+        (!$agentCanKill && !$playerCanKill) ||
+        // Scenario 2: Both can kill, game time is between 50% and 15%, not worth collecting,
+        // neither can one-shot, and player did not shoot
+        ($agentCanKill && $playerCanKill &&
+         $timeLeft.getValue() <= GameState.GAME_TIME * 0.50 &&
+         $timeLeft.getValue() > GameState.GAME_TIME * 0.15 &&
+         !$worthCollectingPoints && !$playerOneShots &&
+         !$agentOneShots && $shotCount.getValue() <= 0)
+    )
+then
+    modify($knowledge){
+        setAgentChoice(new AggressiveCollectChoice())
+    }
+    System.out.println("agent-choices-group: AGGRESSIVE-COLLECT");
+end

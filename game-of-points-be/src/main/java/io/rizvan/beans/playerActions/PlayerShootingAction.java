@@ -1,35 +1,43 @@
 package io.rizvan.beans.playerActions;
 
 import io.rizvan.beans.GameState;
-import io.rizvan.beans.actors.CompetingEntity;
 
 public class PlayerShootingAction extends PlayerAction {
-    private double mouseX;
-    private double mouseY;
+    private int damage;
 
-    public double getMouseX() {
-        return mouseX;
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
-    public void setMouseX(double mouseX) {
-        this.mouseX = mouseX;
+    public int getDamage() {
+        return damage;
     }
 
-    public double getMouseY() {
-        return mouseY;
-    }
+    public PlayerShootingAction() {}
 
-    public void setMouseY(double mouseY) {
-        this.mouseY = mouseY;
+    public PlayerShootingAction(PlayerShootingAction other) {
+        super(other);
+        this.damage = other.damage;
     }
 
     @Override
     public boolean apply(GameState gameState) {
-        return false;
+        var agentSeenByPlayer = playerGameState.getAgent();
+        var currentAgent = gameState.getAgent();
+        var player = gameState.getPlayer();
+
+        int damage = player.shoot();
+        if (player.canReach(agentSeenByPlayer) && damage > 0) {
+            int agentHp = currentAgent.getHitPoints();
+            currentAgent.setHitPoints(agentHp - damage);
+            this.damage = damage;
+        }
+
+        return damage > 0;
     }
 
     @Override
     public boolean isLegal(GameState gameState) {
-        return false;
+        return damage == gameState.getPlayer().getDamage();
     }
 }

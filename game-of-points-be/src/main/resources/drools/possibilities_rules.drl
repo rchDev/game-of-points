@@ -1,0 +1,150 @@
+package rules
+
+import io.rizvan.beans.knowledge.AgentKnowledge;
+import io.rizvan.beans.actors.agent.Agent
+import io.rizvan.beans.knowledge.AgentPossibilities
+import io.rizvan.beans.GameState
+import io.rizvan.utils.Coord;
+
+rule "Determine if agent can kill a player"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($damage : getDamage(), $ammo : getAmmo())
+        $knowledge : AgentKnowledge($playerHitPoints : getPlayerHitPoints())
+        $possibilities : AgentPossibilities()
+        eval($playerHitPoints.getValue() <= $damage * $ammo)
+    then
+        modify($possibilities) {
+            setCanKillPlayer(true)
+        }
+end
+
+rule "Determine if player is low on health"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($damage : getDamage())
+        $knowledge : AgentKnowledge($playerHitPoints : getPlayerHitPoints())
+        $possibilities : AgentPossibilities()
+        eval($playerHitPoints.getValue() <= $damage)
+    then
+        modify($possibilities) {
+            setCanOneShootPlayer(true)
+        }
+end
+
+rule "Determine if player can kill an agent"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($hitPoints : getHitPoints())
+        $knowledge : AgentKnowledge($playerDamage : getPlayerDamage(), $playerAmmo : getPlayerAmmoCapacity())
+        $possibilities : AgentPossibilities()
+        eval($hitPoints <= $playerDamage.getValue() * $playerAmmo.getValue())
+    then
+        modify($possibilities) {
+            setKilledByPlayer(true)
+        }
+end
+
+rule "Determine if agent is low on health"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($hitPoints : getHitPoints())
+        $knowledge : AgentKnowledge($playerDamage : getPlayerDamage())
+        $possibilities : AgentPossibilities()
+        eval($hitPoints <= $playerDamage.getValue())
+    then
+        modify($possibilities) {
+            setOneShotByPlayer(true)
+        }
+end
+
+rule "Determine if agent is faster than player"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($speed : getSpeed())
+        $knowledge : AgentKnowledge($playerSpeed : getPlayerSpeed())
+        $possibilities : AgentPossibilities()
+        eval($speed > $playerSpeed.getValue())
+    then
+        modify($possibilities) {
+            setFasterThanPlayer(true),
+            setSlowerThanPlayer(false)
+        }
+end
+
+rule "Determine if agent is slower than player"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($speed : getSpeed())
+        $knowledge : AgentKnowledge($playerSpeed : getPlayerSpeed())
+        $possibilities : AgentPossibilities()
+        eval($speed < $playerSpeed.getValue())
+    then
+        modify($possibilities) {
+            setFasterThanPlayer(false),
+            setSlowerThanPlayer(true)
+        }
+end
+
+rule "Determine if agent can reach player"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($x : getX(), $y : getY())
+        $knowledge : AgentKnowledge($playerPosition : getPlayerPosition(), $playerHitBox : getPlayerHitBox())
+        $possibilities : AgentPossibilities()
+    then
+        Coord<Double> playerPosition = $playerPosition.getValue();
+
+        boolean canReach = $agent.canReach(playerPosition.getX(), playerPosition.getY(), $playerHitBox.getValue());
+        modify($possibilities) {
+            setCanReachPlayer(canReach)
+        }
+end
+
+rule "Determine if player can reach agent"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($x : getX(), $y : getY())
+        $knowledge : AgentKnowledge($playerPosition : getPlayerPosition(), $playerReach : getPlayerReach())
+        $possibilities : AgentPossibilities()
+    then
+        Double playerX = $playerPosition.getValue().getX();
+        Double playerY = $playerPosition.getValue().getY();
+
+        Double distance = Math.sqrt(Math.pow($x - playerX, 2) + Math.pow($y - playerY, 2));
+
+        boolean canReach = $playerReach.getValue() >= distance;
+        modify($possibilities) {
+            setReachedByPlayer(canReach)
+        }
+end
+
+rule "Determine if agent can win by collecting points"
+agenda-group "possibilities-group"
+no-loop true
+    when
+        $agent : Agent($agentPoints : getPoints())
+        $knowledge : AgentKnowledge($timeLeft : getTimeLeft(), $playerPoints : getPlayerPoints())
+        $possibilities : AgentPossibilities()
+    then
+        int timePassed = GameState.GAME_TIME == $timeLeft.getValue() ? 1 : GameState.GAME_TIME - $timeLeft.getValue();
+        int pointDiff = $agentPoints - $playerPoints.getValue();
+
+        double agentPointsPerSecond = (double) $agentPoints / timePassed;
+        double playerPointsPerSecond = (double) $playerPoints.getValue() / timePassed;
+
+        long agentPointPrognosis = Math.round($timeLeft.getValue() * agentPointsPerSecond) + $agentPoints;
+        long playerPointPrognosis = Math.round($timeLeft.getValue() * playerPointsPerSecond) + $playerPoints.getValue();
+        boolean worthCollecting = pointDiff >= 0 || agentPointPrognosis >= playerPointPrognosis;
+        modify($possibilities) {
+            setCanWinByPointCollection(worthCollecting)
+        }
+end
