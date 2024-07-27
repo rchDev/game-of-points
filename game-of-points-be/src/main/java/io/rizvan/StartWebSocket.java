@@ -4,7 +4,6 @@ import io.quarkus.vertx.ConsumeEvent;
 import io.rizvan.beans.SessionStorage;
 import io.rizvan.beans.dtos.responses.GameEndedResponse;
 import io.rizvan.beans.playerActions.PlayerActionDeserializer;
-import io.rizvan.beans.playerActions.PlayerShootingAction;
 import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
