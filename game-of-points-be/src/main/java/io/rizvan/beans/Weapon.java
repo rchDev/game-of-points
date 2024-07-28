@@ -1,15 +1,30 @@
 package io.rizvan.beans;
 
-import jakarta.json.bind.annotation.JsonbTransient;
-
 import java.time.Instant;
 
 public class Weapon {
     public enum Type {
-        SNIPER(0, "Sniper", 3, 0.85f, 2, 400, 3000),
-        CARBINE(1, "Carbine", 1, 0.95f, 5, 300, 1500),
-        SUB_MACHINE(2, "Sub-machine", 1, 1.0f, 10, 150, 500),
-        PISTOL(3, "Pistol", 1, 1.25f, 7, 200, 1000);
+
+        BUBBLE_BLASTER(0, "Bubble Blaster", 2, 0.90f, 5, 10, 1500),
+        FROSTY_FLUTE(1, "Frosty Flute", 1, 0.95f, 8, 12, 2000),
+        SPARKLE_STAFF(2, "Sparkle Staff", 3, 1.0f, 4, 8, 1800),
+        WHIMSY_WAND(3, "Whimsy Wand", 4, 1.10f, 3, 15, 3000),
+        JELLYBEAN_JAVELIN(4, "Jellybean Javelin", 3, 0.85f, 6, 7, 1300),
+        CANDY_CANE_CLUB(5, "Candy Cane Club", 2, 0.95f, 5, 6, 1000),
+        POPCORN_PISTOL(6, "Popcorn Pistol", 2, 1.00f, 7, 14, 2500),
+        LOLLIPOP_LANCE(7, "Lollipop Lance", 4, 1.20f, 4, 9, 2200),
+        MARSHMALLOW_MACE(8, "Marshmallow Mace", 3, 0.90f, 6, 11, 1700),
+        TOFFEE_THROWER(9, "Toffee Thrower", 1, 0.85f, 8, 5, 900),
+        GUMMY_GUN(10, "Gummy Gun", 2, 1.0f, 5, 7, 2000),
+        FIZZY_FINGER(11, "Fizzy Finger", 4, 1.20f, 3, 12, 2400),
+        COOKIE_CATAPULT(12, "Cookie Catapult", 3, 0.90f, 6, 8, 1600),
+        SUGARCANE_SPEAR(13, "Sugarcane Spear", 1, 0.95f, 7, 3, 500),
+        TAFFY_TWISTER(14, "Taffy Twister", 2, 0.90f, 6, 9, 1400),
+        CARAMEL_CROSSBOW(15, "Caramel Crossbow", 4, 1.20f, 3, 7, 1900),
+        PEPPERMINT_PIKE(16, "Peppermint Pike", 3, 0.85f, 6, 11, 2100),
+        JELLYBEAN_JAVELIN_2(17, "Jellybean Javelin", 3, 0.90f, 6, 6, 1100),
+        BUBBLEGUM_BLADE(18, "Bubblegum Blade", 2, 1.0f, 5, 8, 2000),
+        HONEYCOMB_HAMMER(19, "Honeycomb Hammer", 1, 0.95f, 7, 5, 1000);
 
         private final Weapon weapon;
         Type(int id, String name, int damage, double speedModifier, int ammo, double range, int rechargeTimeMs) {
@@ -18,22 +33,6 @@ public class Weapon {
 
         public Weapon get() {
             return weapon;
-        }
-    }
-
-    public enum Name {
-        SNIPER("Sniper"),
-        CARBINE("Carbine"),
-        SUB_MACHINE("Sub-machine"),
-        PISTOL("Pistol");
-
-        private String name;
-        Name(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
         }
     }
 

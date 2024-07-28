@@ -12,6 +12,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 @Path("/games")
 public class GameResource {
     @Inject
@@ -24,14 +27,23 @@ public class GameResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public GameResponse createGame(GameCreationRequest request) {
-        var weapons = weaponCache.getWeapons();
-        var weapon = weapons.stream()
+        var weapons = new ArrayList<Weapon>();
+        Collections.copy(weapons, weaponCache.getWeapons());
+
+        if (weapons.isEmpty()) {
+            System.err.println("No weapons found");
+        }
+
+        var playerWeapon = weapons.stream()
                 .filter(w -> w.getId() == request.getWeaponId())
                 .findFirst()
                 .orElse(weapons.get(0));
 
-        var player = Player.fromWeapon(weapon);
-        var agent = Agent.getRandom();
+        var player = Player.fromWeapon(playerWeapon);
+
+        Collections.shuffle(weapons);
+        var agentsWeapon = weapons.stream().findFirst().get();
+        var agent = Agent.fromWeapon(agentsWeapon);
 
         var gameState = new GameState(
                 player,
