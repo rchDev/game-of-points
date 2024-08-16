@@ -6,7 +6,6 @@ import io.rizvan.beans.Weapon;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 
 public class Agent extends CompetingEntity {
-
     public AgentsBrain brain;
 
     private AgentChoice currentChoice;

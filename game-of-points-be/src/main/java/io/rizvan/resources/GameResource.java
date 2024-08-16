@@ -27,8 +27,7 @@ public class GameResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public GameResponse createGame(GameCreationRequest request) {
-        var weapons = new ArrayList<Weapon>();
-        Collections.copy(weapons, weaponCache.getWeapons());
+        var weapons = new ArrayList<>(weaponCache.getWeapons());
 
         if (weapons.isEmpty()) {
             System.err.println("No weapons found");

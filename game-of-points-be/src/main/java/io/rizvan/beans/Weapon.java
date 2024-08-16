@@ -1,30 +1,43 @@
 package io.rizvan.beans;
 
 import java.time.Instant;
+import java.util.HashMap;
+
 
 public class Weapon {
+    public class WeaponStat<T> {
+        private final T value;
+
+        public WeaponStat(T value) {
+            this.value = value;
+        }
+
+        public T getValue() {
+            return value;
+        }
+    }
     public enum Type {
 
-        BUBBLE_BLASTER(0, "Bubble Blaster", 2, 0.90f, 5, 10, 1500),
-        FROSTY_FLUTE(1, "Frosty Flute", 1, 0.95f, 8, 12, 2000),
-        SPARKLE_STAFF(2, "Sparkle Staff", 3, 1.0f, 4, 8, 1800),
-        WHIMSY_WAND(3, "Whimsy Wand", 4, 1.10f, 3, 15, 3000),
-        JELLYBEAN_JAVELIN(4, "Jellybean Javelin", 3, 0.85f, 6, 7, 1300),
-        CANDY_CANE_CLUB(5, "Candy Cane Club", 2, 0.95f, 5, 6, 1000),
-        POPCORN_PISTOL(6, "Popcorn Pistol", 2, 1.00f, 7, 14, 2500),
-        LOLLIPOP_LANCE(7, "Lollipop Lance", 4, 1.20f, 4, 9, 2200),
-        MARSHMALLOW_MACE(8, "Marshmallow Mace", 3, 0.90f, 6, 11, 1700),
-        TOFFEE_THROWER(9, "Toffee Thrower", 1, 0.85f, 8, 5, 900),
-        GUMMY_GUN(10, "Gummy Gun", 2, 1.0f, 5, 7, 2000),
-        FIZZY_FINGER(11, "Fizzy Finger", 4, 1.20f, 3, 12, 2400),
-        COOKIE_CATAPULT(12, "Cookie Catapult", 3, 0.90f, 6, 8, 1600),
-        SUGARCANE_SPEAR(13, "Sugarcane Spear", 1, 0.95f, 7, 3, 500),
-        TAFFY_TWISTER(14, "Taffy Twister", 2, 0.90f, 6, 9, 1400),
-        CARAMEL_CROSSBOW(15, "Caramel Crossbow", 4, 1.20f, 3, 7, 1900),
-        PEPPERMINT_PIKE(16, "Peppermint Pike", 3, 0.85f, 6, 11, 2100),
-        JELLYBEAN_JAVELIN_2(17, "Jellybean Javelin", 3, 0.90f, 6, 6, 1100),
-        BUBBLEGUM_BLADE(18, "Bubblegum Blade", 2, 1.0f, 5, 8, 2000),
-        HONEYCOMB_HAMMER(19, "Honeycomb Hammer", 1, 0.95f, 7, 5, 1000);
+        BUBBLE_BLASTER(0, "Bubble Blaster", 1, 1.00f, 4, 24, 1500),
+        FROSTY_FLUTE(1, "Frosty Flute", 1, 1.05f, 4, 20, 1000),
+        SPARKLE_STAFF(2, "Sparkle Staff", 2, 0.85f, 3, 20, 1500),
+        WHIMSY_WAND(3, "Whimsy Wand", 3, 0.80f, 2, 8, 2000),
+        JELLYBEAN_JAVELIN(4, "Jellybean Javelin", 2, 0.80f, 3, 16, 2000),
+        CANDY_CANE_CLUB(5, "Candy Cane Club", 1, 1.05f, 4, 20, 1000),
+        POPCORN_PISTOL(6, "Popcorn Pistol", 1, 1.00f, 4, 16, 1500),
+        LOLLIPOP_LANCE(7, "Lollipop Lance", 3, 0.70f, 2, 8, 2500),
+        MARSHMALLOW_MACE(8, "Marshmallow Mace", 2, 0.85f, 3, 12, 2000),
+        TOFFEE_THROWER(9, "Toffee Thrower", 1, 1.10f, 5, 16, 1000),
+        GUMMY_GUN(10, "Gummy Gun", 1, 1.00f, 5, 20, 1000),
+        FIZZY_FINGER(11, "Fizzy Finger", 3, 0.80f, 2, 12, 2000),
+        COOKIE_CATAPULT(12, "Cookie Catapult", 2, 0.90f, 3, 16, 2000),
+        SUGARCANE_SPEAR(13, "Sugarcane Spear", 1, 1.10f, 4, 12, 1500),
+        TAFFY_TWISTER(14, "Taffy Twister", 1, 1.05f, 5, 20, 1000),
+        CARAMEL_CROSSBOW(15, "Caramel Crossbow", 3, 0.70f, 2, 8, 2000),
+        PEPPERMINT_PIKE(16, "Peppermint Pike", 2, 0.85f, 3, 16, 1500),
+        JELLYBEAN_JAVELIN_2(17, "Jellybean Javelin", 2, 0.80f, 3, 16, 2000),
+        BUBBLEGUM_BLADE(18, "Bubblegum Blade", 1, 1.00f, 3, 20, 1500),
+        HONEYCOMB_HAMMER(19, "Honeycomb Hammer", 2, 0.85f, 3, 12, 2000);
 
         private final Weapon weapon;
         Type(int id, String name, int damage, double speedModifier, int ammo, double range, int rechargeTimeMs) {
@@ -33,6 +46,43 @@ public class Weapon {
 
         public Weapon get() {
             return weapon;
+        }
+    }
+
+    public enum Stat {
+        DAMAGE("damage", Integer.class),
+        SPEED_MOD("speed_mod", Double.class),
+        USES("uses", Integer.class),
+        RANGE("range", Double.class),
+        RECHARGE_TIME("recharge_time", Long.class);
+
+        private final Class<? extends Number> type;
+        private final String name;
+
+        Stat(String name, Class<? extends Number> type) {
+            this.name = name;
+            this.type = type;
+        }
+
+        public Class<? extends Number> getType() {
+            return type;
+        }
+
+        public <T extends Number> T cast(Number value) {
+            return (T) value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static Stat fromName(String name) {
+            for (Stat stat : Stat.values()) {
+                if (stat.getName().equalsIgnoreCase(name)) {
+                    return stat;
+                }
+            }
+            throw new IllegalArgumentException("No enum constant for name: " + name);
         }
     }
 
@@ -45,6 +95,7 @@ public class Weapon {
     private double range;
     private long shotTime;
     private final long rechargeTimeMs;
+    private HashMap<Stat, Number> stats;
 
     public Weapon(int id, String name, int damage, double speedModifier, int ammo, double range, long rechargeTimeMs) {
         this.id = id;
@@ -55,6 +106,13 @@ public class Weapon {
         this.ammoCapacity = ammo;
         this.range = range;
         this.rechargeTimeMs = rechargeTimeMs;
+
+        this.stats = new HashMap<>();
+        stats.put(Stat.DAMAGE, damage);
+        stats.put(Stat.SPEED_MOD, speedModifier);
+        stats.put(Stat.USES, ammo);
+        stats.put(Stat.RANGE, range);
+        stats.put(Stat.RECHARGE_TIME, rechargeTimeMs);
     }
 
     public Weapon(Weapon original) {
@@ -67,6 +125,7 @@ public class Weapon {
         this.range = original.range;
         this.shotTime = original.shotTime;
         this.rechargeTimeMs = original.rechargeTimeMs;
+        this.stats = original.stats;
     }
 
     public int getId() {
@@ -139,4 +198,20 @@ public class Weapon {
         long timeSinceLastShot = Instant.now().toEpochMilli() - shotTime;
         return Math.max(rechargeTimeMs - (timeSinceLastShot), 0);
     }
+
+    public Number getStat(Stat stat) {
+        return stats.getOrDefault(stat, 0);
+    }
+
+    public <T extends Number> T getStatAs(Stat stat, Class<T> type) {
+        var statValue = stats.get(stat);
+        if (type.isInstance(statValue)) {
+            return (T) statValue;
+        } else {
+            throw new ClassCastException("Cannot cast value to " + type.getName());
+        }
+    }
+
+
+
 }

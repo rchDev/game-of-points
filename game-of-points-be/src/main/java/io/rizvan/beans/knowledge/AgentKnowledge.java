@@ -8,8 +8,10 @@ import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.actors.agent.AgentChoice;
 import io.rizvan.beans.actors.agent.actions.AgentAction;
 import io.rizvan.utils.Coord;
+import io.rizvan.utils.Pair;
 import jakarta.json.bind.annotation.JsonbTransient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AgentKnowledge {
@@ -24,6 +26,7 @@ public class AgentKnowledge {
     private final ResourcePointKnowledge resourcePoints;
     private final GameTimeKnowledge timeLeft;
     private final PlayerReachKnowledge playerReach;
+    private final List<Pair<Weapon.Stat, Weapon.Stat>> statRelations;
     private AgentChoice agentChoice;
     private WeaponCache possibleWeapons;
     private AgentAction currentAction;
@@ -46,6 +49,13 @@ public class AgentKnowledge {
         this.playerReach = new PlayerReachKnowledge();
         this.playerHitBox = new PlayerHitBoxKnowledge();
         this.shotCount.setKnown(true);
+
+        this.statRelations = new ArrayList<>(){};
+        statRelations.add(new Pair<>(Weapon.Stat.DAMAGE, Weapon.Stat.SPEED_MOD));
+        statRelations.add(new Pair<>(Weapon.Stat.RECHARGE_TIME, Weapon.Stat.DAMAGE));
+        statRelations.add(new Pair<>(Weapon.Stat.RANGE, Weapon.Stat.DAMAGE));
+        statRelations.add(new Pair<>(Weapon.Stat.USES, Weapon.Stat.RECHARGE_TIME));
+
     }
 
     public PlayerPositionKnowledge getPlayerPosition() {
@@ -156,6 +166,10 @@ public class AgentKnowledge {
     public void setPlayerReach(Double playerReach, boolean isKnown) {
         this.playerReach.setValue(playerReach);
         this.playerReach.setKnown(isKnown);
+    }
+
+    public List<Pair<Weapon.Stat, Weapon.Stat>> getStatRelations() {
+        return statRelations;
     }
 
     public boolean isPlayerClose(Double agentX, Double agentY, HitBox hitBox) {
