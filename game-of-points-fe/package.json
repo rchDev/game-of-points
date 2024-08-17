@@ -12,6 +12,7 @@
     "vite": "^5.1.4"
   },
   "dependencies": {
+    "@google-cloud/dialogflow-cx": "^4.8.0",
     "lodash": "^4.17.21",
     "p5": "^1.9.1"
   }
