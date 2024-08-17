@@ -4,6 +4,7 @@ public class GameCreationRequest {
     private int weaponId;
     private int windowWidth;
     private int windowHeight;
+    private String dialogFlowSessionId;
 
     public GameCreationRequest() {}
 
@@ -33,5 +34,13 @@ public class GameCreationRequest {
 
     public void setWindowHeight(int windowHeight) {
         this.windowHeight = windowHeight;
+    }
+
+    public String getDialogFlowSessionId() {
+        return dialogFlowSessionId;
+    }
+
+    public void setDialogFlowSessionId(String dialogFlowSessionId) {
+        this.dialogFlowSessionId = dialogFlowSessionId;
     }
 }

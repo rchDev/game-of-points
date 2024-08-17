@@ -3,6 +3,7 @@ package io.rizvan.resources;
 import io.rizvan.beans.*;
 import io.rizvan.beans.actors.agent.Agent;
 import io.rizvan.beans.actors.Player;
+import io.rizvan.beans.actors.player.PlayerAnswersCache;
 import io.rizvan.beans.dtos.requests.GameCreationRequest;
 import io.rizvan.beans.dtos.responses.GameResponse;
 import io.rizvan.utils.RandomNumberGenerator;
@@ -23,6 +24,8 @@ public class GameResource {
     SessionStorage storage;
     @Inject
     RandomNumberGenerator rng;
+    @Inject
+    PlayerAnswersCache playerAnswersCache;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -38,7 +41,8 @@ public class GameResource {
                 .findFirst()
                 .orElse(weapons.get(0));
 
-        var player = Player.fromWeapon(playerWeapon);
+        var playerAnswers = playerAnswersCache.getPlayerAnswers(request.getDialogFlowSessionId());
+        var player = Player.fromWeapon(playerWeapon, playerAnswers);
 
         Collections.shuffle(weapons);
         var agentsWeapon = weapons.stream().findFirst().get();

@@ -3,6 +3,7 @@ package io.rizvan.resources;
 import io.rizvan.beans.Weapon;
 import io.rizvan.beans.WeaponCache;
 import io.rizvan.beans.actors.player.PlayerAnswers;
+import io.rizvan.beans.actors.player.PlayerAnswersCache;
 import jakarta.inject.Inject;
 import jakarta.json.*;
 import jakarta.json.bind.Jsonb;
@@ -26,7 +27,7 @@ public class InfoValidationResource {
     @Inject
     WeaponCache weaponCache;
     @Inject
-    PlayerAnswers playerAnswers;
+    PlayerAnswersCache playerAnswersCache;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -35,17 +36,16 @@ public class InfoValidationResource {
         System.out.println(requestBody);
         // Parse the incoming JSON request
         JsonObject request = parseJsonRequest(requestBody);
+        var sessionId = extractRequestSessionId(request);
+        playerAnswersCache.addIfAbsent(sessionId, new PlayerAnswers());
 
         var formParams = extractFormParameters(request);
         var validatedParams = validateFormParameters(formParams);
-        addFromParametersToPlayerAnswers(validatedParams);
-        // Safely extract query text
-        String queryText = extractQueryText(request);
-
+        addFromParametersToPlayerAnswers(validatedParams, sessionId);
         // Create a successful response
-        JsonObject jsonResponse = createSimpleResponse("Your request was: " + queryText, validatedParams);
+        JsonObject jsonResponse = createSimpleResponse(validatedParams);
         System.out.println(jsonResponse);
-        System.out.println(playerAnswers);
+        System.out.println(playerAnswersCache.getPlayerAnswers(sessionId));
         return Response.ok(jsonResponse).build();
     }
 
@@ -57,8 +57,10 @@ public class InfoValidationResource {
         }
     }
 
-    private String extractQueryText(JsonObject request) {
-        return request.getString("text", "No text provided.");
+    private String extractRequestSessionId(JsonObject request) {
+        var sessionInfo = request.getJsonObject("sessionInfo").getString("session");
+        var sessionInfoList = sessionInfo.split("/");
+        return sessionInfoList[sessionInfoList.length - 1];
     }
 
     private List<FormParameter> extractFormParameters(JsonObject request) {
@@ -103,43 +105,43 @@ public class InfoValidationResource {
         return validatedFormParameters;
     }
 
-    private void addFromParametersToPlayerAnswers(List<FormParameter> formParameters) {
+    private void addFromParametersToPlayerAnswers(List<FormParameter> formParameters, String sessionId) {
         formParameters.forEach(param -> {
             if (param.getState() == ParamState.VALID) {
-                addParamToPlayerAnswers(param);
+                addParamToPlayerAnswers(param, sessionId);
             }
         });
     }
 
-    private void addParamToPlayerAnswers(FormParameter formParameter) {
+    private void addParamToPlayerAnswers(FormParameter formParameter, String sessionId) {
         switch (formParameter.getDisplayName()) {
             case USER_MOOD ->
-                    playerAnswers.setMood(formParameter.getValue());
+                    playerAnswersCache.getPlayerAnswers(sessionId).setMood(formParameter.getValue());
             case WEAPON_NAME ->
-                    playerAnswers.setWeaponName(formParameter.getValue());
+                    playerAnswersCache.getPlayerAnswers(sessionId).setWeaponName(formParameter.getValue());
             case WEAPON_SPEED ->
-                    playerAnswers.setSpeed(Double.parseDouble(formParameter.getValue()));
+                    playerAnswersCache.getPlayerAnswers(sessionId).setSpeed(Double.parseDouble(formParameter.getValue()));
             case WEAPON_DAMAGE -> {
                 var valueDouble = Double.parseDouble(formParameter.getValue());
                 var value = Math.toIntExact((long) valueDouble);
-                playerAnswers.setDamage(value);
+                playerAnswersCache.getPlayerAnswers(sessionId).setDamage(value);
             }
             case WEAPON_USES -> {
                 var valueDouble = Double.parseDouble(formParameter.getValue());
                 var value = Math.toIntExact((long) valueDouble);
-                playerAnswers.setUses(value);
+                playerAnswersCache.getPlayerAnswers(sessionId).setUses(value);
             }
             case WEAPON_RANGE ->
-                    playerAnswers.setRange(Double.parseDouble(formParameter.getValue()));
+                    playerAnswersCache.getPlayerAnswers(sessionId).setRange(Double.parseDouble(formParameter.getValue()));
             case WEAPON_RECHARGE_TIME -> {
                 var valueDouble = Double.parseDouble(formParameter.getValue());
                 var value = (long) valueDouble;
-                playerAnswers.setRechargeTime(value);
+                playerAnswersCache.getPlayerAnswers(sessionId).setRechargeTime(value);
             }
         }
     }
 
-    private JsonObject createSimpleResponse(String fulfillmentText, List<FormParameter> formParameters) {
+    private JsonObject createSimpleResponse(List<FormParameter> formParameters) {
         var invalidParams = formParameters.stream().filter(param -> param.state.equals(ParamState.INVALID)).toList();
         JsonArrayBuilder parameterInfoArray = Json.createArrayBuilder();
         for (var param: formParameters) {
@@ -357,7 +359,4 @@ public class InfoValidationResource {
             return justCollected;
         }
     }
-
-
-
 }
