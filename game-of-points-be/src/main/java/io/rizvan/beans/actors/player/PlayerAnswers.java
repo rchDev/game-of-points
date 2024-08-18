@@ -3,16 +3,17 @@ package io.rizvan.beans.actors.player;
 import java.util.Optional;
 
 public class PlayerAnswers {
-    private Optional<String> mood;
+    private Optional<String> moodDescription;
     private Optional<String> weaponName;
     private Optional<Double> speed;
     private Optional<Integer> damage;
     private Optional<Integer> uses;
     private Optional<Double> range;
     private Optional<Long> rechargeTime;
+    private Optional<PlayerMood> mood;
 
     public PlayerAnswers() {
-        mood = Optional.empty();
+        moodDescription = Optional.empty();
         weaponName = Optional.empty();
         speed = Optional.empty();
         damage = Optional.empty();
@@ -24,7 +25,7 @@ public class PlayerAnswers {
     @Override
     public String toString() {
         return "PlayerAnswers:\n\tmood=" +
-                (mood.orElse("[empty]")) + "\n\tweaponName=" +
+                (moodDescription.orElse("[empty]")) + "\n\tweaponName=" +
                 weaponName.orElse("[empty]") + "\n\tspeed=" +
                 (speed.isEmpty() ? "[empty]" : speed.get()) + "\n\tdamage=" +
                 (damage.isEmpty() ? "[empty]" : damage.get()) + "\n\tuses=" +
@@ -33,12 +34,12 @@ public class PlayerAnswers {
                 (rechargeTime.isEmpty() ? "[empty]" : rechargeTime.get()) + "\n}";
     }
 
-    public Optional<String> getMood() {
-        return mood;
+    public Optional<String> getMoodDescription() {
+        return moodDescription;
     }
 
-    public void setMood(String mood) {
-        this.mood = Optional.of(mood);
+    public void setMoodDescription(String mood) {
+        this.moodDescription = Optional.of(mood);
     }
 
     public Optional<String> getWeaponName() {
@@ -87,5 +88,13 @@ public class PlayerAnswers {
 
     public void setRechargeTime(Long rechargeTime) {
         this.rechargeTime = Optional.of(rechargeTime);
+    }
+
+    public void setMood(PlayerMood mood) {
+        this.mood = Optional.of(mood);
+    }
+
+    public Optional<PlayerMood> getMood() {
+        return this.mood;
     }
 }

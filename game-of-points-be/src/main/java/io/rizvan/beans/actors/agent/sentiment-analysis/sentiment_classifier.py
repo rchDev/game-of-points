@@ -35,6 +35,15 @@ class SentimentAnalysisModel:
                            loss='categorical_crossentropy', metrics=['accuracy'])
         logger.info("SentimentAnalysisModel initialized.")
 
+    def __str__(self):
+        return "SentimentAnalysisModel instance"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def toString(self):
+        return self.__str__()
+
     def train_model(self, sentences, labels, epochs=15, batch_size=32):
         try:
             # Convert labels to one-hot encoding
@@ -119,6 +128,10 @@ class SentimentAnalysisModel:
             logger.error(f"Error during conversion to Java list: {e}")
             raise
 
+    def get_prediction(self, sentence):
+        predictions = self.predict_sentiment([sentence])
+        return predictions[0]
+
     def set_gateway(self, gateway):
         self.gateway = gateway
 
@@ -164,8 +177,8 @@ def prediction_mode():
 
     # Setup Py4J gateway
     gateway = JavaGateway(
-        gateway_parameters=GatewayParameters(port=25333, auto_convert=True),
-        callback_server_parameters=CallbackServerParameters(port=25334),
+        gateway_parameters=GatewayParameters(port=25335, auto_convert=True),
+        callback_server_parameters=CallbackServerParameters(port=25336),
         python_server_entry_point=model
     )
     model.set_gateway(gateway)
@@ -188,9 +201,11 @@ if __name__ == "__main__":
             logger.error("CSV file path must be provided for training mode.")
     elif args.mode == 'test':
         if args.sentence:
+            print(f"sentence: {args.sentence}")
             model = SentimentAnalysisModel()
             model.load_model("sentiment_model.keras")
             prediction = model.predict_sentiment([args.sentence])
+            print(f"prediction: {prediction}")
             print(f"The sentiment is: {prediction[0]}")
         else:
             logger.error("Sentence must be provided for test mode.")

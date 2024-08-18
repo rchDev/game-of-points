@@ -116,7 +116,7 @@ public class InfoValidationResource {
     private void addParamToPlayerAnswers(FormParameter formParameter, String sessionId) {
         switch (formParameter.getDisplayName()) {
             case USER_MOOD ->
-                    playerAnswersCache.getPlayerAnswers(sessionId).setMood(formParameter.getValue());
+                    playerAnswersCache.getPlayerAnswers(sessionId).setMoodDescription(formParameter.getValue());
             case WEAPON_NAME ->
                     playerAnswersCache.getPlayerAnswers(sessionId).setWeaponName(formParameter.getValue());
             case WEAPON_SPEED ->
@@ -255,7 +255,7 @@ public class InfoValidationResource {
     }
 
     public boolean validateUserMood(String feelings) {
-        String regex = "^(\\b\\w{3,}\\b(?:,\\s*)?)+$";
+        String regex = "^[A-Za-z][^0-9]*[A-Za-z][^0-9]*[A-Za-z][^0-9]*$";
         return feelings!= null && feelings.matches(regex);
     }
 

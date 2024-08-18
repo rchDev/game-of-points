@@ -4,39 +4,28 @@ import io.rizvan.beans.GameState;
 import io.rizvan.beans.Weapon;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.knowledge.AgentPossibilities;
+import io.rizvan.utils.BayesPythonManager;
 import io.rizvan.utils.Pair;
+import io.rizvan.utils.PythonGateway;
 import jakarta.annotation.PreDestroy;
-import jakarta.inject.Inject;
-import jakarta.json.bind.Jsonb;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import py4j.GatewayServer;
-import com.google.gson.Gson;
 
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 public class DroolsBrain implements AgentsBrain {
-    @Inject
-    Jsonb jsonb;
-
     private final AgentKnowledge knowledge;
     private final AgentPossibilities possibilities;
-    // I want KieSession to reside here
     private final KieContainer kieContainer;
     private List<Weapon> weapons;
 
 
-    public DroolsBrain() {
-
-        GatewayServer gatewayServer = new GatewayServer();
-        gatewayServer.start();
-
-        PythonManager manager = (PythonManager) gatewayServer.getPythonServerEntryPoint(new Class[]{PythonManager.class});
-
+    public DroolsBrain(PythonGateway pythonGateway) {
+        var manager = pythonGateway.getBayesNetwork();
         knowledge = new AgentKnowledge();
         possibilities = new AgentPossibilities();
         KieServices kieService = KieServices.Factory.get();
@@ -217,18 +206,6 @@ public class DroolsBrain implements AgentsBrain {
 
         // Use streams to group and count the values
         return new ConditionalResult(statQueryValues, statEvidenceValues, statCPDs);
-    }
-
-    public interface PythonManager {
-        void add_nodes(List<String> nodes);
-
-        void add_edges(List<String[]> edges);
-
-        void add_cpd(String variable, int variable_card, double[][] values, String[] evidence, int[] evidence_card);
-
-        void finalize_model();
-
-        Map<String, Integer> map_query(List<String[]> evidence);
     }
 
 

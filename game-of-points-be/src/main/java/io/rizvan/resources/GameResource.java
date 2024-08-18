@@ -4,8 +4,11 @@ import io.rizvan.beans.*;
 import io.rizvan.beans.actors.agent.Agent;
 import io.rizvan.beans.actors.Player;
 import io.rizvan.beans.actors.player.PlayerAnswersCache;
+import io.rizvan.beans.actors.player.PlayerMood;
 import io.rizvan.beans.dtos.requests.GameCreationRequest;
 import io.rizvan.beans.dtos.responses.GameResponse;
+import io.rizvan.repositories.WeaponService;
+import io.rizvan.utils.PythonGateway;
 import io.rizvan.utils.RandomNumberGenerator;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
@@ -26,6 +29,10 @@ public class GameResource {
     RandomNumberGenerator rng;
     @Inject
     PlayerAnswersCache playerAnswersCache;
+    @Inject
+    WeaponService weaponService;
+    @Inject
+    PythonGateway pythonGateway;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -42,11 +49,22 @@ public class GameResource {
                 .orElse(weapons.get(0));
 
         var playerAnswers = playerAnswersCache.getPlayerAnswers(request.getDialogFlowSessionId());
+
+        if (playerAnswers != null && playerAnswers.getMoodDescription().isPresent()) {
+            var playerMoodDescription = playerAnswers.getMoodDescription().get();
+            var moodClass = pythonGateway.getSentimentAnalyser().get_prediction(playerMoodDescription);
+            var mood = PlayerMood.fromName(moodClass);
+            weaponService.addWeaponWithMood(playerWeapon, mood);
+        }
+
+        var weaponsInDb = weaponService.getAllWeapons();
+//        var weaponMoodOccurrences = weaponService.getAllMoodWeaponCombos();
+
         var player = Player.fromWeapon(playerWeapon, playerAnswers);
 
         Collections.shuffle(weapons);
         var agentsWeapon = weapons.stream().findFirst().get();
-        var agent = Agent.fromWeapon(agentsWeapon);
+        var agent = Agent.fromWeapon(agentsWeapon, pythonGateway);
 
         var gameState = new GameState(
                 player,
