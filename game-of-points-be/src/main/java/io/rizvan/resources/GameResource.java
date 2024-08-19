@@ -7,6 +7,7 @@ import io.rizvan.beans.actors.player.PlayerAnswersCache;
 import io.rizvan.beans.actors.player.PlayerMood;
 import io.rizvan.beans.dtos.requests.GameCreationRequest;
 import io.rizvan.beans.dtos.responses.GameResponse;
+import io.rizvan.entities.WeaponEntity;
 import io.rizvan.repositories.WeaponService;
 import io.rizvan.utils.PythonGateway;
 import io.rizvan.utils.RandomNumberGenerator;
@@ -18,6 +19,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Path("/games")
 public class GameResource {
@@ -57,14 +59,13 @@ public class GameResource {
             weaponService.addWeaponWithMood(playerWeapon, mood);
         }
 
-        var weaponsInDb = weaponService.getAllWeapons();
-//        var weaponMoodOccurrences = weaponService.getAllMoodWeaponCombos();
+        List<WeaponEntity> weaponMoodOccurrences = weaponService.getAllWeapons().stream().toList();
 
-        var player = Player.fromWeapon(playerWeapon, playerAnswers);
+        var player = Player.fromWeapon(playerWeapon);
 
         Collections.shuffle(weapons);
         var agentsWeapon = weapons.stream().findFirst().get();
-        var agent = Agent.fromWeapon(agentsWeapon, pythonGateway);
+        var agent = Agent.fromWeapon(agentsWeapon, pythonGateway, playerAnswers, weaponMoodOccurrences);
 
         var gameState = new GameState(
                 player,

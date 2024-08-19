@@ -2,16 +2,18 @@ package io.rizvan.beans.actors.agent;
 
 import io.rizvan.beans.GameState;
 import io.rizvan.beans.Weapon;
+import io.rizvan.beans.actors.player.PlayerAnswers;
+import io.rizvan.beans.actors.player.PlayerMood;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.knowledge.AgentPossibilities;
-import io.rizvan.utils.BayesPythonManager;
+import io.rizvan.entities.WeaponEntity;
 import io.rizvan.utils.Pair;
 import io.rizvan.utils.PythonGateway;
+import io.rizvan.utils.Trie;
 import jakarta.annotation.PreDestroy;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import py4j.GatewayServer;
 
 
 import java.util.*;
@@ -24,12 +26,13 @@ public class DroolsBrain implements AgentsBrain {
     private List<Weapon> weapons;
 
 
-    public DroolsBrain(PythonGateway pythonGateway) {
-        var manager = pythonGateway.getBayesNetwork();
+    public DroolsBrain(PythonGateway pythonGateway, PlayerAnswers playerAnswer, List<WeaponEntity> weaponMoodOccurrences) {
         knowledge = new AgentKnowledge();
         possibilities = new AgentPossibilities();
         KieServices kieService = KieServices.Factory.get();
         kieContainer = kieService.getKieClasspathContainer();
+
+
         var marginalProbabilities = getMarginalProbabilities(knowledge.getPossibleWeapons());
         var conditionalResults = getConditionalProbabilities(
                 knowledge.getPossibleWeapons(),
@@ -37,42 +40,117 @@ public class DroolsBrain implements AgentsBrain {
                 knowledge.getStatRelations()
         );
 
+        var speedValues = marginalProbabilities.getValues().get(Weapon.Stat.SPEED_MOD);
+        var damageValues = marginalProbabilities.getValues().get(Weapon.Stat.DAMAGE);
+
+        HashMap<PlayerMood, HashMap<Number, HashMap<Number, Double>>> speedDamageMoodProbabilities = new HashMap<>();
+
+        Set<PlayerMood> moodsFound = new HashSet<>();
+        Set<Number> speedsFound = new HashSet<>();
+        Set<Number> damagesFound = new HashSet<>();
+
+        for (var speed : speedValues) {
+            for (var damage : damageValues) {
+                var speedDamageOccurrenceCount = weaponMoodOccurrences.stream()
+                        .filter(o -> o.getDamage() == (int) damage && o.getSpeedModifier() == (double) speed)
+                        .count();
+
+                if (speedDamageOccurrenceCount > 0) {
+                    for (var mood : PlayerMood.values()) {
+                        var speedDamageMoodOccurrenceCount = weaponMoodOccurrences.stream()
+                                .filter(wp -> wp.getDamage() == (int) damage &&
+                                        wp.getSpeedModifier() == (double) speed &&
+                                        wp.getMoods().stream().toList().get(0).getMood() == mood
+                                ).count();
+                        if (speedDamageMoodOccurrenceCount > 0) {
+                            speedsFound.add(speed);
+                            damagesFound.add(damage);
+                            moodsFound.add(mood);
+                            var speedPart = speedDamageMoodProbabilities.getOrDefault(mood, new HashMap<>());
+                            var probabilities = speedPart.getOrDefault(speed, new HashMap<>());
+                            probabilities.put(damage, (double) speedDamageMoodOccurrenceCount / speedDamageOccurrenceCount);
+                            speedPart.putIfAbsent(speed, probabilities);
+                            speedDamageMoodProbabilities.putIfAbsent(mood, speedPart);
+                        }
+                    }
+                }
+            }
+        }
+
+        var moodsFoundList = moodsFound.stream().toList();
+        var speedsFoundList = speedsFound.stream().toList();
+        var damagesFoundList = damagesFound.stream().toList();
+
+        double[][] moodSpeedDamageConditionals = new double[moodsFound.size()][speedsFoundList.size() * moodsFoundList.size()];
+
+        var matchingComboIdx = 0;
+        for (var speed : speedsFoundList) {
+            var found = false;
+            for (var damage : damagesFoundList) {
+                for (var moodIdx = 0; moodIdx < moodsFoundList.size(); moodIdx++) {
+                    var mood = moodsFoundList.get(moodIdx);
+
+                    var moodPart = speedDamageMoodProbabilities.get(mood);
+
+                    var speedPart = moodPart.get(speed);
+                    if (speedPart == null) continue;
+
+                    var probability = speedPart.get(damage);
+                    if (probability == null) continue;
+
+                    moodSpeedDamageConditionals[moodIdx][matchingComboIdx] = probability;
+                    found = true;
+                }
+                if (found) matchingComboIdx++;
+            }
+        }
+
         List<String> nodes = new ArrayList<>();
         nodes.add(Weapon.Stat.SPEED_MOD.getName());
         nodes.add(Weapon.Stat.DAMAGE.getName());
         nodes.add(Weapon.Stat.RECHARGE_TIME.getName());
         nodes.add(Weapon.Stat.USES.getName());
         nodes.add(Weapon.Stat.RANGE.getName());
+        nodes.add("mood");
 
         List<String[]> edges = new ArrayList<>();
         edges.add(new String[]{Weapon.Stat.SPEED_MOD.getName(), Weapon.Stat.DAMAGE.getName()});
         edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), Weapon.Stat.RECHARGE_TIME.getName()});
         edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), Weapon.Stat.RANGE.getName()});
         edges.add(new String[]{Weapon.Stat.RECHARGE_TIME.getName(), Weapon.Stat.USES.getName()});
+        edges.add(new String[]{Weapon.Stat.SPEED_MOD.getName(), "mood"});
+        edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), "mood"});
 
+        var manager = pythonGateway.getBayesNetwork();
         manager.add_nodes(nodes);
         manager.add_edges(edges);
-
 
         var speedModEntries = marginalProbabilities.probabilities.get(Weapon.Stat.SPEED_MOD);
         double[][] speedModProbs = new double[speedModEntries.size()][1];
         for (int i = 0; i < speedModProbs.length; i++) {
             speedModProbs[i][0] = speedModEntries.get(i);
         }
-        marginalProbabilities.probabilities.get(Weapon.Stat.SPEED_MOD);
         manager.add_cpd(Weapon.Stat.SPEED_MOD.getName(), speedModEntries.size(), speedModProbs, null, null);
 
         var damageGivenSpeedProbs = conditionalResults.cpds.get(Weapon.Stat.DAMAGE).get(Weapon.Stat.SPEED_MOD);
         manager.add_cpd(Weapon.Stat.DAMAGE.getName(), damageGivenSpeedProbs.length, damageGivenSpeedProbs, new String[]{Weapon.Stat.SPEED_MOD.getName()}, new int[]{damageGivenSpeedProbs[0].length});
 
-        var rechargeTimeGivenDamage = conditionalResults.cpds.get(Weapon.Stat.RECHARGE_TIME).get(Weapon.Stat.DAMAGE);
-        manager.add_cpd(Weapon.Stat.RECHARGE_TIME.getName(), rechargeTimeGivenDamage.length, rechargeTimeGivenDamage, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rechargeTimeGivenDamage[0].length});
+        var rechargeTimeGivenDamageProbs = conditionalResults.cpds.get(Weapon.Stat.RECHARGE_TIME).get(Weapon.Stat.DAMAGE);
+        manager.add_cpd(Weapon.Stat.RECHARGE_TIME.getName(), rechargeTimeGivenDamageProbs.length, rechargeTimeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rechargeTimeGivenDamageProbs[0].length});
 
-        var rangeGivenDamage = conditionalResults.cpds.get(Weapon.Stat.RANGE).get(Weapon.Stat.DAMAGE);
-        manager.add_cpd(Weapon.Stat.RANGE.getName(), rangeGivenDamage.length, rangeGivenDamage, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rangeGivenDamage[0].length});
+        var rangeGivenDamageProbs = conditionalResults.cpds.get(Weapon.Stat.RANGE).get(Weapon.Stat.DAMAGE);
+        manager.add_cpd(Weapon.Stat.RANGE.getName(), rangeGivenDamageProbs.length, rangeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rangeGivenDamageProbs[0].length});
 
-        var usesGivenRechargeTime = conditionalResults.cpds.get(Weapon.Stat.USES).get(Weapon.Stat.RECHARGE_TIME);
-        manager.add_cpd(Weapon.Stat.USES.getName(), usesGivenRechargeTime.length, usesGivenRechargeTime, new String[]{Weapon.Stat.RECHARGE_TIME.getName()}, new int[]{usesGivenRechargeTime[0].length});
+        var usesGivenRechargeTimeProbs = conditionalResults.cpds.get(Weapon.Stat.USES).get(Weapon.Stat.RECHARGE_TIME);
+        manager.add_cpd(Weapon.Stat.USES.getName(), usesGivenRechargeTimeProbs.length, usesGivenRechargeTimeProbs, new String[]{Weapon.Stat.RECHARGE_TIME.getName()}, new int[]{usesGivenRechargeTimeProbs[0].length});
+
+        manager.add_cpd(
+                "mood",
+                moodsFoundList.size(),
+                moodSpeedDamageConditionals,
+                new String[]{Weapon.Stat.SPEED_MOD.getName(), Weapon.Stat.DAMAGE.getName()},
+                new int[]{speedsFoundList.size(), damagesFoundList.size()}
+        );
 
         manager.finalize_model();
 

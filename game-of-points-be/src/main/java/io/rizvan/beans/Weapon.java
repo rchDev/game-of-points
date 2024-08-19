@@ -37,7 +37,22 @@ public class Weapon {
         PEPPERMINT_PIKE(16, "Peppermint Pike", 2, 0.85f, 3, 16, 1500),
         JELLYBEAN_JAVELIN_2(17, "Jellybean Javelin", 2, 0.80f, 3, 16, 2000),
         BUBBLEGUM_BLADE(18, "Bubblegum Blade", 1, 1.00f, 3, 20, 1500),
-        HONEYCOMB_HAMMER(19, "Honeycomb Hammer", 2, 0.85f, 3, 12, 2000);
+        HONEYCOMB_HAMMER(19, "Honeycomb Hammer", 2, 0.85f, 3, 12, 2000),
+        TWIZZLE_TWIRLER(20, "Twizzle Twirler", 1, 0.70f, 4, 20, 1000),
+        CUPCAKE_CRUSHER(21, "Cupcake Crusher", 1, 0.80f, 4, 20, 1000),
+        GUMDROP_GAUNTLET(22, "Gumdrop Gauntlet", 1, 0.85f, 4, 20, 1000),
+        TOOTHSOME_TORCH(23, "Toothsome Torch", 1, 0.90f, 4, 20, 1000),
+        LICORICE_LASHER(24, "Licorice Lasher", 1, 0.90f, 4, 20, 1000),
+        FUDGE_FLOGGER(25, "Fudge Flogger", 3, 0.85f, 2, 20, 2000),
+        TART_TWISTER(26, "Tart Twister", 3, 0.90f, 2, 15, 2000),
+        MOUSSE_MAULER(27, "Mousse Mauler", 3, 1.00f, 2, 15, 2000),
+        TRUFFLE_THRASHER(28, "Truffle Thrasher", 3, 1.05f, 2, 15, 2000),
+        CANDY_CLAWS(29, "Candy Claws", 3, 1.10f, 2, 15, 2000),
+        MARZIPAN_MALLET(30, "Marzipan Mallet", 2, 0.70f, 3, 20, 2000),
+        JELLY_JABBER(31, "Jelly Jabber", 2, 0.80f, 3, 20, 2000),
+        CARAMEL_CRUSH(32, "Caramel Crush", 2, 1.00f, 3, 15, 2000),
+        NOUGAT_NUDGE(33, "Nougat Nudge", 2, 1.05f, 3, 15, 2000),
+        SUGAR_SWATTER(34, "Sugar Swatter", 2, 1.10f, 3, 15, 2000);
 
         private final Weapon weapon;
         Type(int id, String name, int damage, double speedModifier, int ammo, double range, int rechargeTimeMs) {
