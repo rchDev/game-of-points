@@ -7,6 +7,7 @@ public class PlayerSpeedKnowledge extends KnowledgeItem<Double> {
 
     public PlayerSpeedKnowledge() {
         this.speed = 0.0;
+        setName(Weapon.Stat.SPEED_MOD.getName());
     }
 
     public PlayerSpeedKnowledge(double speed) {

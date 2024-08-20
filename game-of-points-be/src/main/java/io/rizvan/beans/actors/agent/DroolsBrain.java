@@ -16,7 +16,6 @@ import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +26,7 @@ public class DroolsBrain implements AgentsBrain {
     private final BayesPythonManager bayesNetwork;
     private final MarginalResult marginals;
     private final ConditionalResult conditionals;
+    private final List<PlayerMood> foundMoods;
 
     public DroolsBrain(PythonGateway pythonGateway, PlayerAnswers playerAnswers, List<WeaponEntity> weaponMoodOccurrences) {
         knowledge = new AgentKnowledge();
@@ -80,17 +80,17 @@ public class DroolsBrain implements AgentsBrain {
             }
         }
 
-        var moodsFoundList = moodsFound.stream().toList();
+        foundMoods = moodsFound.stream().toList();
         var speedsFoundList = speedsFound.stream().toList();
         var damagesFoundList = damagesFound.stream().toList();
 
-        double[][] moodSpeedDamageConditionals = new double[moodsFound.size()][speedsFoundList.size() * moodsFoundList.size()];
+        double[][] moodSpeedDamageConditionals = new double[moodsFound.size()][speedsFoundList.size() * foundMoods.size()];
         var matchingComboIdx = 0;
         for (var speed : speedsFoundList) {
             var found = false;
             for (var damage : damagesFoundList) {
-                for (var moodIdx = 0; moodIdx < moodsFoundList.size(); moodIdx++) {
-                    var mood = moodsFoundList.get(moodIdx);
+                for (var moodIdx = 0; moodIdx < foundMoods.size(); moodIdx++) {
+                    var mood = foundMoods.get(moodIdx);
 
                     var moodPart = speedDamageMoodProbabilities.get(mood);
 
@@ -148,60 +148,88 @@ public class DroolsBrain implements AgentsBrain {
 
         bayesNetwork.add_cpd(
                 "mood",
-                moodsFoundList.size(),
+                foundMoods.size(),
                 moodSpeedDamageConditionals,
                 new String[]{Weapon.Stat.SPEED_MOD.getName(), Weapon.Stat.DAMAGE.getName()},
                 new int[]{speedsFoundList.size(), damagesFoundList.size()}
         );
 
         bayesNetwork.finalize_model();
-
-        // Set evidence and perform MAP query
-//        List<String[]> evidenceList = new ArrayList<>();
-//        evidenceList.add(new String[]{Weapon.Stat.USES.getName(), "3"});
-//        evidenceList.add(new String[]{Weapon.Stat.DAMAGE.getName(), "1"});
-//        var optimisticIdx = moodsFoundList.indexOf(PlayerMood.OPTIMISTIC);
-//        evidenceList.add(new String[]{"mood", "" + optimisticIdx});
-//
-//        Map<String, Integer> mapResult = bayesNetwork.map_query(, evidenceList);
-//
-//        for (var entry : mapResult.entrySet()) {
-//            var statName = entry.getKey();
-//            var idx = entry.getValue();
-//            if (entry.getKey().equals("speed_mod")) {
-//                var value = marginals.values.get(Weapon.Stat.fromName(statName)).get(idx);
-//                System.out.println("idx: " + idx + ", " + statName + ": " + value);
-//            } else {
-//                var value = conditionals.queryValues.get(Weapon.Stat.fromName(statName)).get(idx);
-//                System.out.println("idx: " + idx + ", " + statName + ": " + value);
-//            }
-//        }
-//        System.out.println();
     }
 
-    private List<String[]> getEvidenceList() {
-        return knowledge.getPlayerStats()
+    private String[][] getEvidenceList() {
+        var evidenceList = new ArrayList<>(knowledge.getPlayerStats()
                 .stream()
                 .filter(KnowledgeItem::isKnown)
                 .map(stat -> new String[]{stat.getName(), stat.getValue().toString()})
-                .toList();
+                .toList());
+        var moodEntity = knowledge.getPlayerAnswers().getValue();
+        if (moodEntity != null) {
+            var mood = moodEntity.getMood();
+            mood.ifPresent(playerMood -> evidenceList.add(new String[]{"mood", "" + foundMoods.indexOf(playerMood)}));
+        }
+
+        String[][] evidence = new String[evidenceList.size()][2];
+        for (int i = 0; i < evidenceList.size(); i++) {
+            evidence[i] = evidenceList.get(i);
+        }
+
+        return evidence;
     }
 
-    private List<String> getQueryList() {
-        return knowledge.getPlayerStats()
+    private String[] getQueryList() {
+
+        var queryList = knowledge.getPlayerStats()
                 .stream()
                 .filter(stat -> !stat.isKnown())
                 .map(KnowledgeItem::getName)
                 .toList();
+
+        String[] queries = new String[queryList.size()];
+        for (int i = 0; i < queryList.size(); i++) {
+            queries[i] = queryList.get(i);
+        }
+
+        return queries;
     }
 
     @Override
     public void reason(GameState gameState) {
         knowledge.setPlayerHitBoxKnowledge(gameState.getPlayer().getHitBox(), true);
 
-        var queryList = getQueryList();
-        var evidenceList = getEvidenceList();
+        String[] queryList = getQueryList();
+        String[][] evidenceList = getEvidenceList();
+
         Map<String, Integer> mapResult = bayesNetwork.map_query(queryList, evidenceList);
+        for (var entry : mapResult.entrySet()) {
+            var index = entry.getValue();
+            var statName = entry.getKey();
+            var weaponStat = Weapon.Stat.fromName(statName);
+            switch (statName) {
+                case "damage":
+                    var damageValue = (Integer) conditionals.queryValues.get(weaponStat).get(index);
+                    knowledge.setPlayerDamage(damageValue, false);
+                    break;
+                case "recharge_time":
+                    var rechargeTimeValue = (Long) conditionals.queryValues.get(weaponStat).get(index);
+                    knowledge.setPlayerRechargeTime(rechargeTimeValue, false);
+                    break;
+                case "uses":
+                    var usesValue = (Integer) conditionals.queryValues.get(weaponStat).get(index);
+                    knowledge.setPlayerAmmoCapacity(usesValue, false);
+                    break;
+                case "speed_mod":
+                    var speedModValue = (Double) marginals.values.get(weaponStat).get(index);
+                    knowledge.setPlayerSpeed(speedModValue, false);
+                    break;
+                case "range":
+                    var rangeValue = (Double) conditionals.queryValues.get(weaponStat).get(index);
+                    knowledge.setPlayerReach(rangeValue, false);
+                    break;
+                default:
+                    break;
+            }
+        }
 
         KieSession kieSession = kieContainer.newKieSession("myKsession");
         kieSession.insert(gameState);

@@ -12,5 +12,5 @@ public interface BayesPythonManager {
 
     void finalize_model();
 
-    Map<String, Integer> map_query(List<String> query, List<String[]> evidence);
+    Map<String, Integer> map_query(String[] query, String[][] evidence);
 }

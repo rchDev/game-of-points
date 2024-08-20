@@ -84,16 +84,17 @@ class BayesianNetworkManager:
 
     def map_query(self, query, evidence):
         try:
-            query = list(query.toArray())
+            logger.info(f"query type: {type(query)}")
+            queryList = list(query)
             logger.info(f"evidence: {type(evidence)}")
-            evidence_dict = {entry[0]: int(entry[1]) for entry in list(evidence.toArray())}
+            evidence_dict = {entry[0]: int(entry[1]) for entry in list(evidence)}
             logger.info(f"evidence: {type(evidence_dict)}")
             for key, value in evidence_dict.items():
                 logger.info(f"dict key: {key}")
                 logger.info(f"dict key type: {type(key)}")
                 logger.info(f"dict value: {value}")
                 logger.info(f"dict value type: {type(value)}")
-            result = self.infer.map_query(variables=query, evidence=evidence_dict)
+            result = self.infer.map_query(variables=queryList, evidence=evidence_dict)
             logger.info(f"MAP query result: {result}")
             logger.info(f"POST MAP query")
 
