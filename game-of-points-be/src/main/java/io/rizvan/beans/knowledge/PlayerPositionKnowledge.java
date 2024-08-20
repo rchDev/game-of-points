@@ -7,6 +7,7 @@ public class PlayerPositionKnowledge extends KnowledgeItem<Coord<Double>> {
 
     public PlayerPositionKnowledge() {
         value = new Coord<>(0.0, 0.0);
+        setName("position");
     }
 
     public PlayerPositionKnowledge(Double x, Double y) {

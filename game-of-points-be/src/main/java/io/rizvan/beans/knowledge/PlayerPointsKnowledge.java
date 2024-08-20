@@ -5,6 +5,7 @@ public class PlayerPointsKnowledge extends KnowledgeItem<Integer> {
 
     public PlayerPointsKnowledge() {
         this.totalPoints = 0;
+        setName("points");
     }
 
     public PlayerPointsKnowledge(Integer totalPoints) {

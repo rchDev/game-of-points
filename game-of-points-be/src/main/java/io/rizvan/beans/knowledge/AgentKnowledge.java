@@ -7,6 +7,7 @@ import io.rizvan.beans.WeaponCache;
 import io.rizvan.beans.actors.CompetingEntity;
 import io.rizvan.beans.actors.agent.AgentChoice;
 import io.rizvan.beans.actors.agent.actions.AgentAction;
+import io.rizvan.beans.actors.player.PlayerAnswers;
 import io.rizvan.utils.Coord;
 import io.rizvan.utils.Pair;
 import jakarta.json.bind.annotation.JsonbTransient;
@@ -21,12 +22,16 @@ public class AgentKnowledge {
     private final PlayerAmmoCapacityKnowledge playerAmmoCapacity;
     private final PlayerSpeedKnowledge playerSpeed;
     private final PlayerDamageKnowledge playerDamage;
+    private final PlayerRechargeTimeKnowledge rechargeTime;
     private final PlayerHPKnowledge playerHitPoints;
     private final PlayerPointsKnowledge playerPoints;
     private final ResourcePointKnowledge resourcePoints;
+    private final PlayerAnswersKnowledge playerAnswers;
+
     private final GameTimeKnowledge timeLeft;
     private final PlayerReachKnowledge playerReach;
     private final List<Pair<Weapon.Stat, Weapon.Stat>> statRelations;
+    private final List<KnowledgeItem> playerStats;
     private AgentChoice agentChoice;
     private WeaponCache possibleWeapons;
     private AgentAction currentAction;
@@ -35,13 +40,16 @@ public class AgentKnowledge {
     public static double REACH_DISTANCE_OFFSET = 50.0;
 
     public AgentKnowledge() {
+        this.playerStats = new ArrayList<>();
         this.playerPosition = new PlayerPositionKnowledge();
         this.playerAim = new PlayerAimKnowledge();
         this.shotCount = new ShotCountKnowledge();
+        this.rechargeTime = new PlayerRechargeTimeKnowledge();
         this.playerSpeed = new PlayerSpeedKnowledge();
         this.playerDamage = new PlayerDamageKnowledge();
         this.playerHitPoints = new PlayerHPKnowledge();
         this.playerPoints = new PlayerPointsKnowledge();
+        this.playerAnswers = new PlayerAnswersKnowledge();
         this.timeLeft = new GameTimeKnowledge();
         this.resourcePoints = new ResourcePointKnowledge();
         this.possibleWeapons = new WeaponCache();
@@ -56,6 +64,11 @@ public class AgentKnowledge {
         statRelations.add(new Pair<>(Weapon.Stat.RANGE, Weapon.Stat.DAMAGE));
         statRelations.add(new Pair<>(Weapon.Stat.USES, Weapon.Stat.RECHARGE_TIME));
 
+        playerStats.add(playerAmmoCapacity);
+        playerStats.add(playerSpeed);
+        playerStats.add(playerDamage);
+        playerStats.add(playerReach);
+        playerStats.add(rechargeTime);
     }
 
     public PlayerPositionKnowledge getPlayerPosition() {
@@ -202,6 +215,28 @@ public class AgentKnowledge {
 
     public void setCurrentAction(AgentAction currentAction) {
         this.currentAction = currentAction;
+    }
+
+    public PlayerAnswersKnowledge getPlayerAnswers() {
+        return playerAnswers;
+    }
+
+    public void setPlayerAnswers(PlayerAnswers playerAnswers) {
+        this.playerAnswers.setValue(playerAnswers);
+        this.playerAnswers.setKnown(true);
+    }
+
+    public PlayerRechargeTimeKnowledge getRechargeTime() {
+        return rechargeTime;
+    }
+
+    public void setPlayerRechargeTime(long rechargeTime, boolean isKnown) {
+        this.rechargeTime.setValue(rechargeTime);
+        this.rechargeTime.setKnown(isKnown);
+    }
+
+    public List<KnowledgeItem> getPlayerStats() {
+        return playerStats;
     }
 
     @Override

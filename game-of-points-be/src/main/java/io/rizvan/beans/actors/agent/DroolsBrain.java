@@ -6,10 +6,11 @@ import io.rizvan.beans.actors.player.PlayerAnswers;
 import io.rizvan.beans.actors.player.PlayerMood;
 import io.rizvan.beans.knowledge.AgentKnowledge;
 import io.rizvan.beans.knowledge.AgentPossibilities;
+import io.rizvan.beans.knowledge.KnowledgeItem;
 import io.rizvan.entities.WeaponEntity;
+import io.rizvan.utils.BayesPythonManager;
 import io.rizvan.utils.Pair;
 import io.rizvan.utils.PythonGateway;
-import io.rizvan.utils.Trie;
 import jakarta.annotation.PreDestroy;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -23,25 +24,27 @@ public class DroolsBrain implements AgentsBrain {
     private final AgentKnowledge knowledge;
     private final AgentPossibilities possibilities;
     private final KieContainer kieContainer;
-    private List<Weapon> weapons;
+    private final BayesPythonManager bayesNetwork;
+    private final MarginalResult marginals;
+    private final ConditionalResult conditionals;
 
-
-    public DroolsBrain(PythonGateway pythonGateway, PlayerAnswers playerAnswer, List<WeaponEntity> weaponMoodOccurrences) {
+    public DroolsBrain(PythonGateway pythonGateway, PlayerAnswers playerAnswers, List<WeaponEntity> weaponMoodOccurrences) {
         knowledge = new AgentKnowledge();
+        knowledge.setPlayerAnswers(playerAnswers);
         possibilities = new AgentPossibilities();
         KieServices kieService = KieServices.Factory.get();
         kieContainer = kieService.getKieClasspathContainer();
 
 
-        var marginalProbabilities = getMarginalProbabilities(knowledge.getPossibleWeapons());
-        var conditionalResults = getConditionalProbabilities(
+        marginals = getMarginalProbabilities(knowledge.getPossibleWeapons());
+        conditionals = getConditionalProbabilities(
                 knowledge.getPossibleWeapons(),
-                marginalProbabilities,
+                marginals,
                 knowledge.getStatRelations()
         );
 
-        var speedValues = marginalProbabilities.getValues().get(Weapon.Stat.SPEED_MOD);
-        var damageValues = marginalProbabilities.getValues().get(Weapon.Stat.DAMAGE);
+        var speedValues = marginals.getValues().get(Weapon.Stat.SPEED_MOD);
+        var damageValues = marginals.getValues().get(Weapon.Stat.DAMAGE);
 
         HashMap<PlayerMood, HashMap<Number, HashMap<Number, Double>>> speedDamageMoodProbabilities = new HashMap<>();
 
@@ -82,7 +85,6 @@ public class DroolsBrain implements AgentsBrain {
         var damagesFoundList = damagesFound.stream().toList();
 
         double[][] moodSpeedDamageConditionals = new double[moodsFound.size()][speedsFoundList.size() * moodsFoundList.size()];
-
         var matchingComboIdx = 0;
         for (var speed : speedsFoundList) {
             var found = false;
@@ -121,30 +123,30 @@ public class DroolsBrain implements AgentsBrain {
         edges.add(new String[]{Weapon.Stat.SPEED_MOD.getName(), "mood"});
         edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), "mood"});
 
-        var manager = pythonGateway.getBayesNetwork();
-        manager.add_nodes(nodes);
-        manager.add_edges(edges);
+        bayesNetwork = pythonGateway.getBayesNetwork();
+        bayesNetwork.add_nodes(nodes);
+        bayesNetwork.add_edges(edges);
 
-        var speedModEntries = marginalProbabilities.probabilities.get(Weapon.Stat.SPEED_MOD);
+        var speedModEntries = marginals.probabilities.get(Weapon.Stat.SPEED_MOD);
         double[][] speedModProbs = new double[speedModEntries.size()][1];
         for (int i = 0; i < speedModProbs.length; i++) {
             speedModProbs[i][0] = speedModEntries.get(i);
         }
-        manager.add_cpd(Weapon.Stat.SPEED_MOD.getName(), speedModEntries.size(), speedModProbs, null, null);
+        bayesNetwork.add_cpd(Weapon.Stat.SPEED_MOD.getName(), speedModEntries.size(), speedModProbs, null, null);
 
-        var damageGivenSpeedProbs = conditionalResults.cpds.get(Weapon.Stat.DAMAGE).get(Weapon.Stat.SPEED_MOD);
-        manager.add_cpd(Weapon.Stat.DAMAGE.getName(), damageGivenSpeedProbs.length, damageGivenSpeedProbs, new String[]{Weapon.Stat.SPEED_MOD.getName()}, new int[]{damageGivenSpeedProbs[0].length});
+        var damageGivenSpeedProbs = conditionals.cpds.get(Weapon.Stat.DAMAGE).get(Weapon.Stat.SPEED_MOD);
+        bayesNetwork.add_cpd(Weapon.Stat.DAMAGE.getName(), damageGivenSpeedProbs.length, damageGivenSpeedProbs, new String[]{Weapon.Stat.SPEED_MOD.getName()}, new int[]{damageGivenSpeedProbs[0].length});
 
-        var rechargeTimeGivenDamageProbs = conditionalResults.cpds.get(Weapon.Stat.RECHARGE_TIME).get(Weapon.Stat.DAMAGE);
-        manager.add_cpd(Weapon.Stat.RECHARGE_TIME.getName(), rechargeTimeGivenDamageProbs.length, rechargeTimeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rechargeTimeGivenDamageProbs[0].length});
+        var rechargeTimeGivenDamageProbs = conditionals.cpds.get(Weapon.Stat.RECHARGE_TIME).get(Weapon.Stat.DAMAGE);
+        bayesNetwork.add_cpd(Weapon.Stat.RECHARGE_TIME.getName(), rechargeTimeGivenDamageProbs.length, rechargeTimeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rechargeTimeGivenDamageProbs[0].length});
 
-        var rangeGivenDamageProbs = conditionalResults.cpds.get(Weapon.Stat.RANGE).get(Weapon.Stat.DAMAGE);
-        manager.add_cpd(Weapon.Stat.RANGE.getName(), rangeGivenDamageProbs.length, rangeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rangeGivenDamageProbs[0].length});
+        var rangeGivenDamageProbs = conditionals.cpds.get(Weapon.Stat.RANGE).get(Weapon.Stat.DAMAGE);
+        bayesNetwork.add_cpd(Weapon.Stat.RANGE.getName(), rangeGivenDamageProbs.length, rangeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rangeGivenDamageProbs[0].length});
 
-        var usesGivenRechargeTimeProbs = conditionalResults.cpds.get(Weapon.Stat.USES).get(Weapon.Stat.RECHARGE_TIME);
-        manager.add_cpd(Weapon.Stat.USES.getName(), usesGivenRechargeTimeProbs.length, usesGivenRechargeTimeProbs, new String[]{Weapon.Stat.RECHARGE_TIME.getName()}, new int[]{usesGivenRechargeTimeProbs[0].length});
+        var usesGivenRechargeTimeProbs = conditionals.cpds.get(Weapon.Stat.USES).get(Weapon.Stat.RECHARGE_TIME);
+        bayesNetwork.add_cpd(Weapon.Stat.USES.getName(), usesGivenRechargeTimeProbs.length, usesGivenRechargeTimeProbs, new String[]{Weapon.Stat.RECHARGE_TIME.getName()}, new int[]{usesGivenRechargeTimeProbs[0].length});
 
-        manager.add_cpd(
+        bayesNetwork.add_cpd(
                 "mood",
                 moodsFoundList.size(),
                 moodSpeedDamageConditionals,
@@ -152,32 +154,55 @@ public class DroolsBrain implements AgentsBrain {
                 new int[]{speedsFoundList.size(), damagesFoundList.size()}
         );
 
-        manager.finalize_model();
+        bayesNetwork.finalize_model();
 
         // Set evidence and perform MAP query
-        List<String[]> evidenceList = new ArrayList<>();
-        evidenceList.add(new String[]{Weapon.Stat.USES.getName(), "3"});
-        evidenceList.add(new String[]{Weapon.Stat.DAMAGE.getName(), "1"});
+//        List<String[]> evidenceList = new ArrayList<>();
+//        evidenceList.add(new String[]{Weapon.Stat.USES.getName(), "3"});
+//        evidenceList.add(new String[]{Weapon.Stat.DAMAGE.getName(), "1"});
+//        var optimisticIdx = moodsFoundList.indexOf(PlayerMood.OPTIMISTIC);
+//        evidenceList.add(new String[]{"mood", "" + optimisticIdx});
+//
+//        Map<String, Integer> mapResult = bayesNetwork.map_query(, evidenceList);
+//
+//        for (var entry : mapResult.entrySet()) {
+//            var statName = entry.getKey();
+//            var idx = entry.getValue();
+//            if (entry.getKey().equals("speed_mod")) {
+//                var value = marginals.values.get(Weapon.Stat.fromName(statName)).get(idx);
+//                System.out.println("idx: " + idx + ", " + statName + ": " + value);
+//            } else {
+//                var value = conditionals.queryValues.get(Weapon.Stat.fromName(statName)).get(idx);
+//                System.out.println("idx: " + idx + ", " + statName + ": " + value);
+//            }
+//        }
+//        System.out.println();
+    }
 
-        Map<String, Integer> mapResult = manager.map_query(evidenceList);
+    private List<String[]> getEvidenceList() {
+        return knowledge.getPlayerStats()
+                .stream()
+                .filter(KnowledgeItem::isKnown)
+                .map(stat -> new String[]{stat.getName(), stat.getValue().toString()})
+                .toList();
+    }
 
-        for (var entry : mapResult.entrySet()) {
-            var statName = entry.getKey();
-            var idx = entry.getValue();
-            if (entry.getKey().equals("speed_mod")) {
-                var value = marginalProbabilities.values.get(Weapon.Stat.fromName(statName)).get(idx);
-                System.out.println("idx: " + idx + ", " + statName + ": " + value);
-            } else {
-                var value = conditionalResults.queryValues.get(Weapon.Stat.fromName(statName)).get(idx);
-                System.out.println("idx: " + idx + ", " + statName + ": " + value);
-            }
-        }
-        System.out.println();
+    private List<String> getQueryList() {
+        return knowledge.getPlayerStats()
+                .stream()
+                .filter(stat -> !stat.isKnown())
+                .map(KnowledgeItem::getName)
+                .toList();
     }
 
     @Override
     public void reason(GameState gameState) {
         knowledge.setPlayerHitBoxKnowledge(gameState.getPlayer().getHitBox(), true);
+
+        var queryList = getQueryList();
+        var evidenceList = getEvidenceList();
+        Map<String, Integer> mapResult = bayesNetwork.map_query(queryList, evidenceList);
+
         KieSession kieSession = kieContainer.newKieSession("myKsession");
         kieSession.insert(gameState);
         kieSession.insert(gameState.getAgent());

@@ -82,8 +82,9 @@ class BayesianNetworkManager:
             logger.error(f"Error finalizing model: {e}")
             raise
 
-    def map_query(self, evidence):
+    def map_query(self, query, evidence):
         try:
+            query = list(query.toArray())
             logger.info(f"evidence: {type(evidence)}")
             evidence_dict = {entry[0]: int(entry[1]) for entry in list(evidence.toArray())}
             logger.info(f"evidence: {type(evidence_dict)}")
@@ -92,7 +93,7 @@ class BayesianNetworkManager:
                 logger.info(f"dict key type: {type(key)}")
                 logger.info(f"dict value: {value}")
                 logger.info(f"dict value type: {type(value)}")
-            result = self.infer.map_query(variables=['recharge_time', 'speed_mod'], evidence=evidence_dict)
+            result = self.infer.map_query(variables=query, evidence=evidence_dict)
             logger.info(f"MAP query result: {result}")
             logger.info(f"POST MAP query")
 

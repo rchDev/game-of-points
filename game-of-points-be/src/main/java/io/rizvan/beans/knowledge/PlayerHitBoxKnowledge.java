@@ -5,6 +5,10 @@ import io.rizvan.beans.HitBox;
 public class PlayerHitBoxKnowledge extends KnowledgeItem<HitBox> {
     private HitBox hitBox;
 
+    public PlayerHitBoxKnowledge() {
+        setName("hit_box");
+    }
+
     @Override
     public HitBox getValue() {
         return hitBox;

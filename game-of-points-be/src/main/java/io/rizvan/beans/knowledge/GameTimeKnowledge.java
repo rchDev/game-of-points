@@ -8,6 +8,7 @@ public class GameTimeKnowledge extends KnowledgeItem<Integer> {
 
     public GameTimeKnowledge() {
         this.timeLeft = GameState.GAME_TIME;
+        setName("game_time");
     }
 
     public GameTimeKnowledge(Integer timeLeft) {

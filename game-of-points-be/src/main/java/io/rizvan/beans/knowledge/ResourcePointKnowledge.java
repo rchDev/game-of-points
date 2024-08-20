@@ -10,6 +10,7 @@ public class ResourcePointKnowledge extends KnowledgeItem<List<ResourcePoint>> {
 
     public ResourcePointKnowledge() {
         this.resources = new CopyOnWriteArrayList<>();
+        setName("resource_points");
     }
 
     public ResourcePointKnowledge(List<ResourcePoint> resources) {

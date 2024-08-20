@@ -1,5 +1,7 @@
 package io.rizvan.beans.knowledge;
 
+import io.rizvan.beans.Weapon;
+
 public class PlayerSpeedKnowledge extends KnowledgeItem<Double> {
     private double speed;
 
@@ -9,6 +11,7 @@ public class PlayerSpeedKnowledge extends KnowledgeItem<Double> {
 
     public PlayerSpeedKnowledge(double speed) {
         this.speed = speed;
+        setName(Weapon.Stat.SPEED_MOD.getName());
     }
 
     @Override
