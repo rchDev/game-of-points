@@ -1,7 +1,21 @@
 import p5 from "p5";
 import { cloneDeep } from "lodash";
 
+
 document.querySelector('df-messenger').addEventListener('df-response-received', handleDfResponseEvent);
+let weapons = await fetchWeapons();
+let randomWeaponId = selectRandomWeapon(weapons);
+let weapon = weapons[randomWeaponId];
+updatePlayerStats({
+  player: {
+    points: 0,
+    hitPoints: 3,
+    damage: weapon.damage,
+    ammo: weapon.ammoCapacity,
+    speed: weapon.speedModifier,
+    reach: weapon.range,
+  }
+})
 
 async function handleDfResponseEvent(event) {
   console.log(event.detail);
@@ -12,14 +26,13 @@ async function handleDfResponseEvent(event) {
     document.querySelector('df-messenger').removeEventListener('df-response-received', handleDfResponseEvent);
 
     const dfSessionId = event.detail.raw.queryResult.diagnosticInfo["Session Id"];
-    let weapons = await fetchWeapons();
-    let randomWeaponId = selectRandomWeapon(weapons);
+
     const { offsetWidth: width, offsetHeight: height } =
       document.getElementById("game-canvas");
 
     let { sessionId, gameState } = await getInitialGameState(
       dfSessionId,
-      randomWeaponId,
+      weapon.id,
       width,
       height,
     );
