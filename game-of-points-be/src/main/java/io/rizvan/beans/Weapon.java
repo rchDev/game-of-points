@@ -226,7 +226,4 @@ public class Weapon {
             throw new ClassCastException("Cannot cast value to " + type.getName());
         }
     }
-
-
-
 }

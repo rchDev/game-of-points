@@ -17,6 +17,7 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 public class DroolsBrain implements AgentsBrain {
@@ -193,14 +194,8 @@ public class DroolsBrain implements AgentsBrain {
         return queries;
     }
 
-    @Override
-    public void reason(GameState gameState) {
-        knowledge.setPlayerHitBoxKnowledge(gameState.getPlayer().getHitBox(), true);
-
-        String[] queryList = getQueryList();
-        String[][] evidenceList = getEvidenceList();
-
-        Map<String, Integer> mapResult = bayesNetwork.map_query(queryList, evidenceList);
+    private void updateKnowledge(String[] query, String[][] evidence) {
+        Map<String, Integer> mapResult = bayesNetwork.map_query(query, evidence);
         for (var entry : mapResult.entrySet()) {
             var index = entry.getValue();
             var statName = entry.getKey();
@@ -230,12 +225,24 @@ public class DroolsBrain implements AgentsBrain {
                     break;
             }
         }
+    }
+
+    @Override
+    public void reason(GameState gameState) {
+        knowledge.setPlayerHitBoxKnowledge(gameState.getPlayer().getHitBox(), true);
 
         KieSession kieSession = kieContainer.newKieSession("myKsession");
         kieSession.insert(gameState);
         kieSession.insert(gameState.getAgent());
         kieSession.insert(knowledge);
+        kieSession.insert(bayesNetwork);
+        kieSession.insert(marginals);
+        kieSession.insert(conditionals);
+        kieSession.insert(foundMoods);
         kieSession.insert(possibilities);
+        kieSession.insert(new GetQueriesCallable());
+        kieSession.insert(new GetEvidenceCallable());
+        kieSession.insert(new UpdateKnowledgeCallable());
 
         try {
             gameState.getFacts().forEach(kieSession::insert);
@@ -380,6 +387,35 @@ public class DroolsBrain implements AgentsBrain {
         public HashMap<Weapon.Stat, List<Double>> getProbabilities() {
             return probabilities;
         }
+    }
 
+    public class UpdateKnowledgeCallable implements Callable<Void> {
+        private String[] query;
+        private String[][] evidence;
+
+        public void setParameters(String[] query, String[][] evidence) {
+            this.query = query;
+            this.evidence = evidence;
+        }
+
+        @Override
+        public Void call() {
+            updateKnowledge(query, evidence);
+            return null;
+        }
+    }
+
+    public class GetQueriesCallable implements Callable<String[]> {
+        @Override
+        public String[] call() throws Exception {
+            return getQueryList();
+        }
+    }
+
+    public class GetEvidenceCallable implements Callable<String[][]> {
+        @Override
+        public String[][] call() throws Exception {
+            return getEvidenceList();
+        }
     }
 }
