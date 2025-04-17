@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class SentimentAnalysisModel:
     def __init__(self):
         # Load the pre-trained model and build the classifier
-        hub_url = "https://tfhub.dev/google/nnlm-en-dim50/2"
+        hub_url = "https://tfhub.dev/google/nnlm-en-dim50/2" # alternative to bert
         self.pretrained_embedding_layer = hub.KerasLayer(hub_url, input_shape=[], dtype=tf.string, trainable=True)
 
         self.model = tf_keras.Sequential([
@@ -28,7 +28,7 @@ class SentimentAnalysisModel:
             tf_keras.layers.Dropout(0.3),
             tf_keras.layers.Dense(32, activation='relu', kernel_regularizer=tf_keras.regularizers.l2(0.01)),
             tf_keras.layers.Dropout(0.3),
-            tf_keras.layers.Dense(3, activation='softmax')  # Three output nodes for three classes
+            tf_keras.layers.Dense(3, activation='softmax')  # three output nodes for three classes
         ])
 
         self.model.compile(optimizer=tf_keras.optimizers.Adam(learning_rate=0.001),
@@ -46,18 +46,17 @@ class SentimentAnalysisModel:
 
     def train_model(self, sentences, labels, epochs=15, batch_size=32):
         try:
-            # Convert labels to one-hot encoding
+            # Convert labels to one-hot encoding: [1, 0, 0], [0, 1, 0], [0, 0, 1]
             labels = tf_keras.utils.to_categorical(labels, num_classes=3)
 
             # Define early stopping
             early_stopping = tf_keras.callbacks.EarlyStopping(
-                monitor='val_loss',
-                patience=3,
-                restore_best_weights=True
+                monitor='val_loss', # rezultatu nuokrypis nuo realiu klasiu
+                patience=3, # tesia mokyma max 3 epochas po to, kai loss nustoja mazeti
+                restore_best_weights=True # po sustabdymo, vietoje naujausios epohos svoriu, naudoja geriausius rezultatus sukurusius svorius
             )
 
-            # Train the model with early stopping
-            history = self.model.fit(
+            self.model.fit(
                 np.array(sentences),
                 np.array(labels),
                 epochs=epochs,
@@ -71,7 +70,7 @@ class SentimentAnalysisModel:
             logger.error(f"Error during training: {e}")
             raise
 
-    def save_model(self, model_path="sentiment_model.keras"):
+    def save_model(self, model_path="./sentiment_model.keras"):
         try:
             # Save the trained model
             self.model.save(model_path)
@@ -81,10 +80,10 @@ class SentimentAnalysisModel:
             logger.error(f"Error saving model: {e}")
             raise
 
-    def load_model(self, model_path="sentiment_model.keras"):
+    def load_model(self, model_path="./sentiment_model.keras"):
         try:
             # Load the model
-            self.model = tf_keras.models.load_model(model_path, custom_objects={'KerasLayer': self.pretrained_embedding_layer})
+            self.model = tf_keras.models.load_model(model_path, custom_objects={'KerasLayer': hub.KerasLayer})
             logger.info(f"Model loaded from {model_path}.")
             return f"Model loaded from {model_path}"
         except Exception as e:
@@ -108,7 +107,7 @@ class SentimentAnalysisModel:
         try:
             # Convert input sentences to numpy array
             sentences_array = np.array(sentences)
-            # Perform prediction
+            # Predict
             predictions = self.model.predict(sentences_array)
             # Convert predictions to class labels
             classes = ["pessimistic", "neutral", "optimistic"]
@@ -121,7 +120,7 @@ class SentimentAnalysisModel:
 
     def convert_to_java_list(self, python_list):
         try:
-            # Convert Python list to Java list
+            # Convert python list to java list
             java_list = ListConverter().convert(python_list, self.gateway._gateway_client)
             return java_list
         except Exception as e:
@@ -168,12 +167,12 @@ def train_mode(csv_file, epochs=15, batch_size=32):
     logger.info(f"Evaluation result: {evaluation_result}")
 
     # Save the model
-    model.save_model("sentiment_model.keras")
+    model.save_model("./sentiment_model.keras")
 
 def prediction_mode():
     # Initialize model and load pre-trained weights
     model = SentimentAnalysisModel()
-    model.load_model("sentiment_model.keras")
+    model.load_model("./sentiment_model.keras")
 
     # Setup Py4J gateway
     gateway = JavaGateway(
@@ -187,13 +186,18 @@ def prediction_mode():
     # The server will keep running, waiting for requests from Java
 
 if __name__ == "__main__":
+    # Initialize arguments parser
     parser = argparse.ArgumentParser(description='Sentiment Analysis Model')
+
+    # Add arguments to arg parser
     parser.add_argument('mode', nargs='?', default='predict', help="Mode: 'train' for training, 'predict' for prediction, 'test' for testing a single sentence")
     parser.add_argument('--csv', type=str, help="Path to the CSV file for training", default='')
     parser.add_argument('sentence', nargs='?', help="Sentence to test in test mode", default='')
 
+    # Parse command line arguments into python object
     args = parser.parse_args()
 
+    # Choose future action pipeline based on user selected mode
     if args.mode == 'train':
         if args.csv:
             train_mode(args.csv)

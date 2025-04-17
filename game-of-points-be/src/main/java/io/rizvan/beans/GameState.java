@@ -170,6 +170,9 @@ public class GameState {
         entity.setY(y);
     }
 
+    /**
+     * Funkcija, kuri pritaiko zaidejo atlikta veiksma, zaidejo busenai.
+     */
     public void applyAction(PlayerAction action) {
         if (!action.isLegal(this)) {
             return;
@@ -184,6 +187,9 @@ public class GameState {
         }
     }
 
+    /**
+     * Iskviecia agento veiksmo apply metoda, kuris modifikuoja zaidimo busena.
+     */
     public void applyAction(AgentAction action) {
         this.lastAgentAction = action.getType();
         action.apply(this);

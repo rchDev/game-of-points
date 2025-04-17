@@ -311,7 +311,6 @@ public class InfoValidationResource {
         UPDATED
     }
 
-
     public class FormParameter {
         private final ParameterName displayName;
         private final boolean required;

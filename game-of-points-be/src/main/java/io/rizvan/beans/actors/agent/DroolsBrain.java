@@ -36,23 +36,32 @@ public class DroolsBrain implements AgentsBrain {
         KieServices kieService = KieServices.Factory.get();
         kieContainer = kieService.getKieClasspathContainer();
 
+        // bayeso tinklo formavimas
 
+        // apskaičiuoju kiekvienos ginklo savybės () pasirodymo tikimybes
         marginals = getMarginalProbabilities(knowledge.getPossibleWeapons());
+
+        // apskaičiuoju sąlygines tikimybes pvz žinant jog weapon speed 0.75, kokia tikimybė, jog dmg bus 1.0 ir t.t.
         conditionals = getConditionalProbabilities(
                 knowledge.getPossibleWeapons(),
                 marginals,
                 knowledge.getStatRelations()
         );
 
+        // SPEED, DMG, MOOD salyginiu tikimybiu skaiciavimo PRADZIA
         var speedValues = marginals.getValues().get(Weapon.Stat.SPEED_MOD);
         var damageValues = marginals.getValues().get(Weapon.Stat.DAMAGE);
 
         HashMap<PlayerMood, HashMap<Number, HashMap<Number, Double>>> speedDamageMoodProbabilities = new HashMap<>();
-
         Set<PlayerMood> moodsFound = new HashSet<>();
         Set<Number> speedsFound = new HashSet<>();
         Set<Number> damagesFound = new HashSet<>();
 
+        // 1. keliauji per visas speed ir damage reiksmes.
+        // 2. issiunti uzklausa sqlite db ir is gautu rezultatu suskaiciuoji kiek kartu pasirode tam tikros
+        // speed ir damage kombinacijos
+        // 3. jeigu konkreti kombinacija buvo issaugota duombazeje, suskaiciuojame kiek kartu vartotojas buvo: optimistikas,
+        // pesimistikas, neutralus, isvydes konkrecia kombinacija
         for (var speed : speedValues) {
             for (var damage : damageValues) {
                 var speedDamageOccurrenceCount = weaponMoodOccurrences.stream()
@@ -81,12 +90,14 @@ public class DroolsBrain implements AgentsBrain {
             }
         }
 
+        // # Setus konvertuoju i sąrašus tam, kad galėčiau juos pateikti PGMPY bibliotekai tinkamu formatu.
         foundMoods = moodsFound.stream().toList();
         var speedsFoundList = speedsFound.stream().toList();
         var damagesFoundList = damagesFound.stream().toList();
 
         double[][] moodSpeedDamageConditionals = new double[moodsFound.size()][speedsFoundList.size() * foundMoods.size()];
         var matchingComboIdx = 0;
+        //
         for (var speed : speedsFoundList) {
             var found = false;
             for (var damage : damagesFoundList) {
@@ -107,7 +118,9 @@ public class DroolsBrain implements AgentsBrain {
                 if (found) matchingComboIdx++;
             }
         }
+        // SPEED, DMG, MOOD salyginiu tikimybiu skaiciavimo PABAIGA
 
+        // BAJESO TINKLO FORMAVIMO PRADZIA
         List<String> nodes = new ArrayList<>();
         nodes.add(Weapon.Stat.SPEED_MOD.getName());
         nodes.add(Weapon.Stat.DAMAGE.getName());
@@ -124,7 +137,10 @@ public class DroolsBrain implements AgentsBrain {
         edges.add(new String[]{Weapon.Stat.SPEED_MOD.getName(), "mood"});
         edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), "mood"});
 
+        // gauni py4j gateway serveri, kuris tenkina BayesPythonManager interface reikalavimus
         bayesNetwork = pythonGateway.getBayesNetwork();
+
+        // pridedi atsitiktinius kintamuosius ir ju sarysius
         bayesNetwork.add_nodes(nodes);
         bayesNetwork.add_edges(edges);
 
@@ -145,7 +161,14 @@ public class DroolsBrain implements AgentsBrain {
         bayesNetwork.add_cpd(Weapon.Stat.RANGE.getName(), rangeGivenDamageProbs.length, rangeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rangeGivenDamageProbs[0].length});
 
         var usesGivenRechargeTimeProbs = conditionals.cpds.get(Weapon.Stat.USES).get(Weapon.Stat.RECHARGE_TIME);
-        bayesNetwork.add_cpd(Weapon.Stat.USES.getName(), usesGivenRechargeTimeProbs.length, usesGivenRechargeTimeProbs, new String[]{Weapon.Stat.RECHARGE_TIME.getName()}, new int[]{usesGivenRechargeTimeProbs[0].length});
+        bayesNetwork.add_cpd(
+                Weapon.Stat.USES.getName(),
+                usesGivenRechargeTimeProbs.length,
+                usesGivenRechargeTimeProbs,
+                new String[]{Weapon.Stat.RECHARGE_TIME.getName()},
+                new int[]{usesGivenRechargeTimeProbs[0].length}
+        );
+
 
         bayesNetwork.add_cpd(
                 "mood",
@@ -278,6 +301,13 @@ public class DroolsBrain implements AgentsBrain {
         }
     }
 
+    /**
+     * Returns a MarginalResult object which contains 2 hashmaps.
+     * The first hashmap contains weapon stat name: "DAMAGE", "RANGE", "USES", "SPEED_MOD", "RECHARGE_TIME"
+     * mappings to their values. The second hashmap, maps weapon stat names to their value probability distributions.
+     * @param weapons a list of weapon objects
+     * @return marginal probabilities for each of weapon stats
+     */
     private MarginalResult getMarginalProbabilities(List<Weapon> weapons) {
 
         HashMap<Weapon.Stat, List<Double>> marginalProbabilities = new HashMap<>();
@@ -295,6 +325,19 @@ public class DroolsBrain implements AgentsBrain {
         return new MarginalResult(values, marginalProbabilities);
     }
 
+    /**
+     * Returns ConditionalResult object which contains three hashmaps. Each hashmap contains
+     * weapon stat names: "DAMAGE", "RANGE", "USES", "SPEED_MOD", "RECHARGE_TIME" as their key values.
+     * First hashmap maps weapon stat names to query stat values.
+     * Second - weapon stat names to evidence query values
+     * Third - weapon stat names to
+     * @param weapons a list of weapon objects
+     * @param marginalResult a marginal result object, containing marginal probability distribution over some set of
+     * values
+     * @param conditionalRelations a list of pair objects that defines conditional relations. First item in the pair is
+     * considered to be a query value and second item is considered to be an evidence value
+     * @return
+     */
     private ConditionalResult getConditionalProbabilities(
             List<Weapon> weapons,
             MarginalResult marginalResult,
@@ -312,6 +355,7 @@ public class DroolsBrain implements AgentsBrain {
             var queryValues = marginalResult.values.get(queryStat);
             var evidenceValues = marginalResult.values.get(evidenceStat);
 
+            // Init conditional probability distribution table from query-evidence pair
             double[][] cpd = new double[queryValues.size()][evidenceValues.size()];
             for (int i = 0; i < queryValues.size(); i++) {
                 for (int j = 0; j < evidenceValues.size(); j++) {
@@ -319,6 +363,7 @@ public class DroolsBrain implements AgentsBrain {
                 }
             }
 
+            // Count how many times does each combo of query-evidence occur
             for (var weapon : weapons) {
                 int queryIndex = queryValues.indexOf(weapon.getStat(queryStat));
                 int evidenceIndex = evidenceValues.indexOf(weapon.getStat(evidenceStat));
@@ -326,8 +371,10 @@ public class DroolsBrain implements AgentsBrain {
                 cpd[queryIndex][evidenceIndex]++;
             }
 
-            // Normalize the counts to probabilities
-            for (int i = 0; i < queryValues.size(); i++) {
+            // Calculate conditional prob P(query|evidence) by:
+            // 1. computing joint probability P(query,evidence) by dividing query-evidence occurrences by total weapon count
+            // 2. dividing joint probability by the marginal probability of P(evidence) to get P(query|evidence)
+           for (int i = 0; i < queryValues.size(); i++) {
                 for (int j = 0; j < evidenceValues.size(); j++) {
                     var evidenceProb = marginalResult.probabilities.get(evidenceStat).get(j);
                     cpd[i][j] /= weapons.size();
@@ -335,11 +382,11 @@ public class DroolsBrain implements AgentsBrain {
                 }
             }
 
-            var statCPDValues = new HashMap<Weapon.Stat, double[][]>();
-            statCPDValues.put(evidenceStat, cpd);
-            statCPDs.put(queryStat, statCPDValues);
-            statQueryValues.put(queryStat, queryValues);
-            statEvidenceValues.put(evidenceStat, evidenceValues);
+           var statCPDValues = new HashMap<Weapon.Stat, double[][]>();
+           statCPDValues.put(evidenceStat, cpd);
+           statCPDs.put(queryStat, statCPDValues);
+           statQueryValues.put(queryStat, queryValues);
+           statEvidenceValues.put(evidenceStat, evidenceValues);
         }
 
         // Use streams to group and count the values
@@ -347,6 +394,18 @@ public class DroolsBrain implements AgentsBrain {
     }
 
 
+    /**
+     * A class that represents various values of P(A|B) distribution table.
+     * <br/><br/>
+     * <b>queryValues</b> - a hashmap containing A values in a P(A|B) relationship
+     * <br/><br/>
+     * <b>evidenceValues</b> - a hashmap containing B values in P(A|B) relationship
+     * <br/><br/>
+     * <b>cpds</b> - a hashmap containing another hashmap, which contains cpd table for a combo of weapon stats
+     * <br/>
+     * <b>Example</b>: cpds["DAMAGE"]["SPEED_MOD"] means get the damage-speed_mod CPD table where "DAMAGE" is the <b>query</b> variable
+     * and "SPEED_MOD" is the <b>evidence</b> variable
+     */
     public class ConditionalResult {
         private HashMap<Weapon.Stat, List<Number>> queryValues;
         private HashMap<Weapon.Stat, List<Number>> evidenceValues;
@@ -371,6 +430,9 @@ public class DroolsBrain implements AgentsBrain {
         }
     }
 
+    /**
+     * Klase atspindinti nepriklausoma
+     */
     public class MarginalResult {
         private HashMap<Weapon.Stat, List<Number>> values;
         private HashMap<Weapon.Stat, List<Double>> probabilities;

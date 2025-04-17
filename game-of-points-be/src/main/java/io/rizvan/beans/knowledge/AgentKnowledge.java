@@ -58,6 +58,7 @@ public class AgentKnowledge {
         this.playerHitBox = new PlayerHitBoxKnowledge();
         this.shotCount.setKnown(true);
 
+        // stat relations bajeso tinklui
         this.statRelations = new ArrayList<>(){};
         statRelations.add(new Pair<>(Weapon.Stat.DAMAGE, Weapon.Stat.SPEED_MOD));
         statRelations.add(new Pair<>(Weapon.Stat.RECHARGE_TIME, Weapon.Stat.DAMAGE));

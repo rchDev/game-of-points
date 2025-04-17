@@ -27,6 +27,11 @@ class BayesianNetworkManager:
         self.gateway = gateway
 
     def add_nodes(self, nodes):
+        """
+        Funkcija prideda nauja atsitiktini kintamaji i Bajeso tinkla
+        :param nodes:
+        :return:
+        """
         try:
             nodes = list(nodes.toArray())
             logger.info(f"Adding nodes: {nodes}")
@@ -37,6 +42,11 @@ class BayesianNetworkManager:
             raise
 
     def add_edges(self, edges):
+        """
+        Funkcija sukuria sarysius tarp atsitiktiniu kintamuju
+        :param edges:
+        :return:
+        """
         try:
             edges = [tuple(edge) for edge in list(edges.toArray())]
             logger.info(f"Adding edges: {edges}")
@@ -48,7 +58,9 @@ class BayesianNetworkManager:
             raise
 
     def add_cpd(self, variable, variable_card, values, evidence=None, evidence_card=None):
-
+        """
+        Funkcija prideda salygini tikimybiu skirstini, pasirinktam atsitiktiniam kintamajam
+        """
         values = [list(value) for value in list(values)]
 
         if evidence is not None:
@@ -74,8 +86,10 @@ class BayesianNetworkManager:
             raise
 
     def finalize_model(self):
+        """Funkcija, kuri patikrina modelio teisinguma ir grazina ismeta exception, jeigu modelis nera teisingas"""
         try:
             assert self.model.check_model()
+            # Variable elimination o, ne sampling metodai, nes modelis yra pakankamai mazas
             self.infer = VariableElimination(self.model)
             logger.info("Model finalized successfully.")
         except Exception as e:
@@ -83,6 +97,12 @@ class BayesianNetworkManager:
             raise
 
     def map_query(self, query, evidence):
+        """
+        Funkcija grazina map_query rezultata, kuris yra tiketiniausia jungtini tikimybiu skirstini skirstini.,
+        :param query: atsitiktiniai kintamieji, kuriu nezinome ir norime suzinoti
+        :param evidence: atsitiktiniai kintamieji, kuriu reiksmes zinome
+        :return: grazina key, value poru struktura, kuria py4j biblioteka Java puseje konvertuos i Java Map.
+        """
         try:
             logger.info(f"query type: {type(query)}")
             queryList = list(query)
@@ -105,12 +125,17 @@ class BayesianNetworkManager:
             raise
 
 if __name__ == "__main__":
+    # Inicializuojame Bajeso tinkla
     manager = BayesianNetworkManager()
+
+    # Startuojame py4j serveri
     gateway = JavaGateway(
         gateway_parameters=GatewayParameters(port=25333, auto_convert=True),
         callback_server_parameters=CallbackServerParameters(port=25334),
         python_server_entry_point=manager
     )
+
+    # Paduodame py4j serveri bajeso tinklo klasei, vidiniam vartojimui (Python i Java reiksmiu konvertavimui)
     manager.set_gateway(gateway)
 
     logger.info("Python server is ready.")
