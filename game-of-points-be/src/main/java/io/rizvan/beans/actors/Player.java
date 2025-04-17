@@ -1,7 +1,6 @@
 package io.rizvan.beans.actors;
 
 import io.rizvan.beans.Weapon;
-import io.rizvan.beans.actors.player.PlayerAnswers;
 
 public class Player extends CompetingEntity {
 

@@ -1,7 +1,5 @@
 package io.rizvan.beans.actors.player;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerAnswersCache {
