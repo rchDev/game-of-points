@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "update-bot-ids": "node scripts/update-bot-ids.js",
+    "postinstall": "npm run update-bot-ids -- --project-id=$PROJECT_ID --agent-id=$AGENT_ID"
   },
   "devDependencies": {
     "vite": "^5.1.4"
