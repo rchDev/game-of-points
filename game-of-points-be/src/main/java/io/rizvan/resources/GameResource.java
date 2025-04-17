@@ -56,6 +56,7 @@ public class GameResource {
             var playerMoodDescription = playerAnswers.getMoodDescription().get();
             var moodClass = pythonGateway.getSentimentAnalyser().get_prediction(playerMoodDescription);
             var mood = PlayerMood.fromName(moodClass);
+            playerAnswers.setMood(mood);
             weaponService.addWeaponWithMood(playerWeapon, mood);
         }
 
