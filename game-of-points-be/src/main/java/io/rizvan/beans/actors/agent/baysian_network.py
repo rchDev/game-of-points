@@ -1,5 +1,5 @@
 from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
-from pgmpy.models import BayesianNetwork
+from pgmpy.models import DiscreteBayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
 import logging
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class BayesianNetworkManager:
     def __init__(self):
-        self.model = BayesianNetwork()
+        self.model = DiscreteBayesianNetwork()
 
     def __str__(self):
         return "BayesianNetworkManager instance"
