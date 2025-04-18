@@ -17,6 +17,10 @@ import io.rizvan.beans.Weapon;
 import java.util.Optional;
 import java.util.stream.Stream
 import java.util.List
+import java.util.concurrent.Callable;
+import io.rizvan.beans.actors.agent.DroolsBrain.UpdateKnowledgeCallable;
+import io.rizvan.beans.actors.agent.DroolsBrain.GetQueriesCallable;
+import io.rizvan.beans.actors.agent.DroolsBrain.GetEvidenceCallable;
 
 rule "Player Moved"
 agenda-group "inference-group"
@@ -100,7 +104,7 @@ no-loop true
        };
 end
 
-rule "Player HP changed"
+rule "player-hp-changed"
 agenda-group "inference-group"
 no-loop true
     when
@@ -112,57 +116,20 @@ no-loop true
         };
 end
 
-rule "Knowledge Inference"
+rule "player-stat-inference"
 agenda-group "inference-group"
 salience -100
     when
         $knowledge : AgentKnowledge()
+        $getQueryList : GetQueriesCallable()
+        $getEvidenceList : GetEvidenceCallable()
+        $updateKnowledge: UpdateKnowledgeCallable()
     then
-        boolean isShotCountKnown = $knowledge.getShotCount().isKnown();
-        boolean isAmmoCapacityKnown = $knowledge.getPlayerAmmoCapacity().isKnown();
-        boolean isPlayerDamageKnown = $knowledge.getPlayerDamage().isKnown();
-        boolean isPlayerSpeedKnown = $knowledge.getPlayerSpeed().isKnown();
-        boolean isPlayerReachKnown = $knowledge.getPlayerReach().isKnown();
+        String[] queries = (String[]) $getQueryList.call();
+        String[][] evidence = (String[][]) $getEvidenceList.call();
 
-        if (!isPlayerDamageKnown || !isPlayerSpeedKnown || !isPlayerReachKnown || !isAmmoCapacityKnown) {
-            List<Weapon> weapons = $knowledge.getPossibleWeapons()
-            .stream()
-            .filter(wep ->
-                ((wep.getAmmoCapacity() >= $knowledge.getShotCount().getValue()) &&
-                (!isPlayerDamageKnown || wep.getDamage() == $knowledge.getPlayerDamage().getValue()) &&
-                (!isPlayerSpeedKnown || wep.getSpeedModifier() * CompetingEntity.BASE_SPEED == $knowledge.getPlayerSpeed().getValue()) &&
-                (!isPlayerReachKnown || wep.getRange() == $knowledge.getPlayerReach().getValue()))
-            ).toList();
-
-
-            weapons.stream().max(Comparator.comparingInt(Weapon::getAmmoCapacity))
-                .ifPresent(maxCapacityWeapon -> {
-                    if (!isAmmoCapacityKnown) {
-                        $knowledge.setPlayerAmmoCapacity(maxCapacityWeapon.getAmmoCapacity(), isAmmoCapacityKnown);
-                    }
-                });
-
-            weapons.stream().max(Comparator.comparingInt(Weapon::getDamage))
-                .ifPresent(maxDamageWeapon -> {
-                    if (!isPlayerDamageKnown) {
-                        $knowledge.setPlayerDamage(maxDamageWeapon.getDamage(), isPlayerDamageKnown);
-                    }
-                });
-
-            weapons.stream().max(Comparator.comparingDouble(Weapon::getSpeedModifier))
-               .ifPresent(maxSpeedWeapon -> {
-                   if (!isPlayerSpeedKnown) {
-                       $knowledge.setPlayerSpeed(maxSpeedWeapon.getSpeedModifier() * CompetingEntity.BASE_SPEED, isPlayerSpeedKnown);
-                   }
-               });
-
-            weapons.stream().max(Comparator.comparingDouble(Weapon::getRange))
-               .ifPresent(maxRangeWeapon -> {
-                   if (!isPlayerReachKnown) {
-                       $knowledge.setPlayerReach(maxRangeWeapon.getRange(), isPlayerReachKnown);
-                   }
-               });
-        }
-        System.out.println("inference-group: knowledge-inference-ran");
+        $updateKnowledge.setParameters(queries, evidence);
+        $updateKnowledge.call();
+        System.out.println("inference-group: player-stat-inference-ran");
 end
 

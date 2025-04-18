@@ -1,6 +1,48 @@
 import p5 from "p5";
 import { cloneDeep } from "lodash";
 
+
+document.querySelector('df-messenger').addEventListener('df-response-received', handleDfResponseEvent);
+let weapons = await fetchWeapons();
+let randomWeaponId = selectRandomWeapon(weapons);
+let weapon = weapons[randomWeaponId];
+updatePlayerStats({
+  player: {
+    points: 0,
+    hitPoints: 3,
+    damage: weapon.damage,
+    ammo: weapon.ammoCapacity,
+    speed: weapon.speedModifier,
+    reach: weapon.range,
+  }
+})
+
+async function handleDfResponseEvent(event) {
+  console.log(event.detail);
+
+  const pageDisplayName = event.detail.raw.queryResult.currentPage.displayName;
+
+  if (pageDisplayName === 'End Session') {
+    document.querySelector('df-messenger').removeEventListener('df-response-received', handleDfResponseEvent);
+
+    const dfSessionId = event.detail.raw.queryResult.diagnosticInfo["Session Id"];
+
+    const { offsetWidth: width, offsetHeight: height } =
+      document.getElementById("game-canvas");
+
+    let { sessionId, gameState } = await getInitialGameState(
+      dfSessionId,
+      weapon.id,
+      width,
+      height,
+    );
+
+    updatePlayerStats(gameState);
+
+    new p5(sketch(sessionId, gameState));
+  }
+}
+
 async function countdownTimer(duration) {
   for (let seconds = duration; seconds > 0; seconds--) {
     console.log("game starts in:", seconds);
@@ -16,18 +58,18 @@ async function fetchWeapons() {
   return response.json();
 }
 
-async function selectRandomWeapon(weapons) {
+function selectRandomWeapon(weapons) {
   const randomIndex = Math.floor(Math.random() * weapons.length);
   return weapons[randomIndex].id;
 }
 
-async function getInitialGameState(weaponId, windowWidth, windowHeight) {
+async function getInitialGameState(dfSessionId, weaponId,  windowWidth, windowHeight) {
   const response = await fetch("http://localhost:8080/games", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ weaponId, windowWidth, windowHeight }),
+    body: JSON.stringify({ weaponId, windowWidth, windowHeight, dialogFlowSessionId: dfSessionId }),
   });
 
   if (!response.ok) {
@@ -83,7 +125,7 @@ function updateAgentPoints(points) {
   document.querySelector(".ai-score").innerText = `${points}: AI`;
 }
 
-const sketch = (p) => {
+const sketch = (sessionId, gameState) => (p) => {
   const isMoving = {
     up: false,
     down: false,
@@ -204,19 +246,6 @@ const sketch = (p) => {
     p.gameStateLoaded = false;
 
     await countdownTimer(0);
-    const weapons = await fetchWeapons();
-    const selectedWeaponId = await selectRandomWeapon(weapons);
-
-    const { offsetWidth: width, offsetHeight: height } =
-      document.getElementById("game-canvas");
-
-    let { sessionId, gameState } = await getInitialGameState(
-      selectedWeaponId,
-      width,
-      height,
-    );
-
-    updatePlayerStats(gameState);
 
     p.ws = connectToGameSession(sessionId, mousePositionSendTimer);
     p.ws.onmessage = (message) => onServerUpdate(p.ws, message);
@@ -617,4 +646,3 @@ const sketch = (p) => {
   };
 };
 
-new p5(sketch);

@@ -91,12 +91,18 @@ public class GameStateUpdateScheduler {
         vertx.setTimer(50, id -> updateGameState(sessionId));
     }
 
+    /**
+     * Funkcija, isukanti Resource Point sukurima. Funkcija yra kvieciama, kuomet ivyksta game.created ivykis.
+     */
     @ConsumeEvent("game.created")
     public void scheduleRPCreation(String sessionId) {
         int time = rng.getInteger(2, 5);
         vertx.setTimer(time * 1000L, id -> createNewResourcePoint(sessionId));
     }
 
+    /**
+     * Funkcija, tam tikrai sesijai sukurianti Resource Point ir isukanti naujo Resource Point sukurima ateityje.
+     */
     private void createNewResourcePoint(String sessionId) {
         if (sessionStorage.getSession(sessionId) == null) return;
 
@@ -114,6 +120,9 @@ public class GameStateUpdateScheduler {
         scheduleRPCreation(sessionId);
     }
 
+    /**
+     * Funkcija, kuri kiekvienai zaidimo sesijai inicializuoja timeri.
+     */
     @ConsumeEvent("game.created")
     public void scheduleGameTimer(String sessionId) {
         timerId = vertx.setPeriodic(1000L, id -> {

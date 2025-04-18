@@ -1,10 +1,13 @@
 package io.rizvan.beans.knowledge;
 
+import io.rizvan.beans.Weapon;
+
 public class PlayerAmmoCapacityKnowledge extends KnowledgeItem<Integer> {
     private Integer ammoCapacity;
 
     public PlayerAmmoCapacityKnowledge() {
         this.ammoCapacity = 0;
+        setName(Weapon.Stat.USES.getName());
     }
 
     public PlayerAmmoCapacityKnowledge(Integer ammoCapacity) {

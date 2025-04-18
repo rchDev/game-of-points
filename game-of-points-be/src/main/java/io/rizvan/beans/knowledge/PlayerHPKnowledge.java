@@ -5,6 +5,7 @@ public class PlayerHPKnowledge extends KnowledgeItem<Integer> {
 
     public PlayerHPKnowledge() {
         this.hitPoints = 3;
+        setName("hit_points");
     }
 
     public PlayerHPKnowledge(Integer hitPoints) {

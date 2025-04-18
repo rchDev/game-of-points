@@ -1,10 +1,13 @@
 package io.rizvan.beans.knowledge;
 
+import io.rizvan.beans.Weapon;
+
 public class PlayerDamageKnowledge extends KnowledgeItem<Integer> {
     private Integer damage;
 
     public PlayerDamageKnowledge() {
         this.damage = 0;
+        setName(Weapon.Stat.DAMAGE.getName());
     }
 
     public PlayerDamageKnowledge(Integer damage) {

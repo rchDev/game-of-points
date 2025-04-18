@@ -5,6 +5,7 @@ public class ShotCountKnowledge extends KnowledgeItem<Integer> {
 
     public ShotCountKnowledge() {
         this.shotCount = 0;
+        setName("shot_count");
     }
 
     public ShotCountKnowledge(Integer shotCount) {
