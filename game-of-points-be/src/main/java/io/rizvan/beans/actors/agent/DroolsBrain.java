@@ -27,7 +27,7 @@ public class DroolsBrain implements AgentsBrain {
     private final BayesPythonManager bayesNetwork;
     private final MarginalResult marginals;
     private final ConditionalResult conditionals;
-    private final List<PlayerMood> foundMoods;
+    private List<PlayerMood> foundMoods;
 
     public DroolsBrain(PythonGateway pythonGateway, PlayerAnswers playerAnswers, List<WeaponEntity> weaponMoodOccurrences) {
         knowledge = new AgentKnowledge();
@@ -36,19 +36,80 @@ public class DroolsBrain implements AgentsBrain {
         KieServices kieService = KieServices.Factory.get();
         kieContainer = kieService.getKieClasspathContainer();
 
-        // bayeso tinklo formavimas
+        // --------------------------------BAJESO TINKLO FORMAVIMO PRADŽIA--------------------------------
 
-        // apskaičiuoju kiekvienos ginklo savybės () pasirodymo tikimybes
+        // apskaičiuojamos visų ginklų savybių pasirodymo tikimybės
         marginals = getMarginalProbabilities(knowledge.getPossibleWeapons());
 
-        // apskaičiuoju sąlygines tikimybes pvz žinant jog weapon speed 0.75, kokia tikimybė, jog dmg bus 1.0 ir t.t.
+        // apskaičiuojamos sąlyginės tikimybės
         conditionals = getConditionalProbabilities(
                 knowledge.getPossibleWeapons(),
                 marginals,
                 knowledge.getStatRelations()
         );
 
-        // SPEED, DMG, MOOD salyginiu tikimybiu skaiciavimo PRADZIA
+        // BAJESO TINKLO FORMAVIMO PRADZIA
+        List<String> nodes = new ArrayList<>();
+        nodes.add(Weapon.Stat.SPEED_MOD.getName());
+        nodes.add(Weapon.Stat.DAMAGE.getName());
+        nodes.add(Weapon.Stat.RECHARGE_TIME.getName());
+        nodes.add(Weapon.Stat.USES.getName());
+        nodes.add(Weapon.Stat.RANGE.getName());
+
+        List<String[]> edges = new ArrayList<>();
+        edges.add(new String[]{Weapon.Stat.SPEED_MOD.getName(), Weapon.Stat.DAMAGE.getName()});
+        edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), Weapon.Stat.RECHARGE_TIME.getName()});
+        edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), Weapon.Stat.RANGE.getName()});
+        edges.add(new String[]{Weapon.Stat.RECHARGE_TIME.getName(), Weapon.Stat.USES.getName()});
+
+        // gauni py4j gateway serveri, kuris tenkina BayesPythonManager interface reikalavimus
+        bayesNetwork = pythonGateway.getBayesNetwork();
+
+        // pridedi atsitiktinius kintamuosius ir ju sarysius
+        bayesNetwork.add_nodes(nodes);
+        bayesNetwork.add_edges(edges);
+
+        var speedModEntries = marginals.probabilities.get(Weapon.Stat.SPEED_MOD);
+        double[][] speedModProbs = new double[speedModEntries.size()][1];
+        for (int i = 0; i < speedModProbs.length; i++) {
+            speedModProbs[i][0] = speedModEntries.get(i);
+        }
+        bayesNetwork.add_cpd(Weapon.Stat.SPEED_MOD.getName(), speedModEntries.size(), speedModProbs, null, null);
+
+        var damageGivenSpeedProbs = conditionals.cpds.get(Weapon.Stat.DAMAGE).get(Weapon.Stat.SPEED_MOD);
+        bayesNetwork.add_cpd(Weapon.Stat.DAMAGE.getName(), damageGivenSpeedProbs.length, damageGivenSpeedProbs, new String[]{Weapon.Stat.SPEED_MOD.getName()}, new int[]{damageGivenSpeedProbs[0].length});
+
+        var rechargeTimeGivenDamageProbs = conditionals.cpds.get(Weapon.Stat.RECHARGE_TIME).get(Weapon.Stat.DAMAGE);
+        bayesNetwork.add_cpd(Weapon.Stat.RECHARGE_TIME.getName(), rechargeTimeGivenDamageProbs.length, rechargeTimeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rechargeTimeGivenDamageProbs[0].length});
+
+        var rangeGivenDamageProbs = conditionals.cpds.get(Weapon.Stat.RANGE).get(Weapon.Stat.DAMAGE);
+        bayesNetwork.add_cpd(Weapon.Stat.RANGE.getName(), rangeGivenDamageProbs.length, rangeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rangeGivenDamageProbs[0].length});
+
+        var usesGivenRechargeTimeProbs = conditionals.cpds.get(Weapon.Stat.USES).get(Weapon.Stat.RECHARGE_TIME);
+        bayesNetwork.add_cpd(
+                Weapon.Stat.USES.getName(),
+                usesGivenRechargeTimeProbs.length,
+                usesGivenRechargeTimeProbs,
+                new String[]{Weapon.Stat.RECHARGE_TIME.getName()},
+                new int[]{usesGivenRechargeTimeProbs[0].length}
+        );
+
+        addMoodNode(bayesNetwork, weaponMoodOccurrences);
+
+
+        bayesNetwork.finalize_model();
+    }
+
+    private void addMoodNode(BayesPythonManager bayesNetwork, List<WeaponEntity> weaponMoodOccurrences) {
+        List<String> nodes = new ArrayList<>();
+        nodes.add("mood");
+        bayesNetwork.add_nodes(nodes);
+
+        List<String[]> edges = new ArrayList<>();
+        edges.add(new String[]{Weapon.Stat.SPEED_MOD.getName(), "mood"});
+        edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), "mood"});
+        bayesNetwork.add_edges(edges);
+
         var speedValues = marginals.getValues().get(Weapon.Stat.SPEED_MOD);
         var damageValues = marginals.getValues().get(Weapon.Stat.DAMAGE);
 
@@ -118,57 +179,6 @@ public class DroolsBrain implements AgentsBrain {
                 if (found) matchingComboIdx++;
             }
         }
-        // SPEED, DMG, MOOD salyginiu tikimybiu skaiciavimo PABAIGA
-
-        // BAJESO TINKLO FORMAVIMO PRADZIA
-        List<String> nodes = new ArrayList<>();
-        nodes.add(Weapon.Stat.SPEED_MOD.getName());
-        nodes.add(Weapon.Stat.DAMAGE.getName());
-        nodes.add(Weapon.Stat.RECHARGE_TIME.getName());
-        nodes.add(Weapon.Stat.USES.getName());
-        nodes.add(Weapon.Stat.RANGE.getName());
-        nodes.add("mood");
-
-        List<String[]> edges = new ArrayList<>();
-        edges.add(new String[]{Weapon.Stat.SPEED_MOD.getName(), Weapon.Stat.DAMAGE.getName()});
-        edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), Weapon.Stat.RECHARGE_TIME.getName()});
-        edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), Weapon.Stat.RANGE.getName()});
-        edges.add(new String[]{Weapon.Stat.RECHARGE_TIME.getName(), Weapon.Stat.USES.getName()});
-        edges.add(new String[]{Weapon.Stat.SPEED_MOD.getName(), "mood"});
-        edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), "mood"});
-
-        // gauni py4j gateway serveri, kuris tenkina BayesPythonManager interface reikalavimus
-        bayesNetwork = pythonGateway.getBayesNetwork();
-
-        // pridedi atsitiktinius kintamuosius ir ju sarysius
-        bayesNetwork.add_nodes(nodes);
-        bayesNetwork.add_edges(edges);
-
-        var speedModEntries = marginals.probabilities.get(Weapon.Stat.SPEED_MOD);
-        double[][] speedModProbs = new double[speedModEntries.size()][1];
-        for (int i = 0; i < speedModProbs.length; i++) {
-            speedModProbs[i][0] = speedModEntries.get(i);
-        }
-        bayesNetwork.add_cpd(Weapon.Stat.SPEED_MOD.getName(), speedModEntries.size(), speedModProbs, null, null);
-
-        var damageGivenSpeedProbs = conditionals.cpds.get(Weapon.Stat.DAMAGE).get(Weapon.Stat.SPEED_MOD);
-        bayesNetwork.add_cpd(Weapon.Stat.DAMAGE.getName(), damageGivenSpeedProbs.length, damageGivenSpeedProbs, new String[]{Weapon.Stat.SPEED_MOD.getName()}, new int[]{damageGivenSpeedProbs[0].length});
-
-        var rechargeTimeGivenDamageProbs = conditionals.cpds.get(Weapon.Stat.RECHARGE_TIME).get(Weapon.Stat.DAMAGE);
-        bayesNetwork.add_cpd(Weapon.Stat.RECHARGE_TIME.getName(), rechargeTimeGivenDamageProbs.length, rechargeTimeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rechargeTimeGivenDamageProbs[0].length});
-
-        var rangeGivenDamageProbs = conditionals.cpds.get(Weapon.Stat.RANGE).get(Weapon.Stat.DAMAGE);
-        bayesNetwork.add_cpd(Weapon.Stat.RANGE.getName(), rangeGivenDamageProbs.length, rangeGivenDamageProbs, new String[]{Weapon.Stat.DAMAGE.getName()}, new int[]{rangeGivenDamageProbs[0].length});
-
-        var usesGivenRechargeTimeProbs = conditionals.cpds.get(Weapon.Stat.USES).get(Weapon.Stat.RECHARGE_TIME);
-        bayesNetwork.add_cpd(
-                Weapon.Stat.USES.getName(),
-                usesGivenRechargeTimeProbs.length,
-                usesGivenRechargeTimeProbs,
-                new String[]{Weapon.Stat.RECHARGE_TIME.getName()},
-                new int[]{usesGivenRechargeTimeProbs[0].length}
-        );
-
 
         bayesNetwork.add_cpd(
                 "mood",
@@ -177,8 +187,6 @@ public class DroolsBrain implements AgentsBrain {
                 new String[]{Weapon.Stat.SPEED_MOD.getName(), Weapon.Stat.DAMAGE.getName()},
                 new int[]{speedsFoundList.size(), damagesFoundList.size()}
         );
-
-        bayesNetwork.finalize_model();
     }
 
     private String[][] getEvidenceList() {
