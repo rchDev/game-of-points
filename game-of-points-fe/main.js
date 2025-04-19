@@ -1,7 +1,6 @@
 import p5 from "p5";
 import { cloneDeep } from "lodash";
 
-
 document.querySelector('df-messenger').addEventListener('df-response-received', handleDfResponseEvent);
 let weapons = await fetchWeapons();
 let randomWeaponId = selectRandomWeapon(weapons);
@@ -16,6 +15,51 @@ updatePlayerStats({
     reach: weapon.range,
   }
 })
+
+window.addEventListener('df-messenger-error', async () => {
+  document.querySelector('df-messenger').classList.add('removed');
+  document.querySelector('.game-container').classList.add('removed');
+  document.getElementById('messenger-error').classList.remove('removed');
+  const errorTimeText = document.getElementById('error-time-text');
+  errorTimeText.classList.remove("removed");
+
+  const messengerErrorText = document.getElementById('messenger-error-text');
+  messengerErrorText.innerText =
+          '🪳🪳🪳🪳 🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+          '🪳🪳🪳 Google\'s conversational agent server is not responding: 🪳🪳🪳\n' +
+          '🪳🪳🪳🪳 1. You forgot to publish agent🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+          '🪳🪳🪳🪳 2. Googles servers are down🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+          '🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n';
+  messengerErrorText.classList.remove('removed');
+
+  let timeLeft = 5;
+  const countdown = setInterval(async () => {
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+
+      document.querySelector('.game-container').classList.remove('removed');
+      document.getElementById('messenger-error').classList.add('removed');
+      messengerErrorText.classList.add('removed');
+      errorTimeText.classList.add("removed");
+
+      const { offsetWidth: width, offsetHeight: height } =
+          document.getElementById("game-canvas");
+
+      let { sessionId, gameState } = await getInitialGameState(
+          null,
+          weapon.id,
+          width,
+          height,
+      );
+      updatePlayerStats(gameState);
+
+      new p5(sketch(sessionId, gameState));
+    } else {
+      document.getElementById("error-time").textContent = timeLeft.toString();
+      timeLeft--;
+    }
+  }, 1000);
+});
 
 document.getElementById('yes-button').addEventListener('click', () => {
   const pregameButtons = document.getElementsByClassName("pregame-buttons");

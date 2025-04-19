@@ -111,3 +111,20 @@ df-messenger {
 .removed {
     display: none;
 }
+
+#messenger-error {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: xx-large;
+}
+
+#messenger-error-text {
+    color: #dc2626;
+}
+
+#error-time-text {
+    color: #dc2626;
+}
