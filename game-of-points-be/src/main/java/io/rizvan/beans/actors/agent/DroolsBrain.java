@@ -30,9 +30,13 @@ public class DroolsBrain implements AgentsBrain {
     private List<PlayerMood> foundMoods;
     private boolean canUseMood = false;
 
-    public DroolsBrain(PythonGateway pythonGateway, PlayerAnswers playerAnswers, List<WeaponEntity> weaponMoodOccurrences) {
+    public DroolsBrain(
+            PythonGateway pythonGateway,
+            Optional<PlayerAnswers> playerAnswers,
+            List<WeaponEntity> weaponMoodOccurrences
+    ) {
         knowledge = new AgentKnowledge();
-        knowledge.setPlayerAnswers(playerAnswers);
+        playerAnswers.ifPresent(knowledge::setPlayerAnswers);
         possibilities = new AgentPossibilities();
         KieServices kieService = KieServices.Factory.get();
         kieContainer = kieService.getKieClasspathContainer();

@@ -88,3 +88,26 @@ df-messenger {
     top: 0;
     width: 350px;
 }
+
+.pregame-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 0.4em;
+    font-size: larger;
+}
+
+.question {
+    margin: 0 0 1em 0;
+}
+
+.answer-button {
+    width: 98%;
+    font-size: large;
+}
+
+.removed {
+    display: none;
+}

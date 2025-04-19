@@ -9,13 +9,14 @@ import io.rizvan.entities.WeaponEntity;
 import io.rizvan.utils.PythonGateway;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Agent extends CompetingEntity {
     public AgentsBrain brain;
 
     private AgentChoice currentChoice;
 
-    public static Agent fromWeapon(Weapon weapon, PythonGateway pythonGateway, PlayerAnswers playerAnswer, List<WeaponEntity> weaponMoodOccurrences) {
+    public static Agent fromWeapon(Weapon weapon, PythonGateway pythonGateway, Optional<PlayerAnswers> playerAnswer, List<WeaponEntity> weaponMoodOccurrences) {
         return new Agent(3, 0, 0, 50, 50, 1.0, 0, weapon, pythonGateway, playerAnswer, weaponMoodOccurrences);
     }
 
@@ -28,7 +29,7 @@ public class Agent extends CompetingEntity {
     }
 
 
-    public Agent(int hitPoints, double x, double y, int width, int height, double speed, int points, Weapon weapon, PythonGateway pythonGateway, PlayerAnswers playerAnswer, List<WeaponEntity> weaponMoodOccurrences) {
+    public Agent(int hitPoints, double x, double y, int width, int height, double speed, int points, Weapon weapon, PythonGateway pythonGateway, Optional<PlayerAnswers> playerAnswer, List<WeaponEntity> weaponMoodOccurrences) {
         super(hitPoints, x, y, width, height, speed, points, weapon);
         this.brain = new DroolsBrain(pythonGateway, playerAnswer, weaponMoodOccurrences);
     }

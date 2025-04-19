@@ -3,6 +3,7 @@ package io.rizvan.resources;
 import io.rizvan.beans.*;
 import io.rizvan.beans.actors.agent.Agent;
 import io.rizvan.beans.actors.Player;
+import io.rizvan.beans.actors.player.PlayerAnswers;
 import io.rizvan.beans.actors.player.PlayerAnswersCache;
 import io.rizvan.beans.actors.player.PlayerMood;
 import io.rizvan.beans.dtos.requests.GameCreationRequest;
@@ -20,6 +21,7 @@ import jakarta.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Path("/games")
 public class GameResource {
@@ -50,13 +52,16 @@ public class GameResource {
                 .findFirst()
                 .orElse(weapons.get(0));
 
-        var playerAnswers = playerAnswersCache.getPlayerAnswers(request.getDialogFlowSessionId());
+        Optional<PlayerAnswers> playerAnswers = Optional.empty();
+        if (request.getDialogFlowSessionId() != null) {
+            playerAnswers = Optional.ofNullable(playerAnswersCache.getPlayerAnswers(request.getDialogFlowSessionId()));
+        }
 
-        if (playerAnswers != null && playerAnswers.getMoodDescription().isPresent()) {
-            var playerMoodDescription = playerAnswers.getMoodDescription().get();
+        if (playerAnswers.isPresent() && playerAnswers.get().getMoodDescription().isPresent()) {
+            var playerMoodDescription = playerAnswers.get().getMoodDescription().get();
             var moodClass = pythonGateway.getSentimentAnalyser().get_prediction(playerMoodDescription);
             var mood = PlayerMood.fromName(moodClass);
-            playerAnswers.setMood(mood);
+            playerAnswers.get().setMood(mood);
             weaponService.addWeaponWithMood(playerWeapon, mood);
         }
 

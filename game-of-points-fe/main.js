@@ -17,6 +17,51 @@ updatePlayerStats({
   }
 })
 
+document.getElementById('yes-button').addEventListener('click', () => {
+  const pregameButtons = document.getElementsByClassName("pregame-buttons");
+  for (let btn of pregameButtons) {
+    btn.classList.add("removed");
+  }
+
+  const messenger = document.getElementById("messenger");
+  if (messenger == null) {
+    console.log("Failed to handle YesPreGameButton, CAUSE: no messenger found")
+    return
+  }
+  messenger.classList.remove("removed");
+
+  const gameContainers = document.getElementsByClassName("game-container");
+  for (let container of gameContainers) {
+    container.classList.remove("removed")
+  }
+});
+
+document.getElementById('no-button').addEventListener('click', async () => {
+  const pregameButtons = document.getElementsByClassName("pregame-buttons");
+  for (let btn of pregameButtons) {
+    btn.classList.add("removed");
+  }
+
+  const gameContainers = document.getElementsByClassName("game-container");
+  for (let container of gameContainers) {
+    container.classList.remove("removed")
+  }
+
+  const { offsetWidth: width, offsetHeight: height } =
+      document.getElementById("game-canvas");
+
+  let { sessionId, gameState } = await getInitialGameState(
+      null,
+      weapon.id,
+      width,
+      height,
+  );
+
+  updatePlayerStats(gameState);
+
+  new p5(sketch(sessionId, gameState));
+})
+
 async function handleDfResponseEvent(event) {
   console.log(event.detail);
 
@@ -69,7 +114,12 @@ async function getInitialGameState(dfSessionId, weaponId,  windowWidth, windowHe
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ weaponId, windowWidth, windowHeight, dialogFlowSessionId: dfSessionId }),
+    body: JSON.stringify({
+      weaponId,
+      windowWidth,
+      windowHeight,
+      dialogFlowSessionId: dfSessionId,
+    }),
   });
 
   if (!response.ok) {
@@ -645,4 +695,3 @@ const sketch = (sessionId, gameState) => (p) => {
     clearInterval(mousePositionSendTimer);
   };
 };
-
