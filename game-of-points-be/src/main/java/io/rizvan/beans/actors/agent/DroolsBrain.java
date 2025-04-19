@@ -142,7 +142,7 @@ public class DroolsBrain implements AgentsBrain {
         }
 
         // Jeigu damage ir speed reikšmės duombazėje nepasirodė bent po vieną kartą, į tinklą nepridedame mood mazgo
-        canUseMood = speedsFound.size() != speedValues.size() || damagesFound.size() != damageValues.size();
+        canUseMood = speedsFound.size() == speedValues.size() && damagesFound.size() == damageValues.size();
         if (!canUseMood) {
             return;
         }
