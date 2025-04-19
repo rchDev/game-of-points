@@ -28,6 +28,7 @@ public class DroolsBrain implements AgentsBrain {
     private final MarginalResult marginals;
     private final ConditionalResult conditionals;
     private List<PlayerMood> foundMoods;
+    private boolean canUseMood = false;
 
     public DroolsBrain(PythonGateway pythonGateway, PlayerAnswers playerAnswers, List<WeaponEntity> weaponMoodOccurrences) {
         knowledge = new AgentKnowledge();
@@ -96,20 +97,10 @@ public class DroolsBrain implements AgentsBrain {
 
         addMoodNode(bayesNetwork, weaponMoodOccurrences);
 
-
         bayesNetwork.finalize_model();
     }
 
     private void addMoodNode(BayesPythonManager bayesNetwork, List<WeaponEntity> weaponMoodOccurrences) {
-        List<String> nodes = new ArrayList<>();
-        nodes.add("mood");
-        bayesNetwork.add_nodes(nodes);
-
-        List<String[]> edges = new ArrayList<>();
-        edges.add(new String[]{Weapon.Stat.SPEED_MOD.getName(), "mood"});
-        edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), "mood"});
-        bayesNetwork.add_edges(edges);
-
         var speedValues = marginals.getValues().get(Weapon.Stat.SPEED_MOD);
         var damageValues = marginals.getValues().get(Weapon.Stat.DAMAGE);
 
@@ -118,11 +109,10 @@ public class DroolsBrain implements AgentsBrain {
         Set<Number> speedsFound = new HashSet<>();
         Set<Number> damagesFound = new HashSet<>();
 
-        // 1. keliauji per visas speed ir damage reiksmes.
-        // 2. issiunti uzklausa sqlite db ir is gautu rezultatu suskaiciuoji kiek kartu pasirode tam tikros
-        // speed ir damage kombinacijos
-        // 3. jeigu konkreti kombinacija buvo issaugota duombazeje, suskaiciuojame kiek kartu vartotojas buvo: optimistikas,
-        // pesimistikas, neutralus, isvydes konkrecia kombinacija
+        /* 1. keliaujama per visas speed ir damage reikšmes,
+           2. skaičiuojama kiek kartų duombazėje pasirodė tam tikros speed ir damage reikšmės,
+           3. skaičiuojamos mood, speed, damage kombinacijų pasirodymo jungtinės tikimybės.
+        */
         for (var speed : speedValues) {
             for (var damage : damageValues) {
                 var speedDamageOccurrenceCount = weaponMoodOccurrences.stream()
@@ -151,7 +141,13 @@ public class DroolsBrain implements AgentsBrain {
             }
         }
 
-        // # Setus konvertuoju i sąrašus tam, kad galėčiau juos pateikti PGMPY bibliotekai tinkamu formatu.
+        // Jeigu damage ir speed reikšmės duombazėje nepasirodė bent po vieną kartą, į tinklą nepridedame mood mazgo
+        canUseMood = speedsFound.size() != speedValues.size() || damagesFound.size() != damageValues.size();
+        if (!canUseMood) {
+            return;
+        }
+
+        // Setus konvertuoju i sąrašus tam, kad galėčiau juos pateikti PGMPY bibliotekai tinkamu formatu.
         foundMoods = moodsFound.stream().toList();
         var speedsFoundList = speedsFound.stream().toList();
         var damagesFoundList = damagesFound.stream().toList();
@@ -179,6 +175,15 @@ public class DroolsBrain implements AgentsBrain {
                 if (found) matchingComboIdx++;
             }
         }
+
+        List<String> nodes = new ArrayList<>();
+        nodes.add("mood");
+        bayesNetwork.add_nodes(nodes);
+
+        List<String[]> edges = new ArrayList<>();
+        edges.add(new String[]{Weapon.Stat.SPEED_MOD.getName(), "mood"});
+        edges.add(new String[]{Weapon.Stat.DAMAGE.getName(), "mood"});
+        bayesNetwork.add_edges(edges);
 
         bayesNetwork.add_cpd(
                 "mood",
