@@ -201,7 +201,7 @@ public class DroolsBrain implements AgentsBrain {
                 .map(stat -> new String[]{stat.getName(), stat.getValue().toString()})
                 .toList());
         var moodEntity = knowledge.getPlayerAnswers().getValue();
-        if (moodEntity != null) {
+        if (moodEntity != null && canUseMood) {
             var mood = moodEntity.getMood();
             mood.ifPresent(playerMood -> evidenceList.add(new String[]{"mood", "" + foundMoods.indexOf(playerMood)}));
         }
