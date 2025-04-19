@@ -63,7 +63,7 @@ document.getElementById('no-button').addEventListener('click', async () => {
 })
 
 async function handleDfResponseEvent(event) {
-  console.log(event.detail);
+  console.log('HANDLE_DF_RESPONSE_EVENT_CALLED:', event.detail);
 
   const pageDisplayName = event.detail.raw.queryResult.currentPage.displayName;
 
@@ -83,6 +83,9 @@ async function handleDfResponseEvent(event) {
     );
 
     updatePlayerStats(gameState);
+
+    const messenger = document.getElementById("messenger");
+    messenger.classList.add("removed");
 
     new p5(sketch(sessionId, gameState));
   }
