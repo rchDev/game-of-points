@@ -5,21 +5,14 @@ title: Home
 
 # Game Of Points
 
-## [Pristatymas](#intro)
-## [Instaliavimas](#installation)
-## [Usage](#usage)
-## [FAQ](#faq)
-
----
-
-### Introduction {#intro}
 Welcome to the docs! Here’s what this project is about.
+## Weird parts
+This project was created for educational purposes. It is in no way "production ready". There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as creative, but objectively bad problem solutions. 
 
-### Instaliavimas {#installation}
+## Installation
 Step-by-step installation instructions.
 
-### Naudojimas {#usage}
+## Usage
 How to actually use this thing.
 
-### FAQ {#faq}
-Frequently asked questions.
+## How system works
