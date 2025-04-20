@@ -11,17 +11,33 @@ This project was created for educational purposes.
 It is in no way "production ready". 
 There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as creative, but objectively bad problem solutions.
 
-## 📋 Before using this project
+## 📋 Environment setup
 
 ❗❗❗ Due to having many small services, the project is hard to launch.
 To mitigate this issue, launch scripts have been created.
 To use these scripts, you have to install optional dependencies. ❗❗❗
 
 ### Required:
+
 #### 1. You have working Google Conversational Agent (~~Dialogflow CX~~)
-#### 2. You have working *JDK*.
-#### 3. You have working *python* setup
-#### 4. You have working *Node.js* setup
+
+#### 2. You have working *JDK* 17-22.
+
+⚠️ Java 23 is not supported and will cause compatibility issues.
+
+#### 3. Maven 3.2+ (for building the project)
+
+Don't have to install maven. Run one of the commands:
+1. mvnw shell command for Mac and Linux
+2. mvnw.cmd for Windows
+
+These will install the correct Maven version the first time they are run.
+
+#### 4. You have working Python setup
+1. Install the version that is specified in <a href="https://github.com/rchDev/game-of-points/blob/main/.python-version" target="_blank">.python-version</a> file (use pyenv)
+2. Install version that is complies with spec in <a href="https://github.com/rchDev/game-of-points/blob/main/pyproject.toml" target="_blank">pyproject.toml</a> file.
+
+#### 5. You have working Node.js setup
 
 ### Optional:
 
@@ -41,10 +57,13 @@ Google's conversational agents' webhook,
 without hosting the game server yourself.
 
 ## 🚀 How to launch this project
+
 #### Launch rules:
 1. Game server depends on working python services (bayes-net and sentiment classifier).
 2. Game frontend depends on working game server
 3. Player data collection step in frontend chat depends on ngrok tunnel (if you are not hosting your backend on public ip address).
+
 #### Recommended launch order:
-1. ''''''
+1. 
+
 ## 🏗️ How system works (Top down view)
