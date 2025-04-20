@@ -60,14 +60,19 @@ without hosting the game server yourself.
 
 #### Project setup:
 1. Inside game-of-points root run: 
+
 ```
 poetry install
 ``` 
->or activate your desired virtual environment and run: 
+
+or activate your desired virtual environment and run: 
+
 ```
 pip install -r ./requirements.txt
 ```
+
 2. Inside game-of-points/game-of-points-fe run: 
+
 ```
 npm install
 ```
