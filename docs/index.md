@@ -37,7 +37,7 @@ These will install the correct Maven version the first time they are run.
 1. Install the version that is specified in <a href="https://github.com/rchDev/game-of-points/blob/main/.python-version" target="_blank">.python-version</a> file (use pyenv)
 2. Install version that is complies with spec in <a href="https://github.com/rchDev/game-of-points/blob/main/pyproject.toml" target="_blank">pyproject.toml</a> file.
 
-#### 5. Node.js installed
+#### 5. Node.js >=v16.20.2 installed
 
 ### Optional:
 
