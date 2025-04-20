@@ -20,12 +20,13 @@ There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as
 #### 4. You have working *Node.js* setup
 
 ### Optional:
-> **❗❗❗ Due to having many small services, project is hard to launch. 
-> To mitigate this issue, launch scripts have been created. 
-> To use these scripts you have to install optional dependencies. 
-> ❗❗❗**
+> ❗❗❗ Due to having many small services, the project is hard to launch.
+To mitigate this issue, launch scripts have been created.
+To use these scripts, you have to install optional dependencies. ❗❗❗
+
 #### 1. You have installed *IntelliJ IDEA*.
 Helpful for easily launching the project.
+
 > **IntelliJ IDEA Downloads: 
 [Mac](https://www.jetbrains.com/idea/download/?section=mac), 
 [Windows](https://www.jetbrains.com/idea/download/?section=windows),
