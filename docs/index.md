@@ -32,7 +32,7 @@ Helpful for easily launching the project.
 [Windows](https://www.jetbrains.com/idea/download/?section=windows),
 [Linux](https://www.jetbrains.com/idea/download/?section=linux)**
 
-#### 2. You have installed *[poetry](https://python-poetry.org/docs/#installation)*.
+#### 2. You have installed <a href="https://python-poetry.org/docs/#installation" target="_blank">Poetry</a>
 
 Although not required, but project uses poetry for easy dependency management.
 
@@ -43,6 +43,7 @@ Although not required, but project uses poetry for easy dependency management.
 Used for exposing your local game server to
 Google's conversational agents' webhook,
 without hosting the game server yourself.
+<a href="https://example.com" target="_blank">Visit Example</a>
 
 ## 🚀 How to launch this project
 #### Launch rules:
