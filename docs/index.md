@@ -58,12 +58,17 @@ without hosting the game server yourself.
 
 ## 🚀 How to launch this project
 
-#### Launch rules:
+#### Project setup:
+1. Inside game-of-points root run: ```poetry install``` 
+(or activate your desired virtual environment and run: ``pip install -r ./requirements.txt``)
+2. Inside game-of-points/game-of-points-fe run: ``npm install``
+
+#### Launch steps:
+1. step 1
+
+#### General launch rules:
 1. Game server depends on working python services (bayes-net and sentiment classifier).
 2. Game frontend depends on working game server
 3. Player data collection step in frontend chat depends on ngrok tunnel (if you are not hosting your backend on public ip address).
-
-#### Recommended launch order:
-1. 
 
 ## 🏗️ How system works (Top down view)
