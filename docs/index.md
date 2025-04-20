@@ -13,6 +13,10 @@ There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as
 
 ## 📋 Before using this project
 
+> ❗❗❗ Due to having many small services, the project is hard to launch.
+To mitigate this issue, launch scripts have been created.
+To use these scripts, you have to install optional dependencies. ❗❗❗
+
 ### Required:
 #### 1. You have working Google Conversational Agent (~~Dialogflow CX~~)
 #### 2. You have working *JDK*.
@@ -20,30 +24,22 @@ There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as
 #### 4. You have working *Node.js* setup
 
 ### Optional:
-> ❗❗❗ Due to having many small services, the project is hard to launch.
-To mitigate this issue, launch scripts have been created.
-To use these scripts, you have to install optional dependencies. ❗❗❗
 
-#### 1. You have installed *IntelliJ IDEA*.
+#### 1. You have installed IntelliJ IDEA: <a href="https://www.jetbrains.com/idea/download/?section=mac" target="_blank">Mac</a>, <a href="https://www.jetbrains.com/idea/download/?section=linux" target="_blank">Linux</a>, <a href="https://www.jetbrains.com/idea/download/?section=windows" target="_blank">Windows</a>
+
 Helpful for easily launching the project.
-
-> **IntelliJ IDEA Downloads: 
-[Mac](https://www.jetbrains.com/idea/download/?section=mac), 
-[Windows](https://www.jetbrains.com/idea/download/?section=windows),
-[Linux](https://www.jetbrains.com/idea/download/?section=linux)**
 
 #### 2. You have installed <a href="https://python-poetry.org/docs/#installation" target="_blank">Poetry</a>
 
-Although not required, but project uses poetry for easy dependency management.
+>Although not required, but project uses poetry for easy dependency management.
 
-> You can use your own virtual environment and install from [requirements.txt](https://github.com/rchDev/game-of-points/blob/main/requirements.txt) file.
+>You can use your own virtual environment and install from [requirements.txt](https://github.com/rchDev/game-of-points/blob/main/requirements.txt) file.
 
-#### 3. You have installed *[ngrok](https://ngrok.com/docs/getting-started/)*.
+#### 3. You have installed <a href="https://ngrok.com/docs/getting-started/" target="_blank">Ngrok</a>
 
 Used for exposing your local game server to
 Google's conversational agents' webhook,
 without hosting the game server yourself.
-<a href="https://example.com" target="_blank">Visit Example</a>
 
 ## 🚀 How to launch this project
 #### Launch rules:
