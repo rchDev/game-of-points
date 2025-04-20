@@ -16,30 +16,29 @@ updatePlayerStats({
   }
 })
 
-window.addEventListener('df-messenger-error', async () => {
+async function displayError(errorMessage) {
   document.querySelector('df-messenger').classList.add('removed');
   document.querySelector('.game-container').classList.add('removed');
+  document.querySelector('.pregame-buttons').classList.add('removed');
   document.getElementById('messenger-error').classList.remove('removed');
-  const errorTimeText = document.getElementById('error-time-text');
+  document.getElementById('error-time-label').classList.add("removed");
+  const messengerErrorText = document.getElementById('messenger-error-text');
+  messengerErrorText.innerText = errorMessage;
+  messengerErrorText.classList.remove('removed');
+}
+
+const displayTimedError = async (errorMessage, timeToShow) => {
+  await displayError(errorMessage);
+  const errorTimeText = document.getElementById('error-time-label');
   errorTimeText.classList.remove("removed");
 
-  const messengerErrorText = document.getElementById('messenger-error-text');
-  messengerErrorText.innerText =
-          '🪳🪳🪳🪳 🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
-          '🪳🪳🪳 Google\'s conversational agent server is not responding: 🪳🪳🪳\n' +
-          '🪳🪳🪳🪳 1. You forgot to publish agent🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
-          '🪳🪳🪳🪳 2. Googles servers are down🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
-          '🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n';
-  messengerErrorText.classList.remove('removed');
-
-  let timeLeft = 5;
   const countdown = setInterval(async () => {
-    if (timeLeft <= 0) {
+    if (timeToShow <= 0) {
       clearInterval(countdown);
 
       document.querySelector('.game-container').classList.remove('removed');
       document.getElementById('messenger-error').classList.add('removed');
-      messengerErrorText.classList.add('removed');
+      document.getElementById('messenger-error-text').classList.add('removed');
       errorTimeText.classList.add("removed");
 
       const { offsetWidth: width, offsetHeight: height } =
@@ -55,10 +54,39 @@ window.addEventListener('df-messenger-error', async () => {
 
       new p5(sketch(sessionId, gameState));
     } else {
-      document.getElementById("error-time").textContent = timeLeft.toString();
-      timeLeft--;
+      document.getElementById("error-time").textContent = timeToShow.toString();
+      timeToShow--;
     }
   }, 1000);
+}
+
+window.addEventListener('df-messenger-error', async () => {
+  await displayTimedError(
+      '🪳🪳🪳🪳 🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+      '🪳🪳🪳 Google\'s conversational agent server is not responding: 🪳🪳🪳\n' +
+      '🪳🪳🪳🪳 1. You forgot to publish agent🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+      '🪳🪳🪳🪳 2. Googles servers are down🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+      '🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n',
+      5
+  );
+});
+
+window.addEventListener('df-session-expired', async () => {
+  await displayTimedError(
+      '🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+      '🪳🪳🪳 Session with conversational agent expired🪳🪳🪳\n' +
+      ' 🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n',
+      5
+  );
+});
+
+window.addEventListener('df-session-ended', async () => {
+  await displayTimedError(
+      '🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+      '🪳🪳🪳Session with conversational agent has ended🪳🪳\n' +
+      ' 🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n',
+      5
+  );
 });
 
 document.getElementById('yes-button').addEventListener('click', () => {
@@ -143,11 +171,19 @@ async function countdownTimer(duration) {
 }
 
 async function fetchWeapons() {
-  const response = await fetch("http://localhost:8080/weapons");
-  if (!response.ok) {
+  try {
+    const response = await fetch("http://localhost:8080/weapons");
+    return response.json();
+  } catch (e) {
+    await displayError(
+        '🪳🪳🪳🪳 🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+        '🪳🪳🪳Game server is not responding: 🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+        '🪳🪳🪳🪳 1. You forgot to launch a server🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n' +
+        '🪳🪳🪳🪳 2. Some weird bug occurred. Try restarting the server.🪳🪳🪳🪳\n' +
+        '🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳🪳\n',
+    );
     throw new Error("Network response was not ok");
   }
-  return response.json();
 }
 
 function selectRandomWeapon(weapons) {
