@@ -32,16 +32,17 @@ Helpful for easily launching the project.
 [Windows](https://www.jetbrains.com/idea/download/?section=windows),
 [Linux](https://www.jetbrains.com/idea/download/?section=linux)**
 
-#### 2. You have installed *poetry*.
+#### 2. You have installed *[poetry](https://python-poetry.org/docs/#installation)*.
+
 Although not required, but project uses poetry for easy dependency management.
-> **Poetry setup [instructions](https://python-poetry.org/docs/#installation).**
 
 > You can use your own virtual environment and install from [requirements.txt](https://github.com/rchDev/game-of-points/blob/main/requirements.txt) file.
-#### 3. You have installed *ngrok*.
+
+#### 3. You have installed *[ngrok](https://ngrok.com/docs/getting-started/)*.
+
 Used for exposing your local game server to
 Google's conversational agents' webhook,
 without hosting the game server yourself.
-> **Ngrok setup [instructions](https://ngrok.com/docs/getting-started/).**
 
 ## 🚀 How to launch this project
 #### Launch rules:
