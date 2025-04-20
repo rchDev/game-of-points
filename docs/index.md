@@ -19,13 +19,13 @@ To use these scripts, you have to install optional dependencies. ❗❗❗
 
 ### Required:
 
-#### 1. You have working Google Conversational Agent (~~Dialogflow CX~~)
+#### 1. Working Google Conversational Agent (~~Dialogflow CX~~)
 
-#### 2. You have working *JDK* 17-22.
+#### 2. *JDK* 17-22 installed.
 
-⚠️ Java 23 is not supported and will cause compatibility issues.
+❗Java 23 is not supported and will cause compatibility issues.
 
-#### 3. Maven 3.2+ (for building the project)
+#### 3. Maven 3.2+ installed
 
 Don't have to install maven. Run one of the commands:
 1. mvnw shell command for Mac and Linux
@@ -33,11 +33,11 @@ Don't have to install maven. Run one of the commands:
 
 These will install the correct Maven version the first time they are run.
 
-#### 4. You have working Python setup
+#### 4. Python >=3.12 installed
 1. Install the version that is specified in <a href="https://github.com/rchDev/game-of-points/blob/main/.python-version" target="_blank">.python-version</a> file (use pyenv)
 2. Install version that is complies with spec in <a href="https://github.com/rchDev/game-of-points/blob/main/pyproject.toml" target="_blank">pyproject.toml</a> file.
 
-#### 5. You have working Node.js setup
+#### 5. Node.js installed
 
 ### Optional:
 
@@ -59,9 +59,18 @@ without hosting the game server yourself.
 ## 🚀 How to launch this project
 
 #### Project setup:
-1. Inside game-of-points root run: ```poetry install``` 
-(or activate your desired virtual environment and run: ``pip install -r ./requirements.txt``)
-2. Inside game-of-points/game-of-points-fe run: ``npm install``
+1. Inside game-of-points root run: 
+```
+poetry install
+``` 
+>or activate your desired virtual environment and run: 
+```
+pip install -r ./requirements.txt
+```
+2. Inside game-of-points/game-of-points-fe run: 
+```
+npm install
+```
 
 #### Launch steps:
 1. step 1
