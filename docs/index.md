@@ -206,7 +206,7 @@ npm run dev
 
 #### Basic data flow:
 
-{: .note }
+{: .important }
 > <a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">*Learn how to implement fast-paced multiplayer client-server communication*</a>
 
 More info on [Agent Reasoning](/game-of-points/agent-reasoning/).
