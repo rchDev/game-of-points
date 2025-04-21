@@ -203,7 +203,10 @@ npm run dev
 5. Google's conversational agent.
 6. Ngrok as a tunnel service connecting Google's conversational agent to local game server.
 
-#### Basic data flow
+#### Basic data flow:
+
+<a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">*Learn how to implement fast-paced multiplayer client-server communication*</a>
+
 1. Game frontend sends a bunch of game state updates to game server through a websocket connection (i know... tcp is bad for game dev.)
 2. While the game server is processing these updates, frontend app simulates the application of these updates to create an illusion of smooth gameplay experience for a user.
 3. For each game session, game server stores game updates inside a <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/SessionStorage.java" target="_blank">session storage</a>.
@@ -215,4 +218,4 @@ npm run dev
 9. Clone is then placed into game state update history inside session storage.
 10. For each session update even is published.
 11. Controller (<a href="" target="_blank">@ConsumeEvent("game.update")</a>) listening for those update events, sends updated game states to each session.
-12. Frontend reconciles 
+12. Frontend reconciles it's predicted game state with authoritative game state that's provided by backend. (<a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-fe/main.js" target="_blank">reconcileWithServerState(updatedGameState)</a>)
