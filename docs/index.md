@@ -114,8 +114,11 @@ cd ..\game-of-points-be
 mvnw.cmd clean install
 ```
 
-#### Launch steps:
-All these steps will be performed from project's root directory.
+#### Launching the project:
+Once you've set up the project, you can launch it in a few ways by following the steps described below.
+
+#### Launching without IntelliJ:
+All these steps should be performed from project's root directory.
 
 **Mac or Linux:**
 
@@ -154,6 +157,8 @@ npm run dev
 ```
 
 **Windows:**
+
+#### Launching with IntelliJ:
 
 #### General launch rules:
 1. Game server depends on working python services (bayes-net and sentiment classifier).
