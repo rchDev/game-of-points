@@ -31,7 +31,7 @@ Don't have to install maven. Run one of the commands:
 1. mvnw shell command for Mac and Linux
 2. mvnw.cmd for Windows
 
-These will install the correct Maven version the first time they are run.
+These commands will install the correct version of Maven package manager the first time they are run.
 
 #### 4. Python >=3.12 installed
 1. Install the version that is specified in <a href="https://github.com/rchDev/game-of-points/blob/main/.python-version" target="_blank">.python-version</a> file (use pyenv)
@@ -48,7 +48,7 @@ Helpful for easily launching the project.
 #### 2. You have installed <a href="https://python-poetry.org/docs/#installation" target="_blank">Poetry</a>
 
 Although not required, but project uses poetry for easy dependency management.
-You can use your own virtual environment and install from [requirements.txt](https://github.com/rchDev/game-of-points/blob/main/requirements.txt) file.
+You can use your own virtual environment and install dependencies from <a href="https://github.com/rchDev/game-of-points/blob/main/requirements.txt" target="_blank">requirements.txt</a> file.
 
 #### 3. You have installed <a href="https://ngrok.com/docs/getting-started/" target="_blank">Ngrok</a>
 
@@ -66,7 +66,7 @@ Inside game-of-points root run:
 poetry install
 ``` 
 
-or activate your desired virtual environment and run: 
+or activate virtual environment of your choice and run: 
 
 ```
 pip install -r ./game-of-points-be/requirements.txt
@@ -78,21 +78,21 @@ Inside game-of-points/game-of-points-fe, run:
 npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversational agent id> npm install
 ```
 
-*(Optional)* Inside game-of-points/game-of-points-be, run:
+**(Optional)** Inside game-of-points/game-of-points-be, run:
 
-*Mac or Linux:*
+**Mac or Linux:**
 
 ```
 ./mvnw clean install
 ```
 
-*Windows command line:*
+**Windows command line:**
 
 ```
 mvnw.cmd clean install
 ```
 
-*Full setup command to run inside project root:*
+**Full setup command to run inside project root:**
 
 Mac or Linux:
 
