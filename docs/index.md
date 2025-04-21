@@ -80,34 +80,80 @@ npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversati
 
 **(Optional)** Inside game-of-points/game-of-points-be, run:
 
->Mac or Linux:
->
->```
->./mvnw clean install
->```
->
->Windows:
->
->```
->mvnw.cmd clean install
->```
+Mac or Linux:
+
+```
+./mvnw clean install
+```
+
+Windows:
+
+```
+mvnw.cmd clean install
+```
 
 **Full setup command to run inside project root:**
 
 Mac or Linux:
 
 ```
-poetry install && cd ./game-of-points-fe && npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversational agent id> npm install && cd ../game-of-points-be && ./mvnw clean install
+poetry install && \
+cd ./game-of-points-fe && \
+npx cross-env PROJECT_ID=<conversational_agent_project_id> AGENT_ID=<conversational_agent_id> npm install && \
+cd ../game-of-points-be && \
+./mvnw clean install
 ```
 
 Windows:
 
 ```
-poetry install && cd ./game-of-points-fe && npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversational agent id> npm install && cd ../game-of-points-be && ./mvnw clean install
+poetry install
+cd game-of-points-fe
+npx cross-env PROJECT_ID=<conversational_agent_project_id> AGENT_ID=<conversational_agent_id> npm install
+cd ..\game-of-points-be
+mvnw.cmd clean install
 ```
 
 #### Launch steps:
-1. step 1
+All these steps will be performed from project's root directory.
+
+**Mac or Linux:**
+
+Run bayes-net:
+
+```shell
+cd ./game-of-points-be/src/main/java/io/rizvan/beans/actors/agent && \
+poetry run python bayesian_network.py
+```
+
+Run sentiment classifier:
+
+```shell
+cd ./sentiment-analysis
+poetry run python sentiment_classifier.py predict
+```
+
+Run game server:
+
+```shell
+cd ../../../../../../../../../ && \
+./mvnw quarkus:dev
+```
+
+Run ngrok:
+
+```shell
+ngrok http --domain=<your_public_domain> 8080
+```
+
+Run game frontend:
+
+```shell
+cd ../game-of-points-fe && \
+npm run dev
+```
+
+**Windows:**
 
 #### General launch rules:
 1. Game server depends on working python services (bayes-net and sentiment classifier).
