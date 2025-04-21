@@ -28,7 +28,7 @@ To use these scripts, you have to install optional dependencies. ❗❗❗
 #### 3. Maven 3.2+ installed
 
 Don't have to install maven. Run one of the commands:
-1. mvnw shell command for Mac and Linux
+1. ./mvnw shell command for Mac and Linux
 2. mvnw.cmd for Windows
 
 These commands will install the correct version of Maven package manager the first time they are run.
@@ -62,19 +62,19 @@ without hosting the game server yourself.
 
 Inside game-of-points project's root directory run: 
 
-```
+```shell
 poetry install
 ``` 
 
 or activate virtual environment of your choice and run: 
 
-```
+```shell
 pip install -r ./game-of-points-be/requirements.txt
 ```
 
 Inside game-of-points/game-of-points-fe, run: 
 
-```
+```shell
 npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversational agent id> npm install
 ```
 
@@ -82,7 +82,7 @@ npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversati
 
 Mac or Linux:
 
-```
+```shell
 ./mvnw clean install
 ```
 
@@ -96,7 +96,7 @@ mvnw.cmd clean install
 
 Mac or Linux:
 
-```
+```shell
 poetry install && \
 cd ./game-of-points-fe && \
 npx cross-env PROJECT_ID=<conversational_agent_project_id> AGENT_ID=<conversational_agent_id> npm install && \
