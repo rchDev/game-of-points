@@ -59,7 +59,8 @@ without hosting the game server yourself.
 ## 🚀 How to launch this project
 
 #### Project setup:
-1. Inside game-of-points root run: 
+
+Inside game-of-points root run: 
 
 ```
 poetry install
@@ -68,13 +69,17 @@ poetry install
 or activate your desired virtual environment and run: 
 
 ```
-pip install -r ./requirements.txt
+pip install -r ./game-of-points-be/requirements.txt
 ```
 
-2. Inside game-of-points/game-of-points-fe run: 
+Inside game-of-points/game-of-points-fe run: 
 
 ```
 npm install
+```
+Full command for project root:
+```
+poetry install && cd ./game-of-points-fe && npm install
 ```
 
 #### Launch steps:
