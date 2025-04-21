@@ -60,7 +60,7 @@ without hosting the game server yourself.
 
 #### Project setup:
 
-Inside game-of-points root run: 
+Inside game-of-points project's root directory run: 
 
 ```
 poetry install
@@ -80,13 +80,13 @@ npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversati
 
 **(Optional)** Inside game-of-points/game-of-points-be, run:
 
-**Mac or Linux:**
+Mac or Linux:
 
 ```
 ./mvnw clean install
 ```
 
-**Windows command line:**
+Windows:
 
 ```
 mvnw.cmd clean install
