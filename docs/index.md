@@ -23,7 +23,7 @@ To use these scripts, you have to install optional dependencies. ❗❗❗
 
 Inside project's root directory you can find a file called: **exported_agent_snitch.blob**
 
-Take this file and import it into your own: <a href="" target="_blank">Google conversational agent</a> project.
+Take this file and import it into your own: <a href="https://conversational-agents.cloud.google.com/projects" target="_blank">Google conversational agent</a> project.
 
 Inside this link you will find conversational agent console where you can:
 1. Create a new project.
@@ -31,7 +31,7 @@ Inside this link you will find conversational agent console where you can:
 3. Restore (import) the agent to use the agent that's inside the repo file.
 4. Set the webhook url to your own.
 4. Publish the agent.
-5. Use the provided: *project-id*, *agent-it* during npm install.
+5. Use the provided: *project-id*, *agent-id* during npm install.
 
 #### 2. *JDK* 17-22 installed.
 
