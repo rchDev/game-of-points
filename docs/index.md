@@ -208,6 +208,8 @@ npm run dev
 
 <a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">*Learn how to implement fast-paced multiplayer client-server communication*</a>
 
+More info on [Agent Reasoning](/agent-reasoning/).
+
 1. Game frontend sends a bunch of game state updates to game server through a websocket connection (i know... tcp is bad for game dev.)
 2. While the game server is processing these updates, frontend app simulates the application of these updates to create an illusion of smooth gameplay experience for a user.
 3. For each game session, game server stores game updates inside a <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/SessionStorage.java" target="_blank">session storage</a>.

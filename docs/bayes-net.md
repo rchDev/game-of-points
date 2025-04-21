@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Agent Reasoning
+title: Bayes Net
 parent: Agent Reasoning
 nav_order: 1
 ---
