@@ -209,6 +209,7 @@ npm run dev
 {: .info }
 > <a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">*Learn how to implement fast-paced multiplayer client-server communication*</a>
 
+{: .info }
 More info on [Agent Reasoning](/game-of-points/agent-reasoning/).
 
 1. Game frontend sends a bunch of game state updates to game server through a websocket connection (i know... tcp is bad for game dev.)
