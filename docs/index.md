@@ -21,17 +21,19 @@ To use these scripts, you have to install optional dependencies. ❗❗❗
 
 #### 1. Working Google Conversational Agent (~~Dialogflow CX~~)
 
-Inside project's root directory you can find a file called: **exported_agent_snitch.blob**
+Inside project's root directory you'll find a file: **exported_agent_snitch.blob**
 
 Take this file and import it into your own: <a href="https://conversational-agents.cloud.google.com/projects" target="_blank">Google conversational agent</a> project.
 
-Inside this link you will find conversational agent console where you can:
+Overview of the process:
 1. Create a new project.
 2. Create new agent.
 3. Restore (import) the agent to use the agent that's inside the repo file.
 4. Set the webhook url to your own.
 4. Publish the agent.
 5. Use the provided: *project-id*, *agent-id* during npm install.
+
+Detailed instructions can be found: <a href="" target="_blob">here</a>.
 
 #### 2. *JDK* 17-22 installed.
 
