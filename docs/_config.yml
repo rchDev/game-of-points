@@ -1,5 +1,3 @@
 title: Game Of Points
 markdown: kramdown
 theme: just-the-docs
-plugins:
-  - jekyll-remote-theme
