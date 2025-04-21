@@ -9,7 +9,7 @@ NGROK_PID=
 trap 'echo "🧹 Cleaning up..."; kill $PY1_PID $PY2_PID $QUARKUS_PID $NGROK_PID 2>/dev/null || true' EXIT
 
 cd game-of-points-be/src/main/java/io/rizvan/beans/actors/agent
-poetry run python ./baysian_network.py > baysian_network.log 2>&1 &
+poetry run python ./bayesian_network.py > bayesian_network.log 2>&1 &
 PY1_PID=$!
 
 cd ./sentiment-analysis
