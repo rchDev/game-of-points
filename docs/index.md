@@ -4,7 +4,19 @@ title: Home
 ---
 
 # Game Of Points
-Welcome to the docs! Here’s what this project is about.
+
+A Simple game where human user competes against AI agent in a battle to collect the most points and survive.
+
+#### *Disclaimer:*
+
+*This project was created for educational purposes. Main goal was to explore and play with various technologies: including bayes net, neural net, rule engine libraries, and conversational agent tools.*
+
+#### Rules:
+1. Game starts with 60s timer, once the time runs out, whoever collected most points - wins. 
+2. Points appear at random locations and time intervals. 
+3. Both the agent and user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
+4. Whoever kills one another - wins.
+
 ## Weird parts
 
 This project was created for educational purposes.
@@ -102,7 +114,7 @@ Mac or Linux:
 
 Windows:
 
-```
+```shell
 mvnw.cmd clean install
 ```
 
@@ -120,7 +132,7 @@ cd ../game-of-points-be && \
 
 Windows:
 
-```
+```shell
 poetry install
 cd game-of-points-fe
 npx cross-env PROJECT_ID=<conversational_agent_project_id> AGENT_ID=<conversational_agent_id> npm install
