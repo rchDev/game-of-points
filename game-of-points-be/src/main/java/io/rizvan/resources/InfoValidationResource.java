@@ -179,6 +179,7 @@ public class InfoValidationResource {
     }
 
     /**
+     * Nepilna Dialogflow intento struktūra
      * {
      * "page_info": { "form_info": { "parameter_info": [ { "display_name": "order_number", "required": "true", "state": "INVALID", "value": "123" } ] } },
      * "session_info": { "parameters": { "order_number": "null" } }
