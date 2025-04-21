@@ -21,6 +21,15 @@ To use these scripts, you have to install optional dependencies. ❗❗❗
 
 #### 1. Working Google Conversational Agent (~~Dialogflow CX~~)
 
+Inside project's root directory you can find a file called: **exported_agent_snitch.blob**
+
+Take this file and import it into your own: <a href="" target="_blank">Google conversational agent</a> project.
+
+Inside this link you will find conversational agent console where you can:
+1. Create a new project.
+2. Create new agent.
+3. Restore (import) the agent to use the agent that's inside the repo file.
+
 #### 2. *JDK* 17-22 installed.
 
 ❗Java 23 is not supported and will cause compatibility issues.
