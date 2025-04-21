@@ -162,7 +162,7 @@ npm run dev
 
 #### General launch rules:
 1. Game server depends on working python services (bayes-net and sentiment classifier).
-2. Game frontend depends on working game server
-3. Player data collection step in frontend chat depends on ngrok tunnel (if you are not hosting your backend on public ip address).
-
+2. Game frontend depends on a working game server
+3. The Player data collection step in frontend chat depends on ngrok tunnel (if you are not hosting your backend on public ip address).
+   If your conversational agent's webhook isn't pointing to your backend's public address, game server won't receive user questionnaire results.
 ## 🏗️ How system works (Top down view)
