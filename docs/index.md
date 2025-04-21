@@ -72,14 +72,38 @@ or activate your desired virtual environment and run:
 pip install -r ./game-of-points-be/requirements.txt
 ```
 
-Inside game-of-points/game-of-points-fe run: 
+Inside game-of-points/game-of-points-fe, run: 
 
 ```
-npm install
+npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversational agent id> npm install
 ```
-Full command for project root:
+
+*(Optional)* Inside game-of-points/game-of-points-be, run:
+
+*Mac or Linux:*
+
 ```
-poetry install && cd ./game-of-points-fe && npm install
+./mvnw clean install
+```
+
+*Windows command line:*
+
+```
+mvnw.cmd clean install
+```
+
+*Full setup command to run inside project root:*
+
+Mac or Linux:
+
+```
+poetry install && cd ./game-of-points-fe && npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversational agent id> npm install && cd ../game-of-points-be && ./mvnw clean install
+```
+
+Windows:
+
+```
+poetry install && cd ./game-of-points-fe && npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversational agent id> npm install && cd ../game-of-points-be && ./mvnw clean install
 ```
 
 #### Launch steps:
