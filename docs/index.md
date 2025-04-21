@@ -191,4 +191,14 @@ npm run dev
 2. Game frontend depends on a working game server
 3. The Player data collection step in frontend chat depends on ngrok tunnel (if you are not hosting your backend on public ip address).
    If your conversational agent's webhook isn't pointing to your backend's public address, game server won't receive user questionnaire results.
+
 ## 🏗️ How system works (Top down view)
+
+#### Main components:
+
+1. Game frontend application.
+2. Game server.
+3. Bayesian network server.
+4. Sentiment classifier server.
+5. Google's conversational agent.
+6. Ngrok as a tunnel service connecting Google's conversational agent to local game server.
