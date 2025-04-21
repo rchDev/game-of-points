@@ -80,17 +80,17 @@ npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversati
 
 **(Optional)** Inside game-of-points/game-of-points-be, run:
 
-Mac or Linux:
-
-```
-./mvnw clean install
-```
-
-Windows:
-
-```
-mvnw.cmd clean install
-```
+>Mac or Linux:
+>
+>```
+>./mvnw clean install
+>```
+>
+>Windows:
+>
+>```
+>mvnw.cmd clean install
+>```
 
 **Full setup command to run inside project root:**
 
