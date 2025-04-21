@@ -202,3 +202,17 @@ npm run dev
 4. Sentiment classifier server.
 5. Google's conversational agent.
 6. Ngrok as a tunnel service connecting Google's conversational agent to local game server.
+
+#### Basic data flow
+1. Game frontend sends a bunch of game state updates to game server through a websocket connection (i know... tcp is bad for game dev.)
+2. While the game server is processing these updates, frontend app simulates the application of these updates to create an illusion of smooth gameplay experience for a user.
+3. For each game session, game server stores game updates inside a <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/SessionStorage.java" target="_blank">session storage</a>.
+4. Once the time for processing comes, server runs the loop through all sessions and starts applying updates for each of game states. See this <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/GameStateUpdateScheduler.java" target="_blank">code</a>.
+5. Updating starts with cloning a game state, getting all player actions from the session storage and validating them.
+6. Once actions are deemed valid, they are applied to the game state clone and are registered as **facts** for AI agent. (<a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/GameState.java">See this place</a>.)
+7. Once all facts are registered, <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java" target="_blank">agent.reason()</a> method which then uses Drools rule engine and Bayesian network to reason about the current game state, and make action choice decisions based on the current state configuration.
+8. After agent takes these actions, they are applied to the game state clone.
+9. Clone is then placed into game state update history inside session storage.
+10. For each session update even is published.
+11. Controller (<a href="" target="_blank">@ConsumeEvent("game.update")</a>) listening for those update events, sends updated game states to each session.
+12. Frontend reconciles 
