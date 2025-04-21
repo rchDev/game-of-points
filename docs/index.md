@@ -8,9 +8,10 @@ nav_order: 0
 
 A Simple game where human user competes against AI agent in a battle to collect the most points and survive.
 
-#### *Disclaimer:*
-
-*This project was created for educational purposes. Main goal was to explore and play with various technologies: including bayes net, neural net, rule engine libraries, and conversational agent tools.*
+{: .note }
+> Disclaimer
+> 
+> *This project was created for educational purposes. Main goal was to explore and play with various technologies: including bayes net, neural net, rule engine libraries, and conversational agent tools.*
 
 #### Rules:
 1. Game starts with 60s timer, once the time runs out, whoever collected most points - wins. 
@@ -207,7 +208,7 @@ npm run dev
 #### Basic data flow:
 
 {: .info }
-> <a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">*Learn how to implement fast-paced multiplayer client-server communication*</a>
+<a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">*Learn how to implement fast-paced multiplayer client-server communication*</a>
 
 {: .info }
 More info on [Agent Reasoning](/game-of-points/agent-reasoning/).
