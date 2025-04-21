@@ -9,9 +9,7 @@ nav_order: 0
 A Simple game where human user competes against AI agent in a battle to collect the most points and survive.
 
 {: .note }
-> Disclaimer
-> 
-> *This project was created for educational purposes. Main goal was to explore and play with various technologies: including bayes net, neural net, rule engine libraries, and conversational agent tools.*
+*This project was created for educational purposes. Main goal was to explore and play with various technologies: including bayes net, neural net, rule engine libraries, and conversational agent tools.*
 
 #### Rules:
 1. Game starts with 60s timer, once the time runs out, whoever collected most points - wins. 
