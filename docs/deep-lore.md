@@ -28,10 +28,18 @@ An overview of how the agent makes decisions.
 - **Facts** - validated, applied and registered player actions, that happened since the last **agent.reason()** method call.
 - **AgentKnowledge** - Agent doesn't have direct access to **GameState**. So this class acts as a collection of gathered truths about the game environment during the course of game and is used in agents decision making.
 - **AgentsBrain** - interface which defines a contract for creating various types of agents. Its centerpoint is a **reason** method, which takes in a **GameState** as an argument and applies changes to it.
-- **DroolsBrain** - concrete implementation of AgentsBrain which uses Drools rule engine and a Bayes net to make gameplay decisions.
+- **DroolsBrain** - concrete implementation of **AgentsBrain** which uses Drools rule engine and a Bayes net to make gameplay decisions.
 
-### What is happening inside Drools brain
+### Journey of player action to agent action.
+{: .no_toc }
 
+```mermaid
+graph LR;
+    A[Player Action] --> B[Fact];
+    B --> C[Agent Knowledge];
+    C --> D[Agent Choice];
+    D --> E[Agent Action];
+```
 
 ## Reasoning process
 
