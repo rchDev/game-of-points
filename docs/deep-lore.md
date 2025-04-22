@@ -25,6 +25,7 @@ An overview of how the agent makes decisions.
 {: .no-toc}
 
 - **GameState** - a class containing variables which hold information about game environment. Also has methods for validating and applying **PlayerActions** and **AgentActions**, also stores information about **Player** and **Agent** (positions, hp, speed, weapon uses count...)
+- **AgentPossibilities** - (add later.)
 - **AgentChoice** - (add later.)
 - **AgentAction** - interface that defines **apply(GameState) -> void** and **getType() -> ActionType** methods. Concrete implementations of this class have various GameState altering effects that spring into action when **apply** method is called.
 - **PlayerAction** - (add later.)
@@ -33,15 +34,16 @@ An overview of how the agent makes decisions.
 - **AgentsBrain** - interface which defines a contract for creating various types of agents. Its centerpoint is a **reason** method, which takes in a **GameState** as an argument and applies changes to it.
 - **DroolsBrain** - concrete implementation of **AgentsBrain** which uses Drools rule engine and a Bayes net to make gameplay decisions.
 
-### Journey of player action to agent action.
+### A Journey from player action to agent action
 {: .no_toc }
 
 ```mermaid
-graph LR;
-    A[Player Action] --> B[Fact];
-    B --> C[Agent Knowledge];
-    C --> D[Agent Choice];
-    D --> E[Agent Action];
+graph TD;
+    A[Player Action] -->|Registered as| B[Fact];
+    B -->|inference group rules update| C[Agent Knowledge];
+    C -->|possibilities group rules update| D[Agent Possibilities];
+    D -->|agent choices group rules determine| E[Agent Strategy Choice];
+    E -->|agent actions group rules determine| F[Agent Action];
 ```
 
 ## Reasoning process
