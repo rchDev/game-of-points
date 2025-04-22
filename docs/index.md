@@ -5,6 +5,7 @@ nav_order: 0
 ---
 
 # Game Of Points
+{: .no_toc }
 
 A Simple game where human user competes against AI agent in a battle to collect the most points and survive.
 
@@ -18,9 +19,9 @@ A Simple game where human user competes against AI agent in a battle to collect 
 4. Whoever kills one another - wins.
 
 ## Table of contents
-{: .no_toc .text-delta }
+{: .no_toc .text-delta } 
 
-1. TOC
+- TOC
    {:toc}
 
 ---
