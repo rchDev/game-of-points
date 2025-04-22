@@ -9,7 +9,7 @@ permalink: /conv-agent-config/
 # Configuring the conversational agent
 
 {: .note }
-*This guide was written 2025-04-22*
+*Guide was last updated: 2025-04-22.*
 
 ## Steps
 

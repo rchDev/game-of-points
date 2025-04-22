@@ -58,7 +58,7 @@ Overview of the process:
 4. Publish the agent.
 5. Use the provided: *project-id*, *agent-id* during npm install.
 
-Detailed instructions can be found: <a href="" target="_blob">here</a>.
+Detailed instructions can be found: [here](/game-of-points/conv-agent-config/).
 
 #### 2. *JDK* 17-22 installed.
 {: .no_toc }
