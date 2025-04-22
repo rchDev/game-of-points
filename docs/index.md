@@ -17,6 +17,16 @@ A Simple game where human user competes against AI agent in a battle to collect 
 3. Both the agent and user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
 4. Whoever kills one another - wins.
 
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+   {:toc}
+
+---
+
 ## Weird parts
 
 This project was created for educational purposes.
@@ -211,15 +221,16 @@ npm run dev
 {: .info }
 More info on [Agent Reasoning](/game-of-points/agent-reasoning/).
 
-1. Game frontend sends a bunch of game state updates to game server through a websocket connection (i know... tcp is bad for game dev.)
-2. While the game server is processing these updates, frontend app simulates the application of these updates to create an illusion of smooth gameplay experience for a user.
-3. For each game session, game server stores game updates inside a <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/SessionStorage.java" target="_blank">session storage</a>.
-4. Once the time for processing comes, server runs the loop through all sessions and starts applying updates for each of game states. See this <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/GameStateUpdateScheduler.java" target="_blank">code</a>.
-5. Updating starts with cloning a game state, getting all player actions from the session storage and validating them.
-6. Once actions are deemed valid, they are applied to the game state clone and are registered as **facts** for AI agent. (<a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/GameState.java">See this place</a>.)
-7. Once all facts are registered, <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java" target="_blank">agent.reason()</a> method which then uses Drools rule engine and Bayesian network to reason about the current game state, and make action choice decisions based on the current state configuration.
-8. After agent takes these actions, they are applied to the game state clone.
-9. Clone is then placed into game state update history inside session storage.
-10. For each session update even is published.
-11. Controller (<a href="" target="_blank">@ConsumeEvent("game.update")</a>) listening for those update events, sends updated game states to each session.
-12. Frontend reconciles it's predicted game state with authoritative game state that's provided by backend. (<a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-fe/main.js" target="_blank">reconcileWithServerState(updatedGameState)</a>)
+1. Game session initialization involving questioning by the conversational agent. 
+2. Game frontend sends a bunch of game state updates to game server through a websocket connection (i know... tcp is bad for game dev.)
+3. While the game server is processing these updates, frontend app simulates the application of these updates to create an illusion of smooth gameplay experience for a user. 
+4. For each game session, game server stores game updates inside a <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/SessionStorage.java" target="_blank">session storage</a>. 
+5. Once the time for processing comes, server runs the loop through all sessions and starts applying updates for each of game states. See this <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/GameStateUpdateScheduler.java" target="_blank">code</a>. 
+6. Updating starts with cloning a game state, getting all player actions from the session storage and validating them. 
+7. Once actions are deemed valid, they are applied to the game state clone and are registered as **facts** for AI agent. (<a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/GameState.java">See this place</a>.)
+8. Once all facts are registered, <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java" target="_blank">agent.reason()</a> method which then uses Drools rule engine and Bayesian network to reason about the current game state, and make action choice decisions based on the current state configuration. 
+9. After agent takes these actions, they are applied to the game state clone. 
+10. Clone is then placed into game state update history inside session storage.
+11. For each session update even is published.
+12. Controller (<a href="" target="_blank">@ConsumeEvent("game.update")</a>) listening for those update events, sends updated game states to each session.
+13. Frontend reconciles it's predicted game state with authoritative game state that's provided by backend. (<a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-fe/main.js" target="_blank">reconcileWithServerState(updatedGameState)</a>)
