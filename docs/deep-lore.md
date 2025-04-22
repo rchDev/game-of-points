@@ -15,7 +15,7 @@ An overview of how the agent makes decisions.
 {: .no_toc .text-delta }
 
 - TOC
-  {:toc}
+{:toc}
 
 ---
 
