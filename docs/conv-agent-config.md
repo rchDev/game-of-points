@@ -50,11 +50,11 @@ Now you have a working conversational agent, but game frontend doesn't know whic
 For this purpose i've made a simple script that can be ran on its own or during npm install and it will modify index.html file to insert ids into their places.
 
 {: .info}
->### During frontend setup, run:
+> During frontend setup, run:
 >```shell
 >npx cross-env PROJECT_ID=<project_id> AGENT_ID=<agent_id> npm install
 >```
->### or
+> or
 >```
 >npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 >```
