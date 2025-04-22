@@ -107,6 +107,7 @@ without hosting the game server yourself.
 ## 🚀 How to launch this project
 
 #### Project setup:
+{: .no_toc }
 
 Inside game-of-points project's root directory run: 
 
@@ -163,6 +164,8 @@ mvnw.cmd clean install
 ```
 
 #### Launching the project
+{: .no_toc }
+
 Once you've set up the project, you can launch it in a few ways by following the steps described below.
 
 #### Launching without IntelliJ:
