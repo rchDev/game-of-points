@@ -16,7 +16,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 {: .no_toc .text-delta }
 
 - TOC
-  {:toc}
+{:toc}
 
 ---
 
