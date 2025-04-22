@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Agent Reasoning
-nav_order: 2
+nav_order: 3
 permalink: /agent-reasoning/
 ---
 
