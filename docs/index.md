@@ -28,7 +28,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 
 ---
 
-## Weird parts
+## 🌀 Weird parts
 
 This project was created for educational purposes.
 It is in no way "production ready". 
@@ -222,7 +222,7 @@ npm run dev
 3. The Player data collection step in frontend chat depends on ngrok tunnel (if you are not hosting your backend on public ip address).
    If your conversational agent's webhook isn't pointing to your backend's public address, game server won't receive user questionnaire results.
 
-## 🏗️ How system works (Top down view)
+## 🏗️ System overview
 
 #### Main components:
 {: .no_toc }
