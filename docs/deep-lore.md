@@ -43,7 +43,7 @@ graph LR;
     B -->|inference group rules update| C[Agent Knowledge];
     C -->|possibilities group rules update| D[Agent Possibilities];
     D -->|agent choices group rules determine| E[Agent Strategy Choice];
-    E -->|agent actions group rules determine| F[Agent Action];
+    E -->|agent actions group rules determine|;
 ```
 
 ## Reasoning process
