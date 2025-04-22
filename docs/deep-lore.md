@@ -21,6 +21,9 @@ An overview of how the agent makes decisions.
 
 ## Overview
 
+### Reasoning participants
+{: .no-toc}
+
 - **GameState** - a class containing variables which hold information about game environment. Also has methods for validating and applying **PlayerActions** and **AgentActions**, also stores information about **Player** and **Agent** (positions, hp, speed, weapon uses count...)
 - **AgentChoice** - (add later.)
 - **AgentAction** - interface that defines **apply(GameState) -> void** and **getType() -> ActionType** methods. Concrete implementations of this class have various GameState altering effects that spring into action when **apply** method is called.
