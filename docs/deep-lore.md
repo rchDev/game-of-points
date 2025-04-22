@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Agent Reasoning
-nav_order: 1
-parent: Deep Lore
-permalink: /agent-reasoning/
+title: Deep Lore
+nav_order: 3
+has_children: true
+permalink: /deep-lore/
 ---
 
 # Agent Reasoning
@@ -15,7 +15,7 @@ An overview of how the agent makes decisions.
 {: .no_toc .text-delta }
 
 - TOC
-{:toc}
+  {:toc}
 
 ---
 
