@@ -13,6 +13,8 @@ A Simple game where human user competes against AI agent in a battle to collect 
 *This project was created for educational purposes. Main goal was to explore and play with various technologies: including bayes net, neural net, rule engine libraries, and conversational agent tools.*
 
 ### Rules:
+{: .no_toc }
+
 1. Game starts with 60s timer, once the time runs out, whoever collected most points - wins. 
 2. Points appear at random locations and time intervals. 
 3. Both the agent and user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
@@ -39,8 +41,10 @@ To mitigate this issue, launch scripts have been created.
 To use these scripts, you have to install optional dependencies. ❗❗❗
 
 ### Required:
+{: .no_toc }
 
 #### 1. Working Google Conversational Agent (~~Dialogflow CX~~)
+{: .no_toc }
 
 Inside project's root directory you'll find a file: **exported_agent_snitch.blob**
 
