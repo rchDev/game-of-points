@@ -2,10 +2,24 @@
 layout: default
 title: Agent Reasoning
 nav_order: 2
-has_children: true
 permalink: /agent-reasoning/
 ---
 
 # Agent Reasoning
+{: .no_toc }
 
-Here’s how the agent makes decisions...
+An overview of how the agent makes decisions.
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
+
+## Overview
+
+## Drools Rules
+
+## Bayes network
