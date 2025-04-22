@@ -61,10 +61,12 @@ Overview of the process:
 Detailed instructions can be found: <a href="" target="_blob">here</a>.
 
 #### 2. *JDK* 17-22 installed.
+{: .no_toc }
 
 ❗Java 23 is not supported and will cause compatibility issues.
 
 #### 3. Maven 3.2+ installed
+{: .no_toc }
 
 Don't have to install maven. Run one of the commands:
 1. ./mvnw shell command for Mac and Linux
@@ -73,23 +75,30 @@ Don't have to install maven. Run one of the commands:
 These commands will install the correct version of Maven package manager the first time they are run.
 
 #### 4. Python >=3.12 installed
+{: .no_toc }
+
 1. Install the version that is specified in <a href="https://github.com/rchDev/game-of-points/blob/main/.python-version" target="_blank">.python-version</a> file (use pyenv)
 2. Install version that is complies with spec in <a href="https://github.com/rchDev/game-of-points/blob/main/pyproject.toml" target="_blank">pyproject.toml</a> file.
 
 #### 5. Node.js >=v16.20.2 installed
+{: .no_toc }
 
 ### Optional:
+{: .no_toc }
 
 #### 1. You have installed IntelliJ IDEA: <a href="https://www.jetbrains.com/idea/download/?section=mac" target="_blank">Mac</a>, <a href="https://www.jetbrains.com/idea/download/?section=linux" target="_blank">Linux</a>, <a href="https://www.jetbrains.com/idea/download/?section=windows" target="_blank">Windows</a>
+{: .no_toc }
 
 Helpful for easily launching the project.
 
 #### 2. You have installed <a href="https://python-poetry.org/docs/#installation" target="_blank">Poetry</a>
+{: .no_toc }
 
 Although not required, but project uses poetry for easy dependency management.
 You can use your own virtual environment and install dependencies from <a href="https://github.com/rchDev/game-of-points/blob/main/requirements.txt" target="_blank">requirements.txt</a> file.
 
 #### 3. You have installed <a href="https://ngrok.com/docs/getting-started/" target="_blank">Ngrok</a>
+{: .no_toc }
 
 Used for exposing your local game server to
 Google's conversational agents' webhook,
@@ -153,10 +162,12 @@ cd ..\game-of-points-be
 mvnw.cmd clean install
 ```
 
-#### Launching the project:
+#### Launching the project
 Once you've set up the project, you can launch it in a few ways by following the steps described below.
 
 #### Launching without IntelliJ:
+{: .no_toc }
+
 All these steps should be performed from project's root directory.
 
 **Mac or Linux:**
@@ -198,8 +209,11 @@ npm run dev
 **Windows:**
 
 #### Launching with IntelliJ:
+{: .no_toc }
 
 #### General launch rules:
+{: .no_toc }
+
 1. Game server depends on working python services (bayes-net and sentiment classifier).
 2. Game frontend depends on a working game server
 3. The Player data collection step in frontend chat depends on ngrok tunnel (if you are not hosting your backend on public ip address).
@@ -208,6 +222,7 @@ npm run dev
 ## 🏗️ How system works (Top down view)
 
 #### Main components:
+{: .no_toc }
 
 1. Game frontend application.
 2. Game server.
@@ -217,6 +232,7 @@ npm run dev
 6. Ngrok as a tunnel service connecting Google's conversational agent to local game server.
 
 #### Basic data flow:
+{: .no_toc }
 
 {: .info }
 <a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">*Learn how to implement fast-paced multiplayer client-server communication*</a>
