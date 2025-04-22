@@ -17,8 +17,6 @@ A Simple game where human user competes against AI agent in a battle to collect 
 3. Both the agent and user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
 4. Whoever kills one another - wins.
 
-{: .no_toc }
-
 ## Table of contents
 {: .no_toc .text-delta }
 
