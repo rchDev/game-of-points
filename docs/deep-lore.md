@@ -46,6 +46,25 @@ graph LR;
     E -->|actions rules| F[Agent Action];
 ```
 
+```mermaid
+flowchart TD
+
+subgraph Z[" "]
+direction LR
+A --> B
+B --> C
+end
+
+subgraph ZA[" "]
+direction RL
+D-->E
+E-->F
+end
+
+Z --> ZA
+```
+
+
 ## Reasoning process
 
 The reasoning starts once the GameUpdateScheduler updates the game state, 
