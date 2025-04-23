@@ -81,18 +81,23 @@ We essentially insert a bunch of items that will be used by [Drools rules](https
         kieSession.insert(new UpdateKnowledgeCallable());
 
         try {
+            // insert all the player action facts
             gameState.getFacts().forEach(kieSession::insert);
             gameState.clearFacts();
-
+            
+            // run inference group rules to update AgentKnowledge
             kieSession.getAgenda().getAgendaGroup("inference-group").setFocus();
             kieSession.fireAllRules();
 
+            // run possibilities group rules to update AgentPossibilities
             kieSession.getAgenda().getAgendaGroup("possibilities-group").setFocus();
             kieSession.fireAllRules();
 
+            // run agent choices group to make an agents strategy choice
             kieSession.getAgenda().getAgendaGroup("agent-choices-group").setFocus();
             kieSession.fireAllRules();
-
+            
+            // run agent actions to select best action for currently selected strategy.
             kieSession.getAgenda().getAgendaGroup("agent-actions-group").setFocus();
             kieSession.fireAllRules();
 
