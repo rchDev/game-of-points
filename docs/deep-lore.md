@@ -53,11 +53,11 @@ block-beta
    space space space space space
    F space E space D
 
-   A[Player Action] -->|Registered as| B[Fact]
-   B --> C
-   C --> D
-   D --> E
-   E --> F
+   A[Player Action] -->|Registered as| B[Fact];
+   B --> C;
+   C --> D;
+   D --> E;
+   E --> F;
 ```
 
 
