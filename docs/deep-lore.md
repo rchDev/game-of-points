@@ -21,11 +21,46 @@ An overview of how the agent makes decisions.
 
 ## Overview
 
+Agent wants to make the best decision for the situation that it is in.
+
+Agent has some knowledge about game environment, but doesn't know anything about player stats.
+
+**Agent knows:**
+1. Game time.
+2. Point positions.
+3. Own stats and point count.
+4. Players point count. 
+5. Existing weapons.
+
+**Agent doesn't know:** player stats (damage, mov. speed, weapon uses, weapon reach).
+
+Agent fills information gaps by querying the [**bayes net**]() for the most probable combination of player stats,
+with a set of query (unknown) and a set of evidence (known) variables.
+
+**Agent gathers information:**
+at the start of a match all variables unknown (**query**). 
+As player and agent act in the environment, 
+agent gathers information about player (**evidence**). 
+
+**Reasoning** (in the context of this simulation) is the process of finding the most appropriate decision to achieve the **desired outcome**.
+
+**Desired outcome** - winning the game. Which can be achieved by:
+1. Collecting the most points until the game time runs out (60s.)
+2. Killing the player.
+
+**During the reasoning process:**
+1. gathered information from agent's knowledge base: queries, evidence are used to evaluate agent's capabilities (**possibilities**). 
+2. Based on those capabilities a strategy is chosen (**make a choice**). 
+3. Then, the most appropriate action that best implements the selected strategy is chosen and applied.
+
+
+
 ### Reasoning participants
 {: .no-toc}
 
 - **GameState** - a class containing variables which hold information about game environment. Also has methods for validating and applying **PlayerActions** and **AgentActions**, also stores information about **Player** and **Agent** (positions, hp, speed, weapon uses count...)
 - **AgentPossibilities** - (add later.)
+- **BayesPythonManager** - 
 - **AgentChoice** - (add later.)
 - **AgentAction** - interface that defines **apply(GameState) -> void** and **getType() -> ActionType** methods. Concrete implementations of this class have various GameState altering effects that spring into action when **apply** method is called.
 - **PlayerAction** - (add later.)
@@ -105,7 +140,10 @@ Agents reason method calls Drools brain's reason method. Which looks pretty simp
         }
     }
 ```
-We essentially insert a bunch of items that will be used by [Drools rules](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be/src/main/resources/drools) into a stateless Drools session which is called **KieSession**.
+In this method we essentially insert a bunch of items that will be used by 
+[Drools rules](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be/src/main/resources/drools) 
+into a stateless Drools session which is called **KieSession**. 
+Then we run rule groups one after the other. This process modifies **GameState**.
 
 ## Drools Rules
 
