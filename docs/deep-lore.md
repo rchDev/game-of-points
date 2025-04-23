@@ -122,21 +122,44 @@ block-beta
 ### [Inference rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
 {: .no_toc}
 
-These rules fire on inserted facts and update agent knowledge base.
+These rules fire on inserted facts and update agent's knowledge base.
 
 **Example:** a fact about player using their weapon was inserted into kieSession 
-and the damage was felt by an agent, a rule: ["Player shot"](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl) will fire and update [agents' knowledge base](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/knowledge/AgentKnowledge.java).
+and the damage was felt by an agent, a rule: ["Player shot"](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl) 
+will fire and update [agent's knowledge base](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/knowledge/AgentKnowledge.java).
 
 ### [Possibilities rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/possibilities_rules.drl)
 {: .no_toc}
 
+Once inference rules have updated the knowledge base, possibilities group is ran.
+These rules fire, based on variable relationships inside knowledge base and agent classes.
 
+These rules are really simple, they just set variables inside AgentPossibilities class which you can se bellow:
+```java
+public class AgentPossibilities {
+    private boolean canOneShootPlayer;
+    private boolean oneShotByPlayer;
+    private boolean fasterThanPlayer;
+    private boolean slowerThanPlayer;
+    private boolean canReachPlayer;
+    private boolean reachedByPlayer;
+
+    private boolean canKillPlayer;
+    private boolean killedByPlayer;
+
+    private boolean canWinByPointCollection;
+    ...
+}
+```
+
+This class represents agent's relationship with player.
 
 ### [Agent choices rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl) 
 {: .no_toc }
 
-Based on agent possibilities that we've inserted by the previous layer rules, 
-this group basically implements the decision tree structure seen below and 
+Now that we have agent's possibilities, that were inserted by the previous layer rules.
+We know what agent can and cannot do. We have to make a strategy choice. That is what this layer is responsible for.
+This group basically implements the decision tree structure seen below and 
 produces strategy choice for an agent. Possible strategies include:
 1. Avoid player.
 2. Collect points - safely (while avoiding player).
