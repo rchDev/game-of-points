@@ -9,7 +9,7 @@ permalink: /deep-lore/
 # Agent Reasoning
 {: .no_toc }
 
-An overview of how the agent makes decisions.
+An overview of agent's decision-making process.
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -53,8 +53,8 @@ the agent gathers information about the player (**evidence**).
 2. Based on those capabilities a strategy is chosen (**make a choice**). 
 3. Then, the most appropriate action that best implements the selected strategy is chosen and applied.
 
-### Reasoning participants
-{: .no-toc}
+### Most important classes in reasoning
+{: .no_toc}
 
 - **GameState** - a class containing variables which hold information about game environment. Also has methods for validating and applying **PlayerActions** and **AgentActions**, also stores information about **Player** and **Agent** (positions, hp, speed, weapon uses count...)
 - **AgentPossibilities** - (add later.)
