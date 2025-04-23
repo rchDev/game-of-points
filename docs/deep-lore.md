@@ -53,7 +53,7 @@ block-beta
    space space space space space
    F["AgentPossibilities"] space E["AgentChoice"] space D["AgentAction"]
 
-   A --> B
+   A -->|"asdasd"| B
    B --> C
    C --> D
    D --> E
