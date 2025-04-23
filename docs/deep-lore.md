@@ -51,27 +51,57 @@ block-beta
    E --> F
 ```
 
-```mermaid
-flowchart TB
-    subgraph TopRow
-        direction LR
-        A["PlayerAction"] -->|Registered as| B["Fact"] --> C["AgentKnowledge"]
-    end
-
-    subgraph BottomRow
-        direction RL
-        F["AgentAction"] <-- E["AgentChoice"] <-- D["AgentPossibilities"]
-    end
-
-    C --> D
-
-```
-
 ## Reasoning process
 
-The reasoning starts once the GameUpdateScheduler updates the game state, 
-inserts facts into a facts storage and calls agent's reason method.  
+The reasoning starts once the **GameUpdateScheduler** updates the game state, 
+inserts facts into a facts storage. After that the agent's **reason()** method gets called.
 
+Agents reason method calls Drools brain's reason method. Which looks pretty simple:
+We essentially insert a bunch of items that will be used by [Drools rules](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be/src/main/resources/drools) into a stateless Drools session which is called **KieSession**.
+```java
+    @Override
+    public void reason(GameState gameState) {
+        knowledge.setPlayerHitBoxKnowledge(gameState.getPlayer().getHitBox(), true);
+        
+        KieSession kieSession = kieContainer.newKieSession("myKsession");
+        kieSession.insert(gameState);                     // GameState object
+        kieSession.insert(gameState.getAgent());
+        kieSession.insert(knowledge);                     // Current AgentKnowledge
+        kieSession.insert(bayesNetwork);                  // BayesNet
+        kieSession.insert(marginals);                     // Marginal player stat value probabilities
+        kieSession.insert(conditionals);                  // Conditional player stat value probabilities
+        kieSession.insert(foundMoods);                    // Moods that were seen in PlayerAnswer database
+        kieSession.insert(possibilities);                 // Agent's current possibilities 
+        
+        // Function callback for getting a list of query variables for a Bayes net query.
+        kieSession.insert(new GetQueriesCallable());
+        // Function callback for getting a list of evidence variables for a Bayes net query.
+        kieSession.insert(new GetEvidenceCallable());
+        // Function callback for updating agent's knowledge from a drools rule.
+        kieSession.insert(new UpdateKnowledgeCallable());
+
+        try {
+            gameState.getFacts().forEach(kieSession::insert);
+            gameState.clearFacts();
+
+            kieSession.getAgenda().getAgendaGroup("inference-group").setFocus();
+            kieSession.fireAllRules();
+
+            kieSession.getAgenda().getAgendaGroup("possibilities-group").setFocus();
+            kieSession.fireAllRules();
+
+            kieSession.getAgenda().getAgendaGroup("agent-choices-group").setFocus();
+            kieSession.fireAllRules();
+
+            kieSession.getAgenda().getAgendaGroup("agent-actions-group").setFocus();
+            kieSession.fireAllRules();
+
+            System.out.println("--------------------------");
+        } finally {
+            kieSession.dispose();
+        }
+    }
+```
 ## Drools Rules
 
 ## Bayesian network
