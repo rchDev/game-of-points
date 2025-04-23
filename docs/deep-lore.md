@@ -49,9 +49,9 @@ graph LR;
 ```mermaid
 block-beta
    columns 5
-   A["Player Action"] space B space C
+   A["PlayerAction"] space B["Fact"] space C["AgentKnowledge"]
    space space space space space
-   F space E space D
+   F["AgentPossibilities"] space E["AgentChoice"] space D["AgentAction"]
 
    A --> B
    B --> C
