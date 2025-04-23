@@ -57,7 +57,6 @@ The reasoning starts once the **GameUpdateScheduler** updates the game state,
 inserts facts into a facts storage. After that the agent's **reason()** method gets called.
 
 Agents reason method calls Drools brain's reason method. Which looks pretty simple:
-We essentially insert a bunch of items that will be used by [Drools rules](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be/src/main/resources/drools) into a stateless Drools session which is called **KieSession**.
 ```java
     @Override
     public void reason(GameState gameState) {
@@ -101,12 +100,66 @@ We essentially insert a bunch of items that will be used by [Drools rules](https
             kieSession.getAgenda().getAgendaGroup("agent-actions-group").setFocus();
             kieSession.fireAllRules();
 
-            System.out.println("--------------------------");
         } finally {
             kieSession.dispose();
         }
     }
 ```
+We essentially insert a bunch of items that will be used by [Drools rules](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be/src/main/resources/drools) into a stateless Drools session which is called **KieSession**.
+
 ## Drools Rules
 
+[Rules that belong to agent choices group](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl) basically implement this decision tree structure:
+
+```mermaid
+flowchart TD
+    A["Can agent kill player?"] -->|yes| B["Can player kill agent?"]
+    A -->|no| C["Can player kill agent?"]
+
+    B -->|yes| D["Game time > 50%"]
+    B -->|no| E[kill]
+
+    D -->|yes| F["Is player close?"]
+    D -->|no| G["Game time <= 50% and > 15%"]
+
+    F -->|yes| H[avoid]
+    F -->|no| I[safe-collect]
+
+    G -->|yes| J["Is it worth collecting points?"]
+    G -->|no| K["Game time <= 15%"]
+
+    J -->|yes| L["Is player close?"]
+    J -->|no| M["Can player one shoot agent?"]
+
+    L -->|yes| N[avoid]
+    L -->|no| O[safe-collect]
+
+    M -->|yes| P["Is player close?"]
+    M -->|no| Q["Can agent one shoot player?"]
+
+    P -->|yes| R[avoid]
+    P -->|no| S[safe-collect]
+
+    Q -->|yes| T[kill]
+    Q -->|no| U["Did player shoot at you?"]
+
+    U -->|yes| V[kill]
+    U -->|no| W[aggressive-collect]
+
+    K -->|yes| X["Is it worth collecting points?"]
+    K -->|no| Y[kill]
+
+    X -->|yes| Z["Is player close?"]
+    X -->|no| AA[kill]
+
+    Z -->|yes| AB[avoid]
+    Z -->|no| AC[safe-collect]
+
+    C -->|yes| AD["Is player close?"]
+    C -->|no| AE[aggressive-collect]
+
+    AD -->|yes| AF[avoid]
+    AD -->|no| AG[safe-collect]
+```
+   
 ## Bayesian network
