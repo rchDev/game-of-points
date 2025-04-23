@@ -49,11 +49,11 @@ graph LR;
 ```mermaid
 block-beta
    columns 5
-   A space B space C
+   A[Player Action] space B space C
    space space space space space
    F space E space D
 
-   A --> B
+   A -->|Registered as| B
    B --> C
    C --> D
    D --> E
