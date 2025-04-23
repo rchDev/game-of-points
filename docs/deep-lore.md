@@ -256,11 +256,15 @@ flowchart TD
 ### [Agent Action Rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/agent_action_rules.drl)
 {: .no_toc }
 
-Once the previous layer rules have successfully ran and inserted agent's strategy choice, this layer is ran.
+Once the previous layer rules have successfully run and inserted agent's strategy choice, this layer runs.
 
 Rules in this layer are responsible for evaluating the current environment and picking the most appropriate action that contributes to current strategy.
 
-For example: **agent chose to kill player**, because the player is really effective at collecting points and there is no way the agent will outpace him. In this case a combination of rules will fire that determine if a player is close enough to be attacked. In the case that it is - **attack**, otherwise - **move** in a direction of a player.
+For example: **agent chose to kill player**, 
+because the player is really effective at collecting points and 
+there is no way the agent will outpace him. 
+In this case a combination of rules will fire that determine if a player is within agents reach,
+in that case - **attack**, otherwise - **move** in player's direction.
 
 ## Bayesian network --> [link to code](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/bayesian_network.py)
 
@@ -270,7 +274,21 @@ Most of the time, rules engine only has partial information about player stats,
 while agent's capability assessment process heavily depends on having complete information.
 The Solution to this partial information problem is **Bayesian network**.
 
+Known stats are presented as **evidence** and unknown are given as **query** variables.
+
+### Main use:
+{: .no_toc}
+
+The main use for Bayes net in my app is to: **get the most probable combination of random variables.**
+
+### Creation:
+{: .no_toc}
+
+### Used libraries:
+{: .no_toc}
+
 ### Versions:
+{: .no_toc}
 
 Bayesian network get created inside DroolsBrain class, 
 during agent's creation, when a game session gets initialized.
