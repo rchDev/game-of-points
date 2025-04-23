@@ -113,7 +113,6 @@ We essentially insert a bunch of items that will be used by [Drools rules](https
 
 ```mermaid
 flowchart TD
- flowchart TD
     A["Can agent kill player?"] -->|yes| B["Can player kill agent?"]
     A -->|no| C["Can player kill agent?"]
 
