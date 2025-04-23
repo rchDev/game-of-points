@@ -47,21 +47,17 @@ graph LR;
 ```
 
 ```mermaid
-flowchart TD
+block-beta
+   columns 5
+   A space B space C
+   space space space space space
+   F space E space D
 
-subgraph Z[" "]
-direction LR
-A --> B
-B --> C
-end
-
-subgraph ZA[" "]
-direction RL
-D-->E
-E-->F
-end
-
-Z --> ZA
+   A --> B
+   B --> C
+   C --> D
+   D --> E
+   E --> F
 ```
 
 
