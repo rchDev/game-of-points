@@ -117,13 +117,13 @@ flowchart TD
     A -->|no| C["Can player kill agent?"]
 
     B -->|yes| D["Game time > 50%"]
-    B -->|no| E[kill]:::leaf
+    B -->|no| E[kill]
 
     D -->|yes| F["Is player close?"]
     D -->|no| G["Game time <= 50% and > 15%"]
 
-    F -->|yes| H[avoid]:::leaf
-    F -->|no| I[safe-collect]:::leaf
+    F -->|yes| H[avoid]
+    F -->|no| I[safe-collect]
 
     G -->|yes| J["Is it worth collecting points?"]
     G -->|no| K["Game time <= 15%"]
@@ -131,37 +131,35 @@ flowchart TD
     J -->|yes| L["Is player close?"]
     J -->|no| M["Can player one shoot agent?"]
 
-    L -->|yes| N[avoid]:::leaf
-    L -->|no| O[safe-collect]:::leaf
+    L -->|yes| N[avoid]
+    L -->|no| O[safe-collect]
 
     M -->|yes| P["Is player close?"]
     M -->|no| Q["Can agent one shoot player?"]
 
-    P -->|yes| R[avoid]:::leaf
-    P -->|no| S[safe-collect]:::leaf
+    P -->|yes| R[avoid]
+    P -->|no| S[safe-collect]
 
-    Q -->|yes| T[kill]:::leaf
+    Q -->|yes| T[kill]
     Q -->|no| U["Did player shoot at you?"]
 
-    U -->|yes| V[kill]:::leaf
-    U -->|no| W[aggressive-collect]:::leaf
+    U -->|yes| V[kill]
+    U -->|no| W[aggressive-collect]
 
     K -->|yes| X["Is it worth collecting points?"]
-    K -->|no| Y[kill]:::leaf
+    K -->|no| Y[kill]
 
     X -->|yes| Z["Is player close?"]
-    X -->|no| AA[kill]:::leaf
+    X -->|no| AA[kill]
 
-    Z -->|yes| AB[avoid]:::leaf
-    Z -->|no| AC[safe-collect]:::leaf
+    Z -->|yes| AB[avoid]
+    Z -->|no| AC[safe-collect]
 
     C -->|yes| AD["Is player close?"]
-    C -->|no| AE[aggressive-collect]:::leaf
+    C -->|no| AE[aggressive-collect]
 
-    AD -->|yes| AF[avoid]:::leaf
-    AD -->|no| AG[safe-collect]:::leaf
-
-    classDef leaf fill:#cfc,stroke:#333,stroke-width:1px;
+    AD -->|yes| AF[avoid]
+    AD -->|no| AG[safe-collect]
 ```
    
 ## Bayesian network
