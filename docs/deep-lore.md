@@ -51,6 +51,22 @@ block-beta
    E --> F
 ```
 
+```mermaid
+flowchart TB
+    subgraph TopRow
+        direction LR
+        A["PlayerAction"] -->|Registered as| B["Fact"] --> C["AgentKnowledge"]
+    end
+
+    subgraph BottomRow
+        direction RL
+        F["AgentAction"] <-- E["AgentChoice"] <-- D["AgentPossibilities"]
+    end
+
+    C --> D
+
+```
+
 ## Reasoning process
 
 The reasoning starts once the GameUpdateScheduler updates the game state, 
