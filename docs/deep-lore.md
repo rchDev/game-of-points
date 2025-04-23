@@ -38,28 +38,18 @@ An overview of how the agent makes decisions.
 {: .no_toc }
 
 ```mermaid
-graph LR;
-    A[Player Action] -->|Registered as| B[Fact];
-    B -->|inference rules| C[Agent Knowledge];
-    C -->|possibilities rules| D[Agent Possibilities];
-    D -->|choices rules| E[Agent Strategy Choice];
-    E -->|actions rules| F[Agent Action];
-```
-
-```mermaid
 block-beta
    columns 5
    A["PlayerAction"] space B["Fact"] space C["AgentKnowledge"]
    space space space space space
    F["AgentPossibilities"] space E["AgentChoice"] space D["AgentAction"]
 
-   A -->|"asdasd"| B
+   A --> B
    B --> C
    C --> D
    D --> E
    E --> F
 ```
-
 
 ## Reasoning process
 
