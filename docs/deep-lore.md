@@ -261,4 +261,40 @@ Once the previous layer rules have successfully ran and inserted agent's strateg
 Rules in this layer are responsible for evaluating the current environment and picking the most appropriate action that contributes to current strategy.
 
 For example: **agent chose to kill player**, because the player is really effective at collecting points and there is no way the agent will outpace him. In this case a combination of rules will fire that determine if a player is close enough to be attacked. In the case that it is - **attack**, otherwise - **move** in a direction of a player.
-## Bayesian network
+
+## Bayesian network --> [link to code](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/bayesian_network.py)
+
+Drools rule engine gains information about player's stats from facts.
+Not all info can be known right away, at the start of a game.
+Most of the time, rules engine only has partial information about player stats, 
+while agent's capability assessment process heavily depends on having complete information.
+The Solution to this partial information problem is **Bayesian network**.
+
+### Versions:
+
+Bayesian network get created inside DroolsBrain class, 
+during agent's creation, when a game session gets initialized.
+
+There are two versions of a network:
+
+**Version 1 (with mood)**
+
+```mermaid
+flowchart TD
+    SpeedMod["speed_mod"] --> Damage["damage"]
+    Damage --> Ammo["ammo"]
+    Ammo --> RechargeTime["recharge_time"]
+    Damage --> Range["range"]
+    SpeedMod --> Mood["mood"]
+    Damage --> Mood
+```
+
+**Version 2 (without mood)**
+
+```mermaid
+flowchart TD
+    SpeedMod["speed_mod"] --> Damage["damage"]
+    Damage --> Ammo["ammo"]
+    Ammo --> RechargeTime["recharge_time"]
+    Damage --> Range["range"]
+```
