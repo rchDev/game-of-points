@@ -38,7 +38,7 @@ An overview of how the agent makes decisions.
 {: .no_toc }
 
 ```mermaid
-graph LR    ;
+graph LR;
     A[Player Action] -->|Registered as| B[Fact];
     B -->|inference rules| C[Agent Knowledge];
     C -->|possibilities rules| D[Agent Possibilities];
