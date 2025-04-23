@@ -38,9 +38,9 @@ Agent fills information gaps by querying the [**bayes net**]() for the most prob
 with a set of query (unknown) and a set of evidence (known) variables.
 
 **Agent gathers information:**
-at the start of a match all variables unknown (**query**). 
-As player and agent act in the environment, 
-agent gathers information about player (**evidence**). 
+at the start of a match, all variables are unknown (**query**). 
+As both the player and the agent act in the environment, 
+the agent gathers information about the player (**evidence**). 
 
 **Reasoning** (in the context of this simulation) is the process of finding the most appropriate decision to achieve the **desired outcome**.
 
@@ -52,8 +52,6 @@ agent gathers information about player (**evidence**).
 1. gathered information from agent's knowledge base: queries, evidence are used to evaluate agent's capabilities (**possibilities**). 
 2. Based on those capabilities a strategy is chosen (**make a choice**). 
 3. Then, the most appropriate action that best implements the selected strategy is chosen and applied.
-
-
 
 ### Reasoning participants
 {: .no-toc}
