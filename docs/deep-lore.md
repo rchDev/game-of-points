@@ -113,17 +113,18 @@ We essentially insert a bunch of items that will be used by [Drools rules](https
 
 ```mermaid
 flowchart TD
+ flowchart TD
     A["Can agent kill player?"] -->|yes| B["Can player kill agent?"]
     A -->|no| C["Can player kill agent?"]
 
     B -->|yes| D["Game time > 50%"]
-    B -->|no| E[kill]
+    B -->|no| E[kill]:::leaf
 
     D -->|yes| F["Is player close?"]
     D -->|no| G["Game time <= 50% and > 15%"]
 
-    F -->|yes| H[avoid]
-    F -->|no| I[safe-collect]
+    F -->|yes| H[avoid]:::leaf
+    F -->|no| I[safe-collect]:::leaf
 
     G -->|yes| J["Is it worth collecting points?"]
     G -->|no| K["Game time <= 15%"]
@@ -131,35 +132,37 @@ flowchart TD
     J -->|yes| L["Is player close?"]
     J -->|no| M["Can player one shoot agent?"]
 
-    L -->|yes| N[avoid]
-    L -->|no| O[safe-collect]
+    L -->|yes| N[avoid]:::leaf
+    L -->|no| O[safe-collect]:::leaf
 
     M -->|yes| P["Is player close?"]
     M -->|no| Q["Can agent one shoot player?"]
 
-    P -->|yes| R[avoid]
-    P -->|no| S[safe-collect]
+    P -->|yes| R[avoid]:::leaf
+    P -->|no| S[safe-collect]:::leaf
 
-    Q -->|yes| T[kill]
+    Q -->|yes| T[kill]:::leaf
     Q -->|no| U["Did player shoot at you?"]
 
-    U -->|yes| V[kill]
-    U -->|no| W[aggressive-collect]
+    U -->|yes| V[kill]:::leaf
+    U -->|no| W[aggressive-collect]:::leaf
 
     K -->|yes| X["Is it worth collecting points?"]
-    K -->|no| Y[kill]
+    K -->|no| Y[kill]:::leaf
 
     X -->|yes| Z["Is player close?"]
-    X -->|no| AA[kill]
+    X -->|no| AA[kill]:::leaf
 
-    Z -->|yes| AB[avoid]
-    Z -->|no| AC[safe-collect]
+    Z -->|yes| AB[avoid]:::leaf
+    Z -->|no| AC[safe-collect]:::leaf
 
     C -->|yes| AD["Is player close?"]
-    C -->|no| AE[aggressive-collect]
+    C -->|no| AE[aggressive-collect]:::leaf
 
-    AD -->|yes| AF[avoid]
-    AD -->|no| AG[safe-collect]
+    AD -->|yes| AF[avoid]:::leaf
+    AD -->|no| AG[safe-collect]:::leaf
+
+    classDef leaf fill:#cfc,stroke:#333,stroke-width:1px;
 ```
    
 ## Bayesian network
