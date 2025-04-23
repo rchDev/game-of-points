@@ -38,12 +38,12 @@ An overview of how the agent makes decisions.
 {: .no_toc }
 
 ```mermaid
-graph LR;
+graph LR    ;
     A[Player Action] -->|Registered as| B[Fact];
-    B -->|inference group rules update| C[Agent Knowledge];
-    C -->|possibilities group rules update| D[Agent Possibilities];
-    D -->|agent choices group rules determine| E[Agent Strategy Choice];
-    E -->|agent actions group rules determine|;
+    B -->|inference rules| C[Agent Knowledge];
+    C -->|possibilities rules| D[Agent Possibilities];
+    D -->|choices rules| E[Agent Strategy Choice];
+    E -->|actions rules| F[Agent Action];
 ```
 
 ## Reasoning process
