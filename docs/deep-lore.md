@@ -109,7 +109,23 @@ We essentially insert a bunch of items that will be used by [Drools rules](https
 
 ## Drools Rules
 
-[Rules that belong to agent choices group](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl) basically implement this decision tree structure:
+Based on their functional responsibility, rules are divided into four distinct groups:
+
+```mermaid
+block-beta
+   columns 1
+   A["Fact Inference"]
+   B["Possibilities"]
+   C["Agent Choices"]
+   D["Agent Actions"]
+   
+   A --> B
+   B --> C
+   C --> D
+```
+
+### [Agent choices rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl) basically implement this decision tree structure:
+{: .no-_toc }
 
 ```mermaid
 flowchart TD
