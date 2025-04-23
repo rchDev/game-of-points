@@ -114,14 +114,26 @@ Based on their functional responsibility, rules are divided into four distinct g
 ```mermaid
 block-beta
    columns 1
-   A["Fact Inference"]
+   A["Inference"]
    B["Possibilities"]
-   C["Agent Choices"]
-   D["Agent Actions"]
+   C["Choices"]
+   D["Actions"]
 ```
+### [Inference rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
+{: .no_toc}
+
+These rules fire on inserted facts and update agent knowledge base.
+
+**Example:** a fact about player using their weapon was inserted into kieSession 
+and the damage was felt by an agent, a rule: ["Player shot"](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl) will fire and update [agents' knowledge base](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/knowledge/AgentKnowledge.java).
+
+### [Possibilities rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/possibilities_rules.drl)
+{: .no_toc}
+
+
 
 ### [Agent choices rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl) 
-{: .no-_toc }
+{: .no_toc }
 
 Based on agent possibilities that we've inserted by the previous layer rules, 
 this group basically implements the decision tree structure seen below and 
@@ -182,5 +194,12 @@ flowchart TD
     AD -->|yes| AF[avoid]
     AD -->|no| AG[safe-collect]
 ```
-   
+### [Agent Action Rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/agent_action_rules.drl)
+{: .no_toc }
+
+Once the previous layer rules have successfully ran and inserted agent's strategy choice, this layer is ran.
+
+Rules in this layer are responsible for evaluating the current environment and picking the most appropriate action that contributes to current strategy.
+
+For example: **agent chose to kill player**, because the player is really effective at collecting points and there is no way the agent will outpace him. In this case a combination of rules will fire that determine if a player is close enough to be attacked. In the case that it is - **attack**, otherwise - **move** in a direction of a player.
 ## Bayesian network
