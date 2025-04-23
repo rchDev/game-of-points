@@ -42,7 +42,7 @@ block-beta
    columns 5
    A["PlayerAction"] space B["Fact"] space C["AgentKnowledge"]
    space space space space space
-   F["AgentPossibilities"] space E["AgentChoice"] space D["AgentAction"]
+   F["AgentAction"] space E["AgentChoice"] space D["AgentPossibilities"]
 
    A --> B
    B --> C
