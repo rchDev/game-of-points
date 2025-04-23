@@ -118,10 +118,6 @@ block-beta
    B["Possibilities"]
    C["Agent Choices"]
    D["Agent Actions"]
-   
-   A --> B
-   B --> C
-   C --> D
 ```
 
 ### [Agent choices rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl) basically implement this decision tree structure:
