@@ -120,8 +120,17 @@ block-beta
    D["Agent Actions"]
 ```
 
-### [Agent choices rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl) basically implement this decision tree structure:
+### [Agent choices rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl) 
 {: .no-_toc }
+
+Based on agent possibilities that we've inserted by the previous layer rules, 
+this group basically implements the decision tree structure seen below and 
+produces strategy choice for an agent. Possible strategies include:
+1. Avoid player.
+2. Collect points - safely (while avoiding player).
+3. Collect points - aggressively (while ignoring player).
+4. Kill player.
+
 
 ```mermaid
 flowchart TD
