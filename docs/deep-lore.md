@@ -292,22 +292,21 @@ The main use for Bayes net in my app is to: **get the most probable combination 
 but the game server, where this bayes net will be used, is written in Java. So i used **py4j** to translate
 and the exchange JVM objects with Python interpreter.
 
-For py4j to work, it needs a Gateway server on Python side, that runs on some port and listens on another, 
-hen on Java side you instantiate a Gateway server which at the point of calling:
-bayesGatewayServer.getPythonServerEntryPoint(new Class[]{BayesPythonManager.class}); creates a connection between two servers.
-
-{: .note }
-Python side server has to be up before Java side one, because Java side initiates the connection.
-
-**What is BayesPythonManager?**
+For **py4j** to work, it needs a Gateway server on Python side, that runs on some port and listens on another, 
+then on Java side you instantiate a Gateway server which at the point of calling:
 
 ```java
-package io.rizvan.utils;
+bayesGatewayServer.getPythonServerEntryPoint(new Class[]{BayesPythonManager.class});
+```
 
-import io.quarkus.runtime.Startup;
-import jakarta.annotation.PostConstruct;
-import jakarta.inject.Singleton;
-import py4j.GatewayServer;
+creates a connection between two servers.
+
+{: .note }
+The Python-side server must be running before the Java-side server, as the Java side initiates the connection.  
+Since this class is instantiated during server startup, the Python servers must be up before the Java game server starts.
+
+```java
+...
 
 @Singleton
 @Startup
@@ -356,6 +355,24 @@ public class PythonGateway {
     public SentimentPythonManager getSentimentAnalyser() {
         return sentimentPythonManager;
     }
+}
+```
+
+**What is BayesPythonManager?**
+It's an interface that defines a contract which Python side has to implement. It is probably used to inform **py4j's** serializers and mappers.
+You pass it to a gateway server and get an object which contains all those methods that you can then use to call the actual Bayes-net on the Python side.
+```java
+...
+public interface BayesPythonManager {
+    void add_nodes(List<String> nodes);
+
+    void add_edges(List<String[]> edges);
+
+    void add_cpd(String variable, int variable_card, double[][] values, String[] evidence, int[] evidence_card);
+
+    void finalize_model();
+
+    Map<String, Integer> map_query(String[] query, String[][] evidence);
 }
 ```
 
