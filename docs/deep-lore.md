@@ -284,9 +284,80 @@ The main use for Bayes net in my app is to: **get the most probable combination 
 ### Used libraries:
 {: .no_toc}
 
-[pgmpy](https://pgmpy.org/)
+[pgmpy (Probabilistic Graphical Models using Python)](https://pgmpy.org/) - Python library designed for working with probabilistic graphical models (PGMs) such as Bayesian Networks and Markov Networks.
 
-[py4j](https://www.py4j.org/)
+[py4j (A Bridge between Python and Java)](https://www.py4j.org/) - Py4J enables Python programs running in a Python interpreter to dynamically access Java objects in a Java Virtual Machine.
+
+**pgmpy** was used for creating the actual bayes network in python: [here](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/bayesian_network.py), 
+but the game server, where this bayes net will be used, is written in Java. So i used **py4j** to translate
+and the exchange JVM objects with Python interpreter.
+
+For py4j to work, it needs a Gateway server on Python side, that runs on some port and listens on another, 
+hen on Java side you instantiate a Gateway server which at the point of calling:
+bayesGatewayServer.getPythonServerEntryPoint(new Class[]{BayesPythonManager.class}); creates a connection between two servers.
+
+{: .note }
+Python side server has to be up before Java side one, because Java side initiates the connection.
+
+**What is BayesPythonManager?**
+
+```java
+package io.rizvan.utils;
+
+import io.quarkus.runtime.Startup;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Singleton;
+import py4j.GatewayServer;
+
+@Singleton
+@Startup
+public class PythonGateway {
+    private GatewayServer bayesGatewayServer;
+    private GatewayServer sentimentGatewayServer;
+    private BayesPythonManager bayesManager;
+    private SentimentPythonManager sentimentPythonManager;
+
+    @PostConstruct
+    public void init() {
+
+        bayesGatewayServer = new GatewayServer(
+                null,                    // entryPoint
+                25333,                   // port
+                25334,                   // pythonPort
+                GatewayServer.defaultAddress(),  // address
+                GatewayServer.defaultAddress(),  // pythonAddress
+                GatewayServer.DEFAULT_CONNECT_TIMEOUT,  // connectTimeout
+                GatewayServer.DEFAULT_READ_TIMEOUT,     // readTimeout
+                null                      // customCommands
+        );
+        bayesGatewayServer.start();
+
+        // Initialize the Sentiment Gateway Server with its own Python and callback ports
+        sentimentGatewayServer = new GatewayServer(
+                null,
+                25335,
+                25336,
+                GatewayServer.defaultAddress(),  // address
+                GatewayServer.defaultAddress(),  // pythonAddress
+                GatewayServer.DEFAULT_CONNECT_TIMEOUT,  // connectTimeout
+                GatewayServer.DEFAULT_READ_TIMEOUT,
+                null
+        );
+        sentimentGatewayServer.start();
+
+        bayesManager = (BayesPythonManager) bayesGatewayServer.getPythonServerEntryPoint(new Class[]{BayesPythonManager.class});
+        sentimentPythonManager = (SentimentPythonManager) sentimentGatewayServer.getPythonServerEntryPoint(new Class[]{SentimentPythonManager.class});
+    }
+
+    public BayesPythonManager getBayesNetwork() {
+        return bayesManager;
+    }
+
+    public SentimentPythonManager getSentimentAnalyser() {
+        return sentimentPythonManager;
+    }
+}
+```
 
 ### Construction:
 {: .no_toc}
@@ -310,8 +381,6 @@ unless you create a truncated speed/damage variable.
 
 **Versions:**
 {: .no_toc}
-
-As mentioned before, in creation section, there are two versions of a network:
 
 **Version 1 (with mood)**
 
