@@ -302,8 +302,7 @@ bayesGatewayServer.getPythonServerEntryPoint(new Class[]{BayesPythonManager.clas
 creates a connection between two servers.
 
 {: .note }
-The Python-side server must be running before the Java-side server, as the Java side initiates the connection.  
-Since this class is instantiated during server startup, the Python servers must be up before the Java game server starts.
+The Python-side server must be running before the Java-side server, as the Java side initiates the connection. Since this class is instantiated during server startup, the Python servers must be up before the Java game server starts.
 
 ```java
 ...
@@ -409,8 +408,68 @@ unless you create a truncated speed/damage variable.
 1. Go through the whole weapon list, **count** how many times each value of every weapon stat showed up.
 2. Divide stat counts by the total weapon count to get the **marginal probability** of that stat showing up.
 3. If the stat is fully independent, we already have all the info we need.
-4. In the case when weapon stat is only conditionally independent while knowing some other stat, we cal
-5. In instance when we can add mood variable
+4. Otherwise, when weapon stat is only conditionally independent while knowing some other stat, we count how many times did the query-evidence combo occur and divide the count by the total number of weapons. This way we get joint probability: P(query, evidence). To get P(query | evidence), we divide joint probability by marginal probability of evidence: P(evidence).
+At the end of this we get conditional probability distribution table in a form of matrix, that we could then feed into **add_cpd** function. 
+{: .note} There's a bunch of additional stuff going on this function. Most of it is just convenience metadata.
+   In an instance when we can add mood variable
+```java
+    private ConditionalResult getConditionalProbabilities(
+        List<Weapon> weapons,
+        MarginalResult marginalResult,
+        List<Pair<Weapon.Stat, Weapon.Stat>> conditionalRelations
+) {
+        HashMap<Weapon.Stat, HashMap<Weapon.Stat, double[][]>> statCPDs = new HashMap<>();
+        HashMap<Weapon.Stat, List<Number>> statQueryValues = new HashMap<>();
+        HashMap<Weapon.Stat, List<Number>> statEvidenceValues = new HashMap<>();
+
+        for (var relation : conditionalRelations) {
+            var queryStat = relation.getFirst();
+            var evidenceStat = relation.getSecond();
+
+            var queryValues = marginalResult.values.get(queryStat);
+            var evidenceValues = marginalResult.values.get(evidenceStat);
+
+            // Init conditional probability distribution table from query-evidence pair
+            double[][] cpd = new double[queryValues.size()][evidenceValues.size()];
+            for (int i = 0; i < queryValues.size(); i++) {
+                for (int j = 0; j < evidenceValues.size(); j++) {
+                    cpd[i][j] = 0.0;
+                }
+            }
+
+            // Count how many times does each combo of query-evidence occur
+            for (var weapon : weapons) {
+                int queryIndex = queryValues.indexOf(weapon.getStat(queryStat));
+                int evidenceIndex = evidenceValues.indexOf(weapon.getStat(evidenceStat));
+
+                cpd[queryIndex][evidenceIndex]++;
+            }
+
+            // Calculate conditional prob P(query|evidence) by:
+            // 1. computing joint probability P(query,evidence) by dividing query-evidence occurrences by total weapon count
+            // 2. dividing joint probability by the marginal probability of P(evidence) to get P(query|evidence)
+           for (int i = 0; i < queryValues.size(); i++) {
+                for (int j = 0; j < evidenceValues.size(); j++) {
+                    var evidenceProb = marginalResult.probabilities.get(evidenceStat).get(j);
+                    cpd[i][j] /= weapons.size();
+                    cpd[i][j] /= evidenceProb;
+                }
+            }
+
+           var statCPDValues = new HashMap<Weapon.Stat, double[][]>();
+           statCPDValues.put(evidenceStat, cpd);
+           statCPDs.put(queryStat, statCPDValues);
+           statQueryValues.put(queryStat, queryValues);
+           statEvidenceValues.put(evidenceStat, evidenceValues);
+        }
+
+        // Use streams to group and count the values
+        return new ConditionalResult(statQueryValues, statEvidenceValues, statCPDs);
+    }
+```
+5. 
+
+
 
 ### Versions:
 {: .no_toc}
