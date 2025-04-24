@@ -471,7 +471,11 @@ In an instance when we can add mood variable
         return new ConditionalResult(statQueryValues, statEvidenceValues, statCPDs);
     }
 ```
-5. dsdsddsd
+<ol start="5">
+  <li>Item five</li>
+  <li>Item six</li>
+  <li>Item seven</li>
+</ol>
 
 ### Versions:
 {: .no_toc}
