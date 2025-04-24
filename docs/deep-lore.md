@@ -281,19 +281,37 @@ Known stats are presented as **evidence** and unknown are given as **query** var
 
 The main use for Bayes net in my app is to: **get the most probable combination of random variables.**
 
-### Creation:
-{: .no_toc}
-
 ### Used libraries:
 {: .no_toc}
 
-### Versions:
+[pgmpy](https://pgmpy.org/)
+
+[py4j](https://www.py4j.org/)
+
+### Construction:
 {: .no_toc}
 
-Bayesian network get created inside DroolsBrain class, 
+Bayesian network get created inside DroolsBrain class,
 during agent's creation, when a game session gets initialized.
 
-There are two versions of a network:
+Network is created by using weapon cache data and player answers database, which consists of weapon-mood combinations.
+
+There are two version of a network: one with mood node and one without it.
+Which version get created depends on multiple factors, such as:
+1. Did we receive player mood answer from the conversational agent session during the session initialization phase:
+   - yes - check the other condition,
+   - no - create bayes net without mood variable.
+2. Does the player answers database contain all possible damage and speed values. 
+Mood variable depends on speed and damage variables, 
+so you cannot connect mood with speed and damage if some of the values are missing, 
+unless you create a truncated speed/damage variable.
+   - yes - create with mood variable.
+   - no - create without mood variable.
+
+**Versions:**
+{: .no_toc}
+
+As mentioned before, in creation section, there are two versions of a network:
 
 **Version 1 (with mood)**
 
@@ -316,3 +334,5 @@ flowchart TD
     Ammo --> RechargeTime["recharge_time"]
     Damage --> Range["range"]
 ```
+
+**Process:**
