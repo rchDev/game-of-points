@@ -411,8 +411,9 @@ unless you create a truncated speed/damage variable.
 4. Otherwise, when weapon stat is only conditionally independent while knowing some other stat, we count how many times did the query-evidence combo occur and divide the count by the total number of weapons. This way we get joint probability: P(query, evidence). To get P(query | evidence), we divide joint probability by marginal probability of evidence: P(evidence).
 At the end of this we get conditional probability distribution table in a form of matrix, that we could then feed into **add_cpd** function. 
 
-{: .note} There's a bunch of additional stuff going on this function. Most of it is just convenience metadata.
-   In an instance when we can add mood variable
+{: .note} 
+There's a bunch of additional stuff going on this function. Most of it is just convenience metadata.
+In an instance when we can add mood variable
 
 ```java
     private ConditionalResult getConditionalProbabilities(
