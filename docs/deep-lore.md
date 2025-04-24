@@ -378,8 +378,16 @@ public interface BayesPythonManager {
 
 ### Construction:
 {: .no_toc}
+Now that we have Python objects available to us, we can use methods:
+1. add_nodes
+2. add_edges
+3. add_cpd
+4. finalize_model
 
-Bayesian network get created inside DroolsBrain class,
+to construct the Bayes-net.
+
+
+Bayesian network gets created inside DroolsBrain class,
 during agent's creation, when a game session gets initialized.
 
 Network is created by using weapon cache data and player answers database, which consists of weapon-mood combinations.
@@ -396,7 +404,15 @@ unless you create a truncated speed/damage variable.
    - yes - create with mood variable.
    - no - create without mood variable.
 
-**Versions:**
+**Construction process:**
+
+1. Go through the whole weapon list, **count** how many times each value of every weapon stat showed up.
+2. Divide stat counts by the total weapon count to get the **marginal probability** of that stat showing up.
+3. If the stat is fully independent, we already have all the info we need.
+4. In the case when weapon stat is only conditionally independent while knowing some other stat, we cal
+5. In instance when we can add mood variable
+
+### Versions:
 {: .no_toc}
 
 **Version 1 (with mood)**
@@ -420,5 +436,3 @@ flowchart TD
     Ammo --> RechargeTime["recharge_time"]
     Damage --> Range["range"]
 ```
-
-**Process:**
