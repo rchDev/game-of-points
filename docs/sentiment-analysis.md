@@ -49,8 +49,37 @@ I still tried to use that data in training, but as my intuition was telling me, 
 **The result of using this data:** incredible training and test accuracy >0.98, but terrible real world results.
 The trained model couldn't even classify the simplest answers, like: "I'm feeling great."
 
-### Training metadata
+### Training code
 
+```python
+def train_model(self, sentences, labels, epochs=15, batch_size=32):
+    try:
+        # Convert labels to one-hot encoding: [1, 0, 0], [0, 1, 0], [0, 0, 1]
+        labels = tf_keras.utils.to_categorical(labels, num_classes=3)
 
+        # Define early stopping function callback
+        early_stopping = tf_keras.callbacks.EarlyStopping(
+            monitor='val_loss', # monitor validation loss
+            patience=3, # stop when validation loss doesn't get smaller for more than 3 epohs.
+            restore_best_weights=True # when stopped, use not the latest epohs results, but the best possible results.
+        )
+        
+        # Keras fit function gets called which calculates loss and gradiends, 
+        # then applies the Adam optimizer to update model weights and does so for all 32 batches, for 15 epohs
+        self.model.fit(
+            np.array(sentences),
+            np.array(labels),
+            epochs=epochs,
+            batch_size=batch_size,
+            validation_split=0.2,
+            callbacks=[early_stopping]
+        )
+        
+        logger.info("Model trained successfully.")
+        return "Training completed"
+    except Exception as e:
+        logger.error(f"Error during training: {e}")
+        raise
+```
 
 ## Usage
