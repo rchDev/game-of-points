@@ -15,6 +15,18 @@ The point of sentiment analysis in my application is to take a mood description 
 
 ## Training
 
+### Command
+
+**In projects root:**
+
+{: .note}
+Only csv parsing was implemented...
+
+```shell
+cd game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis
+poetry run python sentiment_classifier.py train --csv <data_file_name.csv>
+```
+
 ### Data
 There are many pretrained emotion/sentiment classifiers, but since I had to build my own. 
 The first and the hardest problem I had to tacle was: **getting labeled data**.
@@ -31,10 +43,14 @@ I still tried to use that data in training, but as my intuition was telling me, 
 1. **unbalanced** - too many labels of one class (e.g. optimistic),
 2. **lots of duplicates** - same exact answer showing up many times,
 3. **not diverse** - comes from a single source (my mind, some probably from LLM),
-4. **no noise** - sentences were perfect: no typos, no grammatical errors, no slang terms, correct punctuation...
-5. **inconsistent labels** - duplicated values having different labels
+4. **no noise** - sentences were perfect: no typos, no grammatical errors, no slang terms, correct punctuation,
+5. **inconsistent labels** - duplicated values having different labels.
 
-The result of using this data was: incredible training and test accuracy >0.98, but terrible real world results.
+**The result of using this data:** incredible training and test accuracy >0.98, but terrible real world results.
 The trained model couldn't even classify the simplest answers, like: "I'm feeling great."
+
+### Training metadata
+
+
 
 ## Usage
