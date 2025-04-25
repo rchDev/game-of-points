@@ -13,6 +13,10 @@ The point of sentiment analysis in my application is to take a mood description 
 2. Neutral
 3. Pessimistic
 
+## [sentiment_classifier.py](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L47-L71)
+
+The solution is written in python, but is used in Java project. This is enabled by the py4j library. More info can be found in a write-up about [Bayesian network](/sentiment-analysis#used-libraries).
+
 ## Training
 
 ### Command
@@ -49,7 +53,7 @@ I still tried to use that data in training, but as my intuition was telling me, 
 **The result of using this data:** incredible training and test accuracy >0.98, but terrible real world results.
 The trained model couldn't even classify the simplest answers, like: "I'm feeling great."
 
-### Training code
+### [Training code](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L47-L71)
 
 ```python
 def train_model(self, sentences, labels, epochs=15, batch_size=32):
