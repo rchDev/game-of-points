@@ -12,7 +12,7 @@ Delve deeper into the inner workings of a project
 
 ## Overview of what's going on:
 
-**Questioning before a game match action sequence:**
+**Full game initialization sequence:**
 ```mermaid
 sequenceDiagram
     participant Player
@@ -54,7 +54,7 @@ sequenceDiagram
 
 ```
 
-**Gameplay and reasoning action sequence:**
+**Gameplay and reasoning sequence:**
 ```mermaid
 sequenceDiagram
     participant User
