@@ -9,16 +9,13 @@ permalink: /agent-reasoning/
 # Agent Reasoning
 {: .no_toc }
 
-# Agent Reasoning
-{: .no_toc }
-
 An overview of agent's decision-making process.
 
 ## Table of contents
 {: .no_toc .text-delta }
 
 - TOC
-  {:toc}
+{:toc}
 
 ---
 
