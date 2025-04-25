@@ -10,11 +10,6 @@ permalink: /deep-lore/
 
 Delve deeper into the inner workings of a project
 
-- TOC
-{:toc}
-
----
-
 ## Overview of what's going on:
 
 **Full game initialization sequence:**
