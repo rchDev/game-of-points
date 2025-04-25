@@ -39,6 +39,8 @@ sequenceDiagram
         GameServer ->> Sentiment: Analyze mood text
         Sentiment -->> GameServer: Return mood class
     end
+    
+    GameServer ->> GameServer: Perform probability calculations and create CPDs
 
     %% Agent + Bayes Net creation
     GameServer ->> Bayes: add_nodes
@@ -77,15 +79,4 @@ sequenceDiagram
         Server ->> Frontend: Send updated game state
         Frontend ->> Frontend: Reconcile authoritative server state with local simulation
     end
-```
-
-## Testing links
-```mermaid
-graph TD
-    Frontend["[Frontend](https://yourdomain.com/docs/frontend)"]
-    GameServer["[Game Server](https://yourdomain.com/docs/server)"]
-    Sentiment["[Sentiment Analysis](https://yourdomain.com/docs/sentiment)"]
-    
-    Frontend --> GameServer
-    GameServer --> Sentiment
 ```
