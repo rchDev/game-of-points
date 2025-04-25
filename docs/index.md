@@ -224,7 +224,7 @@ npm run dev
 
 ## 🏗️ System overview
 
-#### Main components:
+### Main components:
 {: .no_toc }
 
 1. Game frontend application.
@@ -234,7 +234,38 @@ npm run dev
 5. Google's conversational agent.
 6. Ngrok as a tunnel service connecting Google's conversational agent to local game server.
 
-#### Basic data flow:
+```mermaid
+graph TD
+  A[Game Frontend Application]
+  B[Game Server]
+  C[Bayesian Network Server]
+  D[Sentiment Classifier Server]
+  E[Google's Conversational Agent]
+  F[Ngrok Tunnel Service]
+
+  A -->|"Player Actions"| B
+  A -->|"Chat message"| E
+  E -->|"Response message"| A
+  B --> |"Authoritative Game State"| A
+  B -->|"MAP query request"| C
+  C -->|"Most probable stat combo"| B
+  E -->|"Validation Requests"| F
+  F -->|"Forwarded Validation Responses"| E
+  F -->|"Forwarded Validation Requests"| B
+  B -->|"Validation Responses"| F
+  B -->|"Player Mood Description"| D
+  D -->|"Mood Class"| B
+
+  style A fill:#90EE90,stroke:#333,stroke-width:2px
+  style B fill:#87CEFA,stroke:#333,stroke-width:2px
+  style C fill:#FFFFE0,stroke:#333,stroke-width:2px
+  style D fill:#FFFFE0,stroke:#333,stroke-width:2px
+  style E fill:pink,stroke:#333,stroke-width:2px
+  style F fill:#D3D3D3,stroke:#333,stroke-width:2px
+
+```
+
+### Basic data flow:
 {: .no_toc }
 
 {: .info }
