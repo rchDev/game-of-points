@@ -10,6 +10,11 @@ permalink: /deep-lore/
 
 Delve deeper into the inner workings of a project
 
+- TOC
+{:toc}
+
+---
+
 ## Overview of what's going on:
 
 **Full game initialization sequence:**
@@ -40,13 +45,13 @@ sequenceDiagram
         Sentiment -->> GameServer: Return mood class
     end
     
-    GameServer ->> GameServer: Perform probability calculations and create CPDs
+    GameServer ->> GameServer: Calculate probabilities and create CPDs
 
     %% Agent + Bayes Net creation
-    GameServer ->> Bayes: add_nodes
-    GameServer ->> Bayes: add_edges
-    GameServer ->> Bayes: add_cpd_tables
-    GameServer ->> Bayes: finalize_model
+    GameServer ->> Bayes: call add_nodes
+    GameServer ->> Bayes: call add_edges
+    GameServer ->> Bayes: call add_cpds
+    GameServer ->> Bayes: call finalize_model
 
     GameServer ->> GameServer: Create agent and game state
     GameServer -->> Frontend: Return session ID + game state
@@ -72,6 +77,7 @@ sequenceDiagram
     %% === Periodic Server Tick Loop ===
     loop Every 20ms (server tick)
         Server ->> Server: Validate and apply player actions
+        Server ->> Server: Store player actions as facts
         Server ->> Server: Call agent.reason(gameState)
         Server ->> BayesNet: Request most probable player stat combo
         BayesNet -->> Server: Return the most probable stat combo
