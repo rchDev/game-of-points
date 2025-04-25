@@ -33,9 +33,9 @@ sequenceDiagram
     Dialogflow -->> Frontend: Indicate chat complete
 
     %% Game creation
-    Frontend ->> GameServer: Create game (with session ID)
-    GameServer ->> GameServer: Read stored session data
-    alt Player provided mood
+    Frontend ->> GameServer: send game creation request (with Dialogflow ID)
+    GameServer ->> GameServer: Read stored player answers
+    alt Player provided mood description
         GameServer ->> Sentiment: Analyze mood text
         Sentiment -->> GameServer: Return mood class
     end
