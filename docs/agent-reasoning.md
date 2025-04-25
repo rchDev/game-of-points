@@ -266,7 +266,7 @@ there is no way the agent will outpace him.
 In this case a combination of rules will fire that determine if a player is within agents reach,
 in that case - **attack**, otherwise - **move** in player's direction.
 
-## Bayesian network --> [link to code](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/bayesian_network.py)
+## [Bayesian network](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/bayesian_network.py)
 
 Drools rule engine gains information about player's stats from facts.
 Not all info can be known right away, at the start of a game.
@@ -296,7 +296,9 @@ For **py4j** to work, it needs a Gateway server on Python side, that runs on som
 then on Java side you instantiate a Gateway server which at the point of calling:
 
 ```java
-bayesGatewayServer.getPythonServerEntryPoint(new Class[]{BayesPythonManager.class});
+bayesGatewayServer.getPythonServerEntryPoint(
+        new Class[]{ BayesPythonManager.class }
+);
 ```
 
 creates a connection between two servers.
