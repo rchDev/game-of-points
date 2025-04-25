@@ -78,3 +78,14 @@ sequenceDiagram
         Frontend ->> Frontend: Reconcile authoritative server state with local simulation
     end
 ```
+
+## Testing links
+```mermaid
+graph TD
+    Frontend["[Frontend](https://yourdomain.com/docs/frontend)"]
+    GameServer["[Game Server](https://yourdomain.com/docs/server)"]
+    Sentiment["[Sentiment Analysis](https://yourdomain.com/docs/sentiment)"]
+    
+    Frontend --> GameServer
+    GameServer --> Sentiment
+```
