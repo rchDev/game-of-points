@@ -265,11 +265,11 @@ graph TD
 
 ```
 
-### Basic data flow:
+### What is going on:
 {: .no_toc }
 
 {: .info }
-<a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">*Learn how to implement fast-paced multiplayer client-server communication*</a>
+<a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">*Article that was really helpful while implementing fast-paced multiplayer client-server communication*</a>
 
 {: .info }
 More info on [Agent Reasoning](/game-of-points/agent-reasoning/).
@@ -281,9 +281,9 @@ More info on [Agent Reasoning](/game-of-points/agent-reasoning/).
 5. Once the time for processing comes, server runs the loop through all sessions and starts applying updates for each of game states. See this <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/GameStateUpdateScheduler.java" target="_blank">code</a>. 
 6. Updating starts with cloning a game state, getting all player actions from the session storage and validating them. 
 7. Once actions are deemed valid, they are applied to the game state clone and are registered as **facts** for AI agent. (<a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/GameState.java">See this place</a>.)
-8. Once all facts are registered, <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java" target="_blank">agent.reason()</a> method which then uses Drools rule engine and Bayesian network to reason about the current game state, and make action choice decisions based on the current state configuration. 
+8. Once all facts are registered, [agent.reason(https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L271-L307)] method which then uses Drools rule engine and Bayesian network to reason about the current game state, and make action choice decisions based on the current state configuration. 
 9. After agent takes these actions, they are applied to the game state clone. 
 10. Clone is then placed into game state update history inside session storage.
-11. For each session update even is published.
-12. Controller (<a href="" target="_blank">@ConsumeEvent("game.update")</a>) listening for those update events, sends updated game states to each session.
-13. Frontend reconciles it's predicted game state with authoritative game state that's provided by backend. (<a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-fe/main.js" target="_blank">reconcileWithServerState(updatedGameState)</a>)
+11. For each session update event is published.
+12. [Controller](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/StartWebSocket.java#L100-L118) that's listening for those update events, sends updated game states to each session (frontend).
+13. Frontend reconciles it's predicted game state with authoritative game state that's provided by backend. ([reconcileWithServerState](https://github.com/rchDev/game-of-points/blob/main/game-of-points-fe/main.js#L341-L354))
