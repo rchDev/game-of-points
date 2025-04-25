@@ -25,7 +25,7 @@ sequenceDiagram
 
     Server ->> Server: Store player actions for processing
 
-    alt Every 20ms (server tick)
+    loop Every 20ms (server tick)
         Server ->> Server: Validate and apply player actions
         Server ->> Server: Call agent.reason(gameState)
         Server ->> BayesNet: Request most probable player stat combo
