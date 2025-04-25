@@ -77,7 +77,7 @@ sequenceDiagram
         Server ->> BayesNet: Request most probable player stat combo
         BayesNet -->> Server: Return the most probable stat combo
         Server ->> Server: Finish reasoning and apply agent actions to game state
-        Server ->> Frontend: Send updated game state
+        Server -->> Frontend: Send updated game state
         Frontend ->> Frontend: Reconcile authoritative server state with local simulation
     end
 ```
