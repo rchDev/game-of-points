@@ -15,7 +15,7 @@ The point of sentiment analysis in my application is to take a mood description 
 
 ## [sentiment_classifier.py](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L47-L71)
 
-The solution is written in python, but is used in Java project. This is enabled by the py4j library. More info can be found in a write-up about [Bayesian network](/game-of-points/sentiment-analysis#used-libraries).
+The solution is written in python, but is used in Java project. This is enabled by the py4j library. More info can be found in a write-up about [Bayesian network](/game-of-points/agent-reasoning#used-libraries).
 
 ## Training
 
