@@ -18,13 +18,15 @@ sequenceDiagram
     participant Frontend
     participant Server
     participant BayesNet as Bayes Network Server
-
+    
+    %% === Continuous Action Flow ===
     User ->> Frontend: Interact with game (e.g., move, click)
     Frontend ->> Server: Send player actions
     note right of Frontend: Simulates action locally
-
     Server ->> Server: Store player actions for processing
-
+    note right of Server: Action queuing runs concurrently
+    
+    %% === Periodic Server Tick Loop ===
     loop Every 20ms (server tick)
         Server ->> Server: Validate and apply player actions
         Server ->> Server: Call agent.reason(gameState)
