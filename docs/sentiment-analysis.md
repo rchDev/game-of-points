@@ -17,9 +17,10 @@ The point of sentiment analysis in my application is to take a mood description 
 
 ### Data
 There are many pretrained emotion/sentiment classifiers, but since I had to build my own. 
-The first and the hardest problem I had to tacle was, getting labeled data.
+The first and the hardest problem I had to tacle was: **getting labeled data**.
 
-At first, I've naively tried to use popular LLMs on the internet to generate unique player answers and their class labels, to a question: how do you feel before match?
+At first, I naively tried to use popular LLMs on the internet to generate unique player answers and their class labels, 
+to a proposed question: "how are feeling before this upcoming match?"
 As I recall, I've tried ChatGPT 4o, some version of Claude and Gemini.
 
 At the time of creating this model, at around Aug. 2024, none of these LLMs could generate unique data. 
