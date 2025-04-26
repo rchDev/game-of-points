@@ -122,7 +122,9 @@ cd game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analys
 poetry run python sentiment_classifier.py test "your sentence, describing the mood"
 ```
 
-This mode can be used to test the classification of one sentence. It doesn't spin up the py4j server.
+### What's going on
+
+This mode can be used to test or demonstrate the classification of one sentence. It doesn't spin up the py4j server.
 All it does, is:
 1. Construct the model.
 2. Load pretrained weights.
@@ -141,3 +143,16 @@ All it does, is:
 ```
 
 ## Prediction mode:
+
+### Command
+
+**In project's root run:**
+
+```shell
+cd game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis
+poetry run python sentiment_classifier.py predict
+```
+
+### What's going on
+
+This mode is for running sentiment (mood) prediction py4j server, that can be used by Java game server.
