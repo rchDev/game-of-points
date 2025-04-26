@@ -87,7 +87,24 @@ Now the set had:
 **Result:** satisfactory real-world performance when mood is described by myself.
 Simple responses like: "OK," "Good," "I'm feeling great," and "I'm scared" are classified correctly.
 
-### [Training code](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L47-L71)
+### The process of training
+
+First the function [train_mode(csv_file, epochs=15, batch_size=32)](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L137-L170) gets called where:
+1. CSV file is read into a pandas DataFrame.
+2. Then a map for mapping sentiment names to array labels get created.
+3. Labels in pandas DataFrame get converted to array indexes.
+4. We extract sentences and their labels into separate numpy ndArrays.
+5. We pass the extracted sentences and their labels into a helper function from sklearn library called: train_test_split and get four numpy arrays:
+   - training sentences - x_train (80%),
+   - training labels - y_train (80%),
+   - test sentences - x_test (20%),
+   - test labels - y_test (20%).
+6. Once data prep is done, we initialize SentimentAnalysisModel and save it into a variable called **model**.
+7. When the model is initialized, train_model(self, sentences, labels, epochs=15, batch_size=32) method gets called.
+8. Once the model is fully fitted, we test its performance on data that it has never seen, by calling a method called evaluate_model(x_test, y_test) with a test data and labels.
+9. Finally, we log test results to the standard output and save the model parameters to a local .keras type file.
+
+Inside a train_model function:
 
 ```python
 def train_model(self, sentences, labels, epochs=15, batch_size=32):
