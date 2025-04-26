@@ -313,7 +313,7 @@ I essentially used a transfer learning technique:
 ### Layers
 
 ```mermaid
-flowchart LR
+flowchart TD
     A["Input Sentence (String)"]:::input --> B["Pretrained Embedding Layer (NNLM from TF Hub)"]:::defaultstroke
     B --> C["Dense Layer (64 units, ReLU Activation)"]:::defaultstroke
     C --> D["Dropout Layer (30% Dropout)"]:::defaultstroke
