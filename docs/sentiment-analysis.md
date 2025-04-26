@@ -13,6 +13,84 @@ The point of sentiment analysis in my application is to take a mood description 
 2. Neutral
 3. Pessimistic
 
+## The model
+
+{: .note }
+I'm not a ML expert, I don't have the critical information needed to evaluate the quality of this solution.
+I just copied things from the internet until it worked.
+
+I essentially used a transfer learning technique:
+1. Took a huge neural net, froze it (don't have enough data to train in).
+2. Tacked on a bunch of densely connected layers, that I could train with my measly data set.
+3. Added the output layer that matched my multiclass classification problem.
+
+### Layers
+
+```mermaid
+flowchart TD
+    A["Input Sentence (String)"]:::input --> B["Pretrained Embedding Layer (NNLM from TF Hub)"]:::defaultstroke
+    B --> C["Dense Layer (64 units, ReLU Activation)"]:::defaultstroke
+    C --> D["Dropout Layer (30% Dropout)"]:::defaultstroke
+    D --> E["Dense Layer (32 units, ReLU Activation)"]:::defaultstroke
+    E --> F["Dropout Layer (30% Dropout)"]:::defaultstroke
+    F --> G["Output Dense Layer (3 units, Softmax Activation)"]:::defaultstroke
+    G --> H["Predicted Class (Sentiment Label)"]:::output
+
+    classDef input fill:#a8e6a3,stroke:#333,stroke-width:2px;
+    classDef output fill:#f7a8c1,stroke:#333,stroke-width:2px;
+    classDef defaultstroke stroke:#333,stroke-width:2px;
+```
+
+**Layer 0:** Pretrained embeddings layer. A smaller BERT alternative for getting contextual embeddings.
+
+{: .warning }
+This layer is locked for training, because I didn't have enough data to train that huge neural net.
+
+{: .note }
+Contextual means that you get different vector for each word based on the context that that word appears in.
+With traditional methods like: "Word2Vec" or "GloVe" you would get a fixed value vector for each word.
+In the famous bank example, when using traditional embeddings, the word bank would have same meaning in both of the sentences:
+"The bank of the river was flooded." and "I went to the bank to deposit money."
+
+**Layer 1:** The word vectors are first passed to a densely connected layer with 64 neurons, a ReLU activation function and an L2 regularizer, which penalizes large weight values.
+
+**Layer 2:** The output of the previous dense layer is then passed to a dropout layer, which randomly drops 30% of neurons during training (no effect during prediction) to help prevent overfitting — another regularization technique.
+
+**Layer 3:** Another dense layer with 32 neurons, ReLU activation and L2 regularization.
+
+**Layer 4:** Another 30% dropout layer to fight overfitting.
+
+**Layer 5:** Output layer, which is a densely connected layer with a softmax function activation function, that outputs three probabilities, one for each class.
+
+### Meta params:
+
+**Optimization target (loss function)** - Categorical crossentropy (don't know why, ChatGPT said it was good for multiclass classification problems)
+
+**Optimizer** - Adam (no clue why not RMSprop or some other optimizer. It just works...)
+
+**Learning rate** - 0.001 (don't know what is a good learning rate or how it should change during the training process)
+
+### [Full Code](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L20-L36)
+```python
+ def __init__(self):
+     # Load the pre-trained model and build the classifier
+     hub_url = "https://tfhub.dev/google/nnlm-en-dim50/2" # alternative to bert
+     self.pretrained_embedding_layer = hub.KerasLayer(hub_url, input_shape=[], dtype=tf.string, trainable=False)
+
+     self.model = tf_keras.Sequential([
+         hub.KerasLayer(hub_url, input_shape=[], dtype=tf.string, trainable=True),
+         tf_keras.layers.Dense(64, activation='relu', kernel_regularizer=tf_keras.regularizers.l2(0.01)),
+         tf_keras.layers.Dropout(0.3),
+         tf_keras.layers.Dense(32, activation='relu', kernel_regularizer=tf_keras.regularizers.l2(0.01)),
+         tf_keras.layers.Dropout(0.3),
+         tf_keras.layers.Dense(3, activation='softmax')  # three output nodes for three classes
+     ])
+
+     self.model.compile(optimizer=tf_keras.optimizers.Adam(learning_rate=0.001),
+                        loss='categorical_crossentropy', metrics=['accuracy'])
+     logger.info("SentimentAnalysisModel initialized.")
+```
+
 ## [sentiment_classifier.py](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py)
 
 The solution is written in python, but is used in Java project. 
@@ -298,81 +376,4 @@ def predict_sentiment(self, sentences):
         logger.error(f"Error during prediction: {e}")
         raise
 ...
-```
-## The model
-
-{: .note }
-I'm not a ML expert, I don't have the critical information needed to evaluate the quality of this solution. 
-I just copied things from the internet until it worked.
-
-I essentially used a transfer learning technique:
-1. Took a huge neural net, froze it (don't have enough data to train in).
-2. Tacked on a bunch of densely connected layers, that I could train with my measly data set.
-3. Added the output layer that matched my multiclass classification problem.
-
-### Layers
-
-```mermaid
-flowchart TD
-    A["Input Sentence (String)"]:::input --> B["Pretrained Embedding Layer (NNLM from TF Hub)"]:::defaultstroke
-    B --> C["Dense Layer (64 units, ReLU Activation)"]:::defaultstroke
-    C --> D["Dropout Layer (30% Dropout)"]:::defaultstroke
-    D --> E["Dense Layer (32 units, ReLU Activation)"]:::defaultstroke
-    E --> F["Dropout Layer (30% Dropout)"]:::defaultstroke
-    F --> G["Output Dense Layer (3 units, Softmax Activation)"]:::defaultstroke
-    G --> H["Predicted Class (Sentiment Label)"]:::output
-
-    classDef input fill:#a8e6a3,stroke:#333,stroke-width:2px;
-    classDef output fill:#f7a8c1,stroke:#333,stroke-width:2px;
-    classDef defaultstroke stroke:#333,stroke-width:2px;
-```
-
-**Layer 0:** Pretrained embeddings layer. A smaller BERT alternative for getting contextual embeddings.
-
-{: .warning }
-This layer is locked for training, because I didn't have enough data to train that huge neural net.
-
-{: .note }
-Contextual means that you get different vector for each word based on the context that that word appears in.
-With traditional methods like: "Word2Vec" or "GloVe" you would get a fixed value vector for each word. 
-In the famous bank example, when using traditional embeddings, the word bank would have same meaning in both of the sentences:
-"The bank of the river was flooded." and "I went to the bank to deposit money."
-
-**Layer 1:** The word vectors are first passed to a densely connected layer with 64 neurons, a ReLU activation function and an L2 regularizer, which penalizes large weight values.
-
-**Layer 2:** The output of the previous dense layer is then passed to a dropout layer, which randomly drops 30% of neurons during training (no effect during prediction) to help prevent overfitting — another regularization technique.
-
-**Layer 3:** Another dense layer with 32 neurons, ReLU activation and L2 regularization.
-
-**Layer 4:** Another 30% dropout layer to fight overfitting.
-
-**Layer 5:** Output layer, which is a densely connected layer with a softmax function activation function, that outputs three probabilities, one for each class.
-
-### Meta params:
-
-**Optimization target (loss function)** - Categorical crossentropy (don't know why, ChatGPT said it was good for multiclass classification problems)
-
-**Optimizer** - Adam (no clue why not RMSprop or some other optimizer. It just works...)
-
-**Learning rate** - 0.001 (don't know what is a good learning rate or how it should change during the training process)
-
-### [Full Code](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L20-L36)
-```python
- def __init__(self):
-     # Load the pre-trained model and build the classifier
-     hub_url = "https://tfhub.dev/google/nnlm-en-dim50/2" # alternative to bert
-     self.pretrained_embedding_layer = hub.KerasLayer(hub_url, input_shape=[], dtype=tf.string, trainable=False)
-
-     self.model = tf_keras.Sequential([
-         hub.KerasLayer(hub_url, input_shape=[], dtype=tf.string, trainable=True),
-         tf_keras.layers.Dense(64, activation='relu', kernel_regularizer=tf_keras.regularizers.l2(0.01)),
-         tf_keras.layers.Dropout(0.3),
-         tf_keras.layers.Dense(32, activation='relu', kernel_regularizer=tf_keras.regularizers.l2(0.01)),
-         tf_keras.layers.Dropout(0.3),
-         tf_keras.layers.Dense(3, activation='softmax')  # three output nodes for three classes
-     ])
-
-     self.model.compile(optimizer=tf_keras.optimizers.Adam(learning_rate=0.001),
-                        loss='categorical_crossentropy', metrics=['accuracy'])
-     logger.info("SentimentAnalysisModel initialized.")
 ```
