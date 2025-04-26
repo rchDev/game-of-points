@@ -26,8 +26,6 @@ I essentially used a transfer learning technique:
 
 ### Layers
 
-<div style="text-align: center;">
-
 ```mermaid
 flowchart TD
     A["Input Sentence (String)"]:::input --> B["Pretrained Embedding Layer (NNLM from TF Hub)"]:::defaultstroke
@@ -42,9 +40,6 @@ flowchart TD
     classDef output fill:#f7a8c1,stroke:#333,stroke-width:2px;
     classDef defaultstroke stroke:#333,stroke-width:2px;
 ```
-
-</div>
-
 
 **Layer 0:** Pretrained embeddings layer. A smaller BERT alternative for getting contextual embeddings.
 
