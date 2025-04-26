@@ -11,14 +11,6 @@ permalink: /agent-reasoning/
 
 An overview of agent's decision-making process.
 
-## Table of contents
-{: .no_toc .text-delta }
-
-- TOC
-{:toc}
-
----
-
 ## Overview
 
 Agent wants to make the best decision for the situation that it is in.
