@@ -175,34 +175,34 @@ All these steps should be performed from project's root directory.
 
 ***Mac or Linux:***
 
-Run bayes-net:
+(Step 1): Run bayes-net:
 
 ```shell
 cd ./game-of-points-be/src/main/java/io/rizvan/beans/actors/agent && \
 poetry run python bayesian_network.py
 ```
 
-Run sentiment classifier:
+(Step 2): Run sentiment classifier:
 
 ```shell
 cd ./sentiment-analysis
 poetry run python sentiment_classifier.py predict
 ```
 
-Run game server:
+(Step 3): Run game server:
 
 ```shell
 cd ../../../../../../../../../ && \
 ./mvnw quarkus:dev
 ```
 
-Run ngrok:
+(Step 4): Run ngrok:
 
 ```shell
 ngrok http --domain=<your_public_domain> 8080
 ```
 
-Run game frontend:
+(Step 5): Run game frontend:
 
 ```shell
 cd ../game-of-points-fe && \
@@ -211,10 +211,10 @@ npm run dev
 
 **Windows:**
 
-#### Launching with IntelliJ:
+**Launching with IntelliJ:**
 {: .no_toc }
 
-#### General launch rules:
+**General launch rules:**
 {: .no_toc }
 
 1. Game server depends on working python services (bayes-net and sentiment classifier).
