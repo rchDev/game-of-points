@@ -106,28 +106,28 @@ without hosting the game server yourself.
 
 ## 🚀 How to launch this project
 
-#### Project setup:
+### Project setup:
 {: .no_toc }
 
-Inside game-of-points project's root directory run: 
+**(Step 1): Inside game-of-points project's root directory run:**
 
 ```shell
 poetry install
 ``` 
 
-or activate virtual environment of your choice and run: 
+**or activate virtual environment of your choice and run:**
 
 ```shell
 pip install -r ./game-of-points-be/requirements.txt
 ```
 
-Inside game-of-points/game-of-points-fe, run: 
+**(Step 2): Inside game-of-points/game-of-points-fe, run:**
 
 ```shell
 npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversational agent id> npm install
 ```
 
-**(Optional)** Inside game-of-points/game-of-points-be, run:
+**(Optional) (Step 3): Inside game-of-points/game-of-points-be, run:**
 
 Mac or Linux:
 
@@ -163,17 +163,17 @@ cd ..\game-of-points-be
 mvnw.cmd clean install
 ```
 
-#### Launching the project
+### Launching the project
 {: .no_toc }
 
 Once you've set up the project, you can launch it in a few ways by following the steps described below.
 
-#### Launching without IntelliJ:
+**Launching without IntelliJ:**
 {: .no_toc }
 
 All these steps should be performed from project's root directory.
 
-**Mac or Linux:**
+***Mac or Linux:***
 
 Run bayes-net:
 
