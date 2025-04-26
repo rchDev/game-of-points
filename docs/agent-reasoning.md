@@ -282,7 +282,7 @@ Known stats are presented as **evidence** and unknown are given as **query** var
 The main use for Bayes net in my app is to: **get the most probable combination of random variables.**
 
 ### Used libraries:
-{: #used-libraries .no_toc}
+{: #used-libraries }
 
 [pgmpy (Probabilistic Graphical Models using Python)](https://pgmpy.org/) - Python library designed for working with probabilistic graphical models (PGMs) such as Bayesian Networks and Markov Networks.
 
