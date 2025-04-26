@@ -21,17 +21,17 @@ The solution is written in python, but is used in Java project. This is enabled 
 
 ### Command
 
-**In projects root:**
-
 {: .note}
 Only csv parsing was implemented...
+
+**In project's root run:**
 
 ```shell
 cd game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis
 poetry run python sentiment_classifier.py train --csv <data_file_name.csv>
 ```
 
-### Data
+### **Data**
 There are many pretrained emotion/sentiment classifiers, but since I had to build my own. 
 The first and the hardest problem I had to tacle was: **getting labeled data**.
 

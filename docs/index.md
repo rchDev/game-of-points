@@ -115,7 +115,7 @@ without hosting the game server yourself.
 poetry install
 ``` 
 
-**or activate virtual environment of your choice and run:**
+or activate virtual environment of your choice and run:
 
 ```shell
 pip install -r ./game-of-points-be/requirements.txt
@@ -163,7 +163,7 @@ cd ..\game-of-points-be
 mvnw.cmd clean install
 ```
 
-### Launching the project
+### **Launching the project**
 {: .no_toc }
 
 Once you've set up the project, you can launch it in a few ways by following the steps described below.
