@@ -132,14 +132,16 @@ All it does, is:
 4. Send the sentence and the predicted class to the standard output.
 
 ```python
-    elif args.mode == 'test':
-        if args.sentence:
-            print(f"sentence: {args.sentence}")
-            model = SentimentAnalysisModel()
-            model.load_model("sentiment_model.keras")
-            prediction = model.predict_sentiment([args.sentence])
-            print(f"prediction: {prediction}")
-            print(f"The sentiment is: {prediction[0]}")
+...
+elif args.mode == 'test':
+    if args.sentence:
+        print(f"sentence: {args.sentence}")
+        model = SentimentAnalysisModel()
+        model.load_model("sentiment_model.keras")
+        prediction = model.predict_sentiment([args.sentence])
+        print(f"prediction: {prediction}")
+        print(f"The sentiment is: {prediction[0]}")
+...
 ```
 
 ## Prediction mode:
@@ -156,3 +158,73 @@ poetry run python sentiment_classifier.py predict
 ### What's going on
 
 This mode is for running sentiment (mood) prediction py4j server, that can be used by Java game server.
+In this mode, fa unction called: [prediction_mode()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L172-L186) is called, where:
+1. SentimentAnalysis model is initialized.
+2. Pretrained weights are loaded from a file.
+3. py4j gateway server is started.
+
+```python
+...
+def prediction_mode():
+    # Initialize model and load pre-trained weights
+    model = SentimentAnalysisModel()
+    model.load_model("./sentiment_model.keras")
+
+    # Setup Py4J gateway
+    gateway = JavaGateway(
+        gateway_parameters=GatewayParameters(port=25335, auto_convert=True),
+        callback_server_parameters=CallbackServerParameters(port=25336),
+        python_server_entry_point=model
+    )
+    model.set_gateway(gateway)
+
+    logger.info("Python server for sentiment analysis is ready.")
+    # The server will keep running, waiting for requests from Java
+...
+```
+
+Then, before the creation of an agent, on the Java side, inside GameResource controller ([see this](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/resources/GameResource.java#L60-L66)).
+In the case that player has provided his mood description during the questioning, we:
+1. call a method: get_prediction() and pass it a mood description.
+2. [get_prediction()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L130-L132) calls a method: [self.predict_sentiment()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L106-L119), which takes a sentence, and returns a list of classes for each sentence (which is always one) (I know it's weird, don't judge...)
+3. On Java side we receive the class as a string, convert it into an enum.
+4. Then store this mood enum in player answers store.
+5. Next, store the answer in player answers database, which is then used for creating a Bayesnet.
+
+```java
+...
+if (playerAnswers.isPresent() && playerAnswers.get().getMoodDescription().isPresent()) {
+    var playerMoodDescription = playerAnswers.get().getMoodDescription().get();
+    var moodClass = pythonGateway.getSentimentAnalyser().get_prediction(playerMoodDescription);
+    var mood = PlayerMood.fromName(moodClass);
+    playerAnswers.get().setMood(mood);
+    weaponService.addWeaponWithMood(playerWeapon, mood);
+}
+...
+```
+
+Inside [predict_sentiment()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L106-L119)
+we:
+1. convert a single string into a numpy array for compatibility with keras stuff...
+2. we use the trained model to give us a prediction array for each sentence. It's an array containing an array that looks something like this: [pessimistic, neutral optimistic] -> [0.2, 0.68, 0.12]
+3. we convert this array of arrays into an array of class names by using an index returned by np.argmax and indexing into classes array.
+4. Then we return a list of class names. The list will always contain only 1 element, because there is no way to pass more than one sentence in an argument list.
+
+```python
+...
+def predict_sentiment(self, sentences):
+    try:
+        # Convert input sentences to numpy array
+        sentences_array = np.array(sentences)
+        # Predict
+        predictions = self.model.predict(sentences_array)
+        # Convert predictions to class labels
+        classes = ["pessimistic", "neutral", "optimistic"]
+        predicted_classes = [classes[np.argmax(pred)] for pred in predictions]
+        logger.info(f"Predicted classes: {predicted_classes}")
+        return predicted_classes
+    except Exception as e:
+        logger.error(f"Error during prediction: {e}")
+        raise
+...
+```
