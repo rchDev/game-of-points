@@ -1,15 +1,14 @@
-document.addEventListener('DOMContentLoaded', function() {
-    if (window.location.hash) {
-        var id = window.location.hash.substring(1);
-        var el = document.getElementById(id);
-        if (el) {
-            setTimeout(function() {
-                var offset = 80; // Adjust header height
-                var elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
-                var maxScroll = document.body.scrollHeight - window.innerHeight;
-                var scrollTo = Math.min(elementPosition - offset, maxScroll);
-                window.scrollTo({ top: scrollTo, behavior: 'auto' });
-            }, 100);
-        }
-    }
-});
+window.onload = function() {
+    if (!window.location.hash) return;
+
+    const id = window.location.hash.slice(1);
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const offset = 80; // Header height
+    const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
+    const maxScroll = document.body.scrollHeight - window.innerHeight;
+    const scrollTo = Math.min(elementPosition - offset, maxScroll);
+
+    window.scrollTo({ top: scrollTo, behavior: 'auto' });
+};
