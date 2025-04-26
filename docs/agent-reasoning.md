@@ -305,7 +305,58 @@ creates a connection between two servers.
 {: .note }
 The Python-side server must be running before the Java-side server, as the Java side initiates the connection. Since this class is instantiated during server startup, the Python servers must be up before the Java game server starts.
 
+```java
+...
 
+@Singleton
+@Startup
+public class PythonGateway {
+    private GatewayServer bayesGatewayServer;
+    private GatewayServer sentimentGatewayServer;
+    private BayesPythonManager bayesManager;
+    private SentimentPythonManager sentimentPythonManager;
+
+    @PostConstruct
+    public void init() {
+
+        bayesGatewayServer = new GatewayServer(
+                null,                    // entryPoint
+                25333,                   // port
+                25334,                   // pythonPort
+                GatewayServer.defaultAddress(),  // address
+                GatewayServer.defaultAddress(),  // pythonAddress
+                GatewayServer.DEFAULT_CONNECT_TIMEOUT,  // connectTimeout
+                GatewayServer.DEFAULT_READ_TIMEOUT,     // readTimeout
+                null                      // customCommands
+        );
+        bayesGatewayServer.start();
+
+        // Initialize the Sentiment Gateway Server with its own Python and callback ports
+        sentimentGatewayServer = new GatewayServer(
+                null,
+                25335,
+                25336,
+                GatewayServer.defaultAddress(),  // address
+                GatewayServer.defaultAddress(),  // pythonAddress
+                GatewayServer.DEFAULT_CONNECT_TIMEOUT,  // connectTimeout
+                GatewayServer.DEFAULT_READ_TIMEOUT,
+                null
+        );
+        sentimentGatewayServer.start();
+
+        bayesManager = (BayesPythonManager) bayesGatewayServer.getPythonServerEntryPoint(new Class[]{BayesPythonManager.class});
+        sentimentPythonManager = (SentimentPythonManager) sentimentGatewayServer.getPythonServerEntryPoint(new Class[]{SentimentPythonManager.class});
+    }
+
+    public BayesPythonManager getBayesNetwork() {
+        return bayesManager;
+    }
+
+    public SentimentPythonManager getSentimentAnalyser() {
+        return sentimentPythonManager;
+    }
+}
+```
 
 **What is BayesPythonManager?**
 It's an interface that defines a contract which Python side has to implement. It is probably used to inform **py4j's** serializers and mappers.
@@ -325,7 +376,7 @@ public interface BayesPythonManager {
 }
 ```
 
-### Construction:
+# Construction:
 {: .no_toc}
 Now that we have Python objects available to us, we can use methods:
 1. add_nodes
