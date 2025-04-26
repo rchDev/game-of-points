@@ -58,7 +58,7 @@ poetry run python sentiment_classifier.py train --csv <data_file_name.csv>
 
 ### **Data**
 There are many pretrained emotion/sentiment classifiers, but since I had to build my own. 
-The first and the hardest problem I had to tacle was: **getting labeled data**.
+The first and the hardest problem I had to tacle was: **acquiring labeled data**.
 
 At first, I naively tried to use popular LLMs on the internet to generate unique player answers and their class labels, 
 to a proposed question: "how are feeling before this upcoming match?"
@@ -77,6 +77,15 @@ I still tried to use that data in training, but as my intuition was telling me, 
 
 **The result of using this data:** incredible training and test accuracy >0.98, but terrible real world results.
 The trained model couldn't even classify the simplest answers, like: "I'm feeling great."
+
+Then i decided to use some of the uniquely generated answers, label them myself and my own answer.
+This resulted in a dataset that contained roughly 100 mood description-label pairs.
+Now the set had:
+1. Consistent labels.
+2. Some noise.
+
+**Result:** satisfactory real-world performance when mood is described by myself.
+Simple responses like: "OK," "Good," "I'm feeling great," and "I'm scared" are classified correctly.
 
 ### [Training code](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L47-L71)
 
@@ -208,7 +217,7 @@ we:
 1. convert a single string into a numpy array for compatibility with keras stuff...
 2. we use the trained model to give us a prediction array for each sentence. It's an array containing an array that looks something like this: [pessimistic, neutral optimistic] -> [0.2, 0.68, 0.12]
 3. we convert this array of arrays into an array of class names by using an index returned by np.argmax and indexing into classes array.
-4. Then we return a list of class names. The list will always contain only 1 element, because there is no way to pass more than one sentence in an argument list.
+4. Then, we return a list of class names. The list will always contain a single element, because there is no mechanism of passing more than one sentence into an argument list.
 
 ```python
 ...
