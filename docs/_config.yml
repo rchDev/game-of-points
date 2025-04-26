@@ -23,4 +23,4 @@ back_to_top: true
 back_to_top_text: "Back to top"
 
 just_the_docs:
-  auxiliary_css: "/assets/css/custom.css"
+  auxiliary_js: "/assets/js/fix-anchor-scroll.js"
