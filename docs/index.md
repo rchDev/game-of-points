@@ -43,7 +43,7 @@ To use these scripts, you have to install optional dependencies. ❗❗❗
 ### Required:
 {: .no_toc }
 
-#### 1. Working Google Conversational Agent (~~Dialogflow CX~~)
+**(Step 1) Working Google Conversational Agent (~~Dialogflow CX~~)**
 {: .no_toc }
 
 Inside project's root directory you'll find a file: **exported_agent_snitch.blob**
@@ -60,12 +60,12 @@ Overview of the process:
 
 Detailed instructions can be found: [here](/game-of-points/conv-agent-config/).
 
-#### 2. *JDK* 17-22 installed.
+**(Step 2) Make sure *JDK* 17-22 is installed.**
 {: .no_toc }
 
 ❗Java 23 is not supported and will cause compatibility issues.
 
-#### 3. Maven 3.2+ installed
+**(Step 3) Install Maven 3.2+**
 {: .no_toc }
 
 Don't have to install maven. Run one of the commands:
@@ -74,30 +74,30 @@ Don't have to install maven. Run one of the commands:
 
 These commands will install the correct version of Maven package manager the first time they are run.
 
-#### 4. Python >=3.12 installed
+**(Step 4) Have Python >=3.12 installed**
 {: .no_toc }
 
 1. Install the version that is specified in <a href="https://github.com/rchDev/game-of-points/blob/main/.python-version" target="_blank">.python-version</a> file (use pyenv)
 2. Install version that is complies with spec in <a href="https://github.com/rchDev/game-of-points/blob/main/pyproject.toml" target="_blank">pyproject.toml</a> file.
 
-#### 5. Node.js >=v16.20.2 installed
+**(Step 5) Install Node.js >=v16.20.2**
 {: .no_toc }
 
 ### Optional:
 {: .no_toc }
 
-#### 1. You have installed IntelliJ IDEA: <a href="https://www.jetbrains.com/idea/download/?section=mac" target="_blank">Mac</a>, <a href="https://www.jetbrains.com/idea/download/?section=linux" target="_blank">Linux</a>, <a href="https://www.jetbrains.com/idea/download/?section=windows" target="_blank">Windows</a>
+**(Step 6) Install IntelliJ IDEA: <a href="https://www.jetbrains.com/idea/download/?section=mac" target="_blank">Mac</a>, <a href="https://www.jetbrains.com/idea/download/?section=linux" target="_blank">Linux</a>, <a href="https://www.jetbrains.com/idea/download/?section=windows" target="_blank">Windows</a>**
 {: .no_toc }
 
 Helpful for easily launching the project.
 
-#### 2. You have installed <a href="https://python-poetry.org/docs/#installation" target="_blank">Poetry</a>
+**(Step 7) Install <a href="https://python-poetry.org/docs/#installation" target="_blank">Poetry</a>**
 {: .no_toc }
 
 Although not required, but project uses poetry for easy dependency management.
 You can use your own virtual environment and install dependencies from <a href="https://github.com/rchDev/game-of-points/blob/main/requirements.txt" target="_blank">requirements.txt</a> file.
 
-#### 3. You have installed <a href="https://ngrok.com/docs/getting-started/" target="_blank">Ngrok</a>
+**(Step 8) Install <a href="https://ngrok.com/docs/getting-started/" target="_blank">Ngrok</a>**
 {: .no_toc }
 
 Used for exposing your local game server to
