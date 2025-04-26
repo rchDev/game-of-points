@@ -13,7 +13,7 @@ The point of sentiment analysis in my application is to take a mood description 
 2. Neutral
 3. Pessimistic
 
-## [sentiment_classifier.py](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L47-L71)
+## [sentiment_classifier.py](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py)
 
 The solution is written in python, but is used in Java project. 
 This is enabled by the [py4j](https://www.py4j.org/) library. 
@@ -49,7 +49,7 @@ The script can be launched in three modes: training, testing or prediction mode.
 {: .note}
 Only csv parsing was implemented...
 
-**In project's root run:**
+In project's root run:
 
 ```shell
 cd game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis
@@ -186,7 +186,7 @@ def train_model(self, sentences, labels, epochs=15, batch_size=32):
 
 ### Command
 
-**In project's root run:**
+In project's root run:
 
 ```shell
 cd game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis
@@ -298,4 +298,60 @@ def predict_sentiment(self, sentences):
         logger.error(f"Error during prediction: {e}")
         raise
 ...
+```
+## The model
+
+{: .note }
+I'm not a ML expert, I don't have the critical information needed to evaluate the quality of this solution. 
+I just copied things from the internet until it worked.
+
+I essentially used a transfer learning technique:
+1. Took a huge neural net, froze it (don't have enough data to train in).
+2. Tacked on a bunch of densely connected layers that I could train with my measly data set.
+3. Added the output layer that matched my multiclass classification problem.
+
+### The model
+
+At the base of the model is a smaller BERT alternative for getting contextual embeddings.
+
+{: .warning }
+This layer is locked for training, because I didn't have enough data to train that huge neural net.
+
+{: .note }
+Contextual means that you get different vector for each word based on the context that that word appears in.
+With traditional methods like: "Word2Vec" or "GloVe" you would get a fixed value vector for each word. 
+In the famous bank example the word bank has the same meaning in both of the sentences:
+1. "The bank of the river was flooded."
+2. "I went to the bank to deposit money."
+
+The word vectors are first passed to a densely connected layer with a ReLU activation function and an L2 regularizer, which penalizes large weight values.
+The output of this dense layer is then passed to a dropout layer, which randomly drops 30% of neurons during training (no effect during prediction) to help prevent overfitting — another regularization technique.
+We repeat this one more time, only this time with a smaller dense layer, until we reach the last layer. 
+Which is a densely connected layer with a softmax function activation function, that outputs three probabilities, one for each class.
+
+**Optimization target (loss function)** - Categorical crossentropy (don't know why, ChatGPT said it was good for multiclass classification problems)
+
+**Optimizer** - Adam (no clue why not RMSprop or some other optimizer. It just works...)
+
+**Learning rate** - 0.001 (don't know what is a good learning rate or how it should change during the training process)
+
+### [Code]()
+```python
+ def __init__(self):
+     # Load the pre-trained model and build the classifier
+     hub_url = "https://tfhub.dev/google/nnlm-en-dim50/2" # alternative to bert
+     self.pretrained_embedding_layer = hub.KerasLayer(hub_url, input_shape=[], dtype=tf.string, trainable=False)
+
+     self.model = tf_keras.Sequential([
+         hub.KerasLayer(hub_url, input_shape=[], dtype=tf.string, trainable=True),
+         tf_keras.layers.Dense(64, activation='relu', kernel_regularizer=tf_keras.regularizers.l2(0.01)),
+         tf_keras.layers.Dropout(0.3),
+         tf_keras.layers.Dense(32, activation='relu', kernel_regularizer=tf_keras.regularizers.l2(0.01)),
+         tf_keras.layers.Dropout(0.3),
+         tf_keras.layers.Dense(3, activation='softmax')  # three output nodes for three classes
+     ])
+
+     self.model.compile(optimizer=tf_keras.optimizers.Adam(learning_rate=0.001),
+                        loss='categorical_crossentropy', metrics=['accuracy'])
+     logger.info("SentimentAnalysisModel initialized.")
 ```
