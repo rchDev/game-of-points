@@ -335,9 +335,8 @@ This layer is locked for training, because I didn't have enough data to train th
 {: .note }
 Contextual means that you get different vector for each word based on the context that that word appears in.
 With traditional methods like: "Word2Vec" or "GloVe" you would get a fixed value vector for each word. 
-In the famous bank example the word bank has the same meaning in both of the sentences:
-1. "The bank of the river was flooded."
-2. "I went to the bank to deposit money."
+In the famous bank example, when using traditional embeddings, the word bank would have same meaning in both of the sentences:
+"The bank of the river was flooded." and "I went to the bank to deposit money."
 
 **Layer 1:** The word vectors are first passed to a densely connected layer with 64 neurons, a ReLU activation function and an L2 regularizer, which penalizes large weight values.
 
@@ -349,13 +348,15 @@ In the famous bank example the word bank has the same meaning in both of the sen
 
 **Layer 5:** Output layer, which is a densely connected layer with a softmax function activation function, that outputs three probabilities, one for each class.
 
+### Meta params:
+
 **Optimization target (loss function)** - Categorical crossentropy (don't know why, ChatGPT said it was good for multiclass classification problems)
 
 **Optimizer** - Adam (no clue why not RMSprop or some other optimizer. It just works...)
 
 **Learning rate** - 0.001 (don't know what is a good learning rate or how it should change during the training process)
 
-### [Code]()
+### [Full Code](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L20-L36)
 ```python
  def __init__(self):
      # Load the pre-trained model and build the classifier
