@@ -104,7 +104,52 @@ First the function [train_mode(csv_file, epochs=15, batch_size=32)](https://gith
 8. Once the model is fully fitted, we test its performance on data that it has never seen, by calling a method called evaluate_model(x_test, y_test) with a test data and labels.
 9. Finally, we log test results to the standard output and save the model parameters to a local .keras type file.
 
-Inside a train_model function:
+```python
+def train_mode(csv_file, epochs=15, batch_size=32):
+    # Read CSV file
+    logger.info(f"Reading training data from {csv_file}")
+    data = pd.read_csv(csv_file)
+
+    # Map sentiment labels to numerical values
+    sentiment_mapping = {
+        "Pessimistic": 0,
+        "Neutral": 1,
+        "Optimistic": 2
+    }
+
+    # Map sentiment labels to corresponding numerical values
+    data['label'] = data['Sentiment'].map(sentiment_mapping)
+
+    # Extract sentences and labels
+    sentences = data['Sentence'].values
+    labels = data['label'].values
+
+    # Split data into training and test sets
+    X_train, X_test, y_train, y_test = train_test_split(sentences, labels, test_size=0.2, random_state=42)
+
+    # Initialize model
+    model = SentimentAnalysisModel()
+
+    # Train the model
+    model.train_model(X_train, y_train, epochs, batch_size)
+
+    # Evaluate the model
+    evaluation_result = model.evaluate_model(X_test, y_test)
+    logger.info(f"Evaluation result: {evaluation_result}")
+
+    # Save the model
+    model.save_model("./sentiment_model.keras")
+```
+
+Inside the **train_model** method:
+1. Labels inside a numpy array get converted into one-hot encodings to fit loss function's: categorical_crossentropy, 
+and last layer activation function's: softmax requirements.
+2. A function callback for early stoppage during the training is defined. 
+Early stoppage should happen if loss function values when testing model with a validation set,
+don't get smaller for more than three epochs. If they don't - stop the training and use weights that produced the best result.
+3. Keras fit() method gets called and passed all the params that it needs, then it "trains" the model by computing the loss,
+calculating gradients via backpropagation, and updating parameters using an optimizer (in this case Adam) with multiple mini-batches of data 
+and over multiple epochs.
 
 ```python
 def train_model(self, sentences, labels, epochs=15, batch_size=32):
