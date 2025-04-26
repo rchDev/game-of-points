@@ -2,10 +2,6 @@ title: Game Of Points
 markdown: kramdown
 remote_theme: just-the-docs/just-the-docs
 
-aux_links:
-  Just the Docs on GitHub:
-    - https://github.com/just-the-docs/just-the-docs
-
 callouts:
   warning:
     title: Warning
