@@ -307,12 +307,27 @@ I just copied things from the internet until it worked.
 
 I essentially used a transfer learning technique:
 1. Took a huge neural net, froze it (don't have enough data to train in).
-2. Tacked on a bunch of densely connected layers that I could train with my measly data set.
+2. Tacked on a bunch of densely connected layers, that I could train with my measly data set.
 3. Added the output layer that matched my multiclass classification problem.
 
-### The model
+### Layers
 
-At the base of the model is a smaller BERT alternative for getting contextual embeddings.
+```mermaid
+flowchart TD
+    A["Input Sentence (String)"]:::input --> B["Pretrained Embedding Layer (NNLM from TF Hub)"]:::defaultstroke
+    B --> C["Dense Layer (64 units, ReLU Activation)"]:::defaultstroke
+    C --> D["Dropout Layer (30% Dropout)"]:::defaultstroke
+    D --> E["Dense Layer (32 units, ReLU Activation)"]:::defaultstroke
+    E --> F["Dropout Layer (30% Dropout)"]:::defaultstroke
+    F --> G["Output Dense Layer (3 units, Softmax Activation)"]:::defaultstroke
+    G --> H["Predicted Class (Sentiment Label)"]:::output
+
+    classDef input fill:#a8e6a3,stroke:#333,stroke-width:2px;
+    classDef output fill:#f7a8c1,stroke:#333,stroke-width:2px;
+    classDef defaultstroke stroke:#333,stroke-width:2px;
+```
+
+**Layer 0:** Pretrained embeddings layer. A smaller BERT alternative for getting contextual embeddings.
 
 {: .warning }
 This layer is locked for training, because I didn't have enough data to train that huge neural net.
@@ -324,10 +339,15 @@ In the famous bank example the word bank has the same meaning in both of the sen
 1. "The bank of the river was flooded."
 2. "I went to the bank to deposit money."
 
-The word vectors are first passed to a densely connected layer with a ReLU activation function and an L2 regularizer, which penalizes large weight values.
-The output of this dense layer is then passed to a dropout layer, which randomly drops 30% of neurons during training (no effect during prediction) to help prevent overfitting — another regularization technique.
-We repeat this one more time, only this time with a smaller dense layer, until we reach the last layer. 
-Which is a densely connected layer with a softmax function activation function, that outputs three probabilities, one for each class.
+**Layer 1:** The word vectors are first passed to a densely connected layer with 64 neurons, a ReLU activation function and an L2 regularizer, which penalizes large weight values.
+
+**Layer 2:** The output of the previous dense layer is then passed to a dropout layer, which randomly drops 30% of neurons during training (no effect during prediction) to help prevent overfitting — another regularization technique.
+
+**Layer 3:** Another dense layer with 32 neurons, ReLU activation and L2 regularization.
+
+**Layer 4:** Another 30% dropout layer to fight overfitting.
+
+**Layer 5:** Output layer, which is a densely connected layer with a softmax function activation function, that outputs three probabilities, one for each class.
 
 **Optimization target (loss function)** - Categorical crossentropy (don't know why, ChatGPT said it was good for multiclass classification problems)
 
