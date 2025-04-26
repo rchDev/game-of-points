@@ -54,7 +54,6 @@ the agent gathers information about the player (**evidence**).
 3. Then, the most appropriate action that best implements the selected strategy is chosen and applied.
 
 ### Most important classes in reasoning
-{: .no_toc}
 
 - **GameState** - a class containing variables which hold information about game environment. Also has methods for validating and applying **PlayerActions** and **AgentActions**, also stores information about **Player** and **Agent** (positions, hp, speed, weapon uses count...)
 - **AgentPossibilities** - (add later.)
@@ -68,7 +67,6 @@ the agent gathers information about the player (**evidence**).
 - **DroolsBrain** - concrete implementation of **AgentsBrain** which uses Drools rule engine and a Bayes net to make gameplay decisions.
 
 ### A Journey from player action to agent action
-{: .no_toc }
 
 ```mermaid
 block-beta
@@ -156,7 +154,6 @@ block-beta
    D["Actions"]
 ```
 ### [Inference rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
-{: .no_toc}
 
 These rules fire on inserted facts and update agent's knowledge base.
 
@@ -165,7 +162,6 @@ and the damage was felt by an agent, a rule: ["Player shot"](https://github.com/
 will fire and update [agent's knowledge base](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/knowledge/AgentKnowledge.java).
 
 ### [Possibilities rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/possibilities_rules.drl)
-{: .no_toc}
 
 Once inference rules have updated the knowledge base, possibilities group is ran.
 These rules fire, based on variable relationships inside knowledge base and agent classes.
@@ -191,7 +187,6 @@ public class AgentPossibilities {
 This class represents agent's relationship with player.
 
 ### [Agent choices rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl)
-{: .no_toc }
 
 Now that we have agent's possibilities, that were inserted by the previous layer rules.
 We know what agent can and cannot do. We have to make a strategy choice. That is what this layer is responsible for.
@@ -277,7 +272,6 @@ The Solution to this partial information problem is **Bayesian network**.
 Known stats are presented as **evidence** and unknown are given as **query** variables.
 
 ### Main use:
-{: .no_toc}
 
 The main use for Bayes net in my app is to: **get the most probable combination of random variables.**
 
@@ -376,8 +370,8 @@ public interface BayesPythonManager {
 }
 ```
 
-# Construction:
-{: .no_toc}
+### Construction:
+
 Now that we have Python objects available to us, we can use methods:
 1. add_nodes
 2. add_edges
