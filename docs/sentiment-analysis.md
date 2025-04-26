@@ -20,7 +20,7 @@ This is enabled by the [py4j](https://www.py4j.org/) library.
 More info can be found in a write-up about [Agent's reasoning process](/game-of-points/agent-reasoning), 
 in a Bayesian networks "Used libraries" section.
 
-The script can be launched in two modes: training, testing or prediction mode.
+The script can be launched in three modes: training, testing or prediction mode.
 
 ```python
     if args.mode == 'train':
@@ -112,6 +112,15 @@ def train_model(self, sentences, labels, epochs=15, batch_size=32):
 ```
 
 ## Testing mode:
+
+### Command
+
+**In project's root run:**
+
+```shell
+cd game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis
+poetry run python sentiment_classifier.py test "your sentence, describing the mood"
+```
 
 This mode can be used to test the classification of one sentence. It doesn't spin up the py4j server.
 All it does, is:
