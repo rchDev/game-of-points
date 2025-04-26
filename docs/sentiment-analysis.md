@@ -15,9 +15,34 @@ The point of sentiment analysis in my application is to take a mood description 
 
 ## [sentiment_classifier.py](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L47-L71)
 
-The solution is written in python, but is used in Java project. This is enabled by the py4j library. More info can be found in a write-up about Agent's reasoning process, in a [Bayesian network section](/game-of-points/agent-reasoning#used-libraries).
+The solution is written in python, but is used in Java project. 
+This is enabled by the [py4j](https://www.py4j.org/) library. 
+More info can be found in a write-up about [Agent's reasoning process](/game-of-points/agent-reasoning), 
+in a Bayesian networks "Used libraries" section.
 
-## Training
+The script can be launched in two modes: training, testing or prediction mode.
+
+```python
+    if args.mode == 'train':
+        if args.csv:
+            train_mode(args.csv)
+        else:
+            logger.error("CSV file path must be provided for training mode.")
+    elif args.mode == 'test':
+        if args.sentence:
+            print(f"sentence: {args.sentence}")
+            model = SentimentAnalysisModel()
+            model.load_model("sentiment_model.keras")
+            prediction = model.predict_sentiment([args.sentence])
+            print(f"prediction: {prediction}")
+            print(f"The sentiment is: {prediction[0]}")
+        else:
+            logger.error("Sentence must be provided for test mode.")
+    else:
+        prediction_mode()
+```
+
+## Training mode
 
 ### Command
 
@@ -86,4 +111,24 @@ def train_model(self, sentences, labels, epochs=15, batch_size=32):
         raise
 ```
 
-## Usage
+## Testing mode:
+
+This mode can be used to test the classification of one sentence. It doesn't spin up the py4j server.
+All it does, is:
+1. Construct the model.
+2. Load pretrained weights.
+3. Pass the sentence that was provided in command line arguments.
+4. Send the sentence and the predicted class to the standard output.
+
+```python
+    elif args.mode == 'test':
+        if args.sentence:
+            print(f"sentence: {args.sentence}")
+            model = SentimentAnalysisModel()
+            model.load_model("sentiment_model.keras")
+            prediction = model.predict_sentiment([args.sentence])
+            print(f"prediction: {prediction}")
+            print(f"The sentiment is: {prediction[0]}")
+```
+
+## Prediction mode:
