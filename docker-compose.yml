@@ -23,13 +23,24 @@ services:
       - JAVA_OPTS=-Dquarkus.http.host=0.0.0.0
     depends_on:
       - bayesian
+      - sentiment-classifier
 
   bayesian:
     build:
-      context: ./path-to-your-bayesian-project
+      context: ./bayes-net
     ports:
       - "25334:25334"
     volumes:
       - ./path-to-your-bayesian-project:/app
     expose:
       - "25334"
+
+  sentiment-classifier:
+    build:
+      context: ./sentiment-classifier
+    ports:
+      - "25336:25336"
+    volumes:
+      - ./path-to-your-sentiment-classifier:/app
+    expose:
+      - "25336"
