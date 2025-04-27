@@ -54,50 +54,54 @@ Overview of the process:
 1. Create a new project.
 2. Create new agent.
 3. Restore (import) the agent to use the agent that's inside the repo file.
-4. Set the webhook url to your own.
-4. Publish the agent.
-5. Use the provided: *project-id*, *agent-id* during npm install.
+4. Set the webhook url to your own. 
+5. Publish the agent.
+6. Use the provided: *project-id*, *agent-id* during npm install.
 
 Detailed instructions can be found: [here](/game-of-points/conv-agent-config/).
 
-**(Step 2) Make sure *JDK* 17-22 is installed.**
+**(Step 2) Have git version control installed**
+
+**(Step 3) Install git LFS (Large File Storage)**
+
+Installation instructions can be found here: ["Installing Git Large File Storage"](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage).
+
+**(Step 4) Make sure *JDK* 17-22 is installed.**
 {: .no_toc }
 
 ❗Java 23 is not supported and will cause compatibility issues.
 
-**(Step 3) Install Maven 3.2+**
-{: .no_toc }
-
-Don't have to install maven. Run one of the commands:
-1. ./mvnw shell command for Mac and Linux
-2. mvnw.cmd for Windows
-
-These commands will install the correct version of Maven package manager the first time they are run.
-
-**(Step 4) Have Python >=3.12 installed**
+**(Step 5) Have Python >=3.12 installed**
 {: .no_toc }
 
 1. Install the version that is specified in <a href="https://github.com/rchDev/game-of-points/blob/main/.python-version" target="_blank">.python-version</a> file (use pyenv)
 2. Install version that is complies with spec in <a href="https://github.com/rchDev/game-of-points/blob/main/pyproject.toml" target="_blank">pyproject.toml</a> file.
 
-**(Step 5) Install Node.js >=v16.20.2**
+**(Step 6) Install Node.js >=v16.20.2**
 {: .no_toc }
 
 ### Optional:
 {: .no_toc }
 
-**(Step 6) Install IntelliJ IDEA: <a href="https://www.jetbrains.com/idea/download/?section=mac" target="_blank">Mac</a>, <a href="https://www.jetbrains.com/idea/download/?section=linux" target="_blank">Linux</a>, <a href="https://www.jetbrains.com/idea/download/?section=windows" target="_blank">Windows</a>**
+**(Step 7) Install Maven 3.2+**
+{: .no_toc }
+
+Maven is not required, because Maven will be installed when running one of these commands:
+1. ./mvnw shell command on Mac or Linux
+2. mvnw.cmd on Windows
+
+**(Step 8) Install IntelliJ IDEA: <a href="https://www.jetbrains.com/idea/download/?section=mac" target="_blank">Mac</a>, <a href="https://www.jetbrains.com/idea/download/?section=linux" target="_blank">Linux</a>, <a href="https://www.jetbrains.com/idea/download/?section=windows" target="_blank">Windows</a>**
 {: .no_toc }
 
 Helpful for easily launching the project.
 
-**(Step 7) Install <a href="https://python-poetry.org/docs/#installation" target="_blank">Poetry</a>**
+**(Step 9) Install <a href="https://python-poetry.org/docs/#installation" target="_blank">Poetry</a>**
 {: .no_toc }
 
 Although not required, but project uses poetry for easy dependency management.
 You can use your own virtual environment and install dependencies from <a href="https://github.com/rchDev/game-of-points/blob/main/requirements.txt" target="_blank">requirements.txt</a> file.
 
-**(Step 8) Install <a href="https://ngrok.com/docs/getting-started/" target="_blank">Ngrok</a>**
+**(Step 10) Install <a href="https://ngrok.com/docs/getting-started/" target="_blank">Ngrok</a>**
 {: .no_toc }
 
 Used for exposing your local game server to
