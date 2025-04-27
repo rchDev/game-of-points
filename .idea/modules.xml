@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/bayes-net/bayes-net.iml" filepath="$PROJECT_DIR$/bayes-net/bayes-net.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/game-of-points.iml" filepath="$PROJECT_DIR$/.idea/game-of-points.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sentiment-classifier/sentiment-classifier.iml" filepath="$PROJECT_DIR$/sentiment-classifier/sentiment-classifier.iml" />
     </modules>
   </component>
 </project>

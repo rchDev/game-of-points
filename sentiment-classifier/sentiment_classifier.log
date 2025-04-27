@@ -1,0 +1,17 @@
+INFO:absl:Using /var/folders/31/455r470940dfqntmm50vskcr0000gn/T/tfhub_modules to cache modules.
+INFO:absl:Fingerprint not found. Saved model loading will continue.
+INFO:absl:path_and_singleprint metric could not be logged. Saved model loading will continue.
+INFO:absl:Fingerprint not found. Saved model loading will continue.
+INFO:absl:path_and_singleprint metric could not be logged. Saved model loading will continue.
+WARNING:absl:At this time, the v2.11+ optimizer `tf.keras.optimizers.Adam` runs slowly on M1/M2 Macs, please use the legacy TF-Keras optimizer instead, located at `tf.keras.optimizers.legacy.Adam`.
+INFO:__main__:SentimentAnalysisModel initialized.
+INFO:absl:Fingerprint not found. Saved model loading will continue.
+INFO:absl:path_and_singleprint metric could not be logged. Saved model loading will continue.
+WARNING:absl:At this time, the v2.11+ optimizer `tf.keras.optimizers.Adam` runs slowly on M1/M2 Macs, please use the legacy TF-Keras optimizer instead, located at `tf.keras.optimizers.legacy.Adam`.
+INFO:__main__:Model loaded from ./sentiment_model.keras.
+INFO:py4j.java_gateway:Callback Server Starting
+INFO:__main__:Python server for sentiment analysis is ready.
+INFO:py4j.java_gateway:Socket listening on ('127.0.0.1', 25336)
+INFO:py4j.java_gateway:Callback Connection ready to receive messages
+INFO:py4j.java_gateway:Received command  on object id 
+INFO:py4j.java_gateway:Closing down callback connection
