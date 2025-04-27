@@ -4,7 +4,6 @@ import os
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 import tensorflow as tf
 import tensorflow_hub as hub
-import tensorflow_text as text
 import tf_keras  # Import tf_keras to use it instead of tf.keras
 import numpy as np
 import pandas as pd
