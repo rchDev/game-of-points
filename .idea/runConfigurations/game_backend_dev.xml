@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="game backend" type="QuarkusRunConfigurationType" factoryName="Quarkus">
+  <configuration default="false" name="game backend dev" type="QuarkusRunConfigurationType" factoryName="Quarkus">
     <module name="game-of-points-be" />
     <QsMavenRunConfiguration>
       <MavenSettings>

@@ -70,7 +70,7 @@ class SentimentAnalysisModel:
             logger.error(f"Error during training: {e}")
             raise
 
-    def save_model(self, model_path="./sentiment_model.keras"):
+    def save_model(self, model_path="sentiment_model.keras"):
         try:
             # Save the trained model
             self.model.save(model_path)
@@ -80,7 +80,7 @@ class SentimentAnalysisModel:
             logger.error(f"Error saving model: {e}")
             raise
 
-    def load_model(self, model_path="./sentiment_model.keras"):
+    def load_model(self, model_path="sentiment_model.keras"):
         try:
             # Load the model
             self.model = tf_keras.models.load_model(model_path, custom_objects={'KerasLayer': hub.KerasLayer})
@@ -167,12 +167,12 @@ def train_mode(csv_file, epochs=15, batch_size=32):
     logger.info(f"Evaluation result: {evaluation_result}")
 
     # Save the model
-    model.save_model("./sentiment_model.keras")
+    model.save_model("sentiment_model.keras")
 
 def prediction_mode():
     # Initialize model and load pre-trained weights
     model = SentimentAnalysisModel()
-    model.load_model("./sentiment_model.keras")
+    model.load_model("sentiment_model.keras")
 
     # Setup Py4J gateway
     gateway = JavaGateway(

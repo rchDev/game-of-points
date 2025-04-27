@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="game frontend" type="js.build_tools.npm">
+  <configuration default="false" name="game frontend dev" type="js.build_tools.npm">
     <package-json value="$PROJECT_DIR$/game-of-points-fe/package.json" />
     <command value="run" />
     <scripts>
