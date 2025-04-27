@@ -132,8 +132,8 @@ if __name__ == "__main__":
     java_host_name = os.getenv("JAVA_GATEWAY_HOST")
     python_host_name = os.getenv("PYTHON_GATEWAY_HOST")
 
-    gateway_host_name = "localhost" if java_host_name is None else java_host_name
-    callback_host_name = "localhost" if python_host_name is None else python_host_name
+    gateway_host_name = "0.0.0.0" if java_host_name is None else java_host_name
+    callback_host_name = "127.0.0.1" if python_host_name is None else python_host_name
 
     # Startuojame py4j serveri
     gateway = JavaGateway(

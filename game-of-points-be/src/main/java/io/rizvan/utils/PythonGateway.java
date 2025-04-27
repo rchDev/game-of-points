@@ -30,11 +30,15 @@ public class PythonGateway {
                 ? InetAddress.getByName(sentimentHost)
                 : GatewayServer.defaultAddress();
 
+        InetAddress javaServerAddress = (bayesHost != null || sentimentHost != null)
+                ? InetAddress.getLocalHost()
+                : GatewayServer.defaultAddress();
+
         bayesGatewayServer = new GatewayServer(
                 null,                    // entryPoint
                 25333,                   // port
                 25334,                   // pythonPort
-                InetAddress.getLocalHost(), // GatewayServer.defaultAddress(),  // address
+                javaServerAddress, // GatewayServer.defaultAddress(),  // address
                 bayesPythonAddress, // GatewayServer.defaultAddress(),  // pythonAddress
                 GatewayServer.DEFAULT_CONNECT_TIMEOUT,  // connectTimeout
                 GatewayServer.DEFAULT_READ_TIMEOUT,     // readTimeout
@@ -42,14 +46,15 @@ public class PythonGateway {
         );
         bayesGatewayServer.start();
 
-        System.out.println("bayesGatewayServer address:" + bayesGatewayServer.getPythonAddress() + ":" + bayesGatewayServer.getPythonPort());
+        System.out.println("bayesGatewayServer address: " + bayesGatewayServer.getPythonAddress() + ":" + bayesGatewayServer.getPythonPort());
+        System.out.println("gatewayServer: " + InetAddress.getLocalHost());
 
         // Initialize the Sentiment Gateway Server with its own Python and callback ports
         sentimentGatewayServer = new GatewayServer(
                 null,
                 25335,
                 25336,
-                InetAddress.getLocalHost(), // GatewayServer.defaultAddress(),  // address
+                javaServerAddress, // GatewayServer.defaultAddress(),  // address
                 sentimentPythonAddress,  // GatewayServer.defaultAddress(),  // pythonAddress
                 GatewayServer.DEFAULT_CONNECT_TIMEOUT,  // connectTimeout
                 GatewayServer.DEFAULT_READ_TIMEOUT,
@@ -57,7 +62,7 @@ public class PythonGateway {
         );
         sentimentGatewayServer.start();
 
-        System.out.println("bayesGatewayServer address:" + sentimentGatewayServer.getPythonAddress() + ":" + sentimentGatewayServer.getPythonPort());
+        System.out.println("sentimentGatewayServer address: " + sentimentGatewayServer.getPythonAddress() + ":" + sentimentGatewayServer.getPythonPort());
 
 
         bayesManager = (BayesPythonManager) bayesGatewayServer.getPythonServerEntryPoint(new Class[]{BayesPythonManager.class});
