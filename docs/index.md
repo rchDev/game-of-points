@@ -28,13 +28,13 @@ A Simple game where human user competes against AI agent in a battle to collect 
 3. Both the agent and user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
 4. Whoever kills one another - wins.
 
-## 🌀 Weird parts
+## **🌀 Weird parts**
 
 This project was created for educational purposes.
 It is in no way "production ready". 
 There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as creative, but objectively bad problem solutions.
 
-## 📋 Environment setup
+## **📋 Environment setup**
 
 ❗❗❗ Due to having many small services, the project is hard to launch.
 To mitigate this issue, launch scripts have been created.
@@ -108,7 +108,7 @@ Used for exposing your local game server to
 Google's conversational agents' webhook,
 without hosting the game server yourself.
 
-## ⚙️ Project setup:
+## **⚙️ Project setup**
 
 **(Step 1) Inside game-of-points project's root run:**
 ```shell
@@ -173,7 +173,7 @@ cd ..\game-of-points-be
 mvnw.cmd clean install
 ```
 
-## 🚀 **Launching the project**
+## **🚀 Launching the project**
 
 Once you've set up the environment and the project, you can launch the whole application in a few ways, by following instructions bellow.
 
@@ -231,7 +231,7 @@ npm run dev
 3. The Player data collection step in frontend chat depends on ngrok tunnel (if you are not hosting your backend on public ip address).
    If your conversational agent's webhook isn't pointing to your backend's public address, game server won't receive user questionnaire results.
 
-## 🏗️ System overview
+## **🏗️ System overview**
 
 ### Main components:
 {: .no_toc }
