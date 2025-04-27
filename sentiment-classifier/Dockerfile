@@ -10,4 +10,5 @@ COPY . .
 
 EXPOSE 25336
 
-CMD ["python", "sentiment_classifier.py"]
+ENTRYPOINT ["python", "sentiment_classifier.py"]
+CMD []
