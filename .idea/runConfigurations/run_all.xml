@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="run all" type="CompoundRunConfigurationType">
-    <toRun name="Python services" type="CompoundRunConfigurationType" />
-    <toRun name="game frontend" type="js.build_tools.npm" />
-    <toRun name="game backend" type="QuarkusRunConfigurationType" />
-    <method v="2" />
-  </configuration>
-</component>

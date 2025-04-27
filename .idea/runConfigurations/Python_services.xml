@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Python services" type="CompoundRunConfigurationType">
-    <toRun name="bayesnet" type="PythonConfigurationType" />
-    <toRun name="sentiment-classifier" type="PythonConfigurationType" />
-    <method v="2" />
-  </configuration>
-</component>
