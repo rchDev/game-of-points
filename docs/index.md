@@ -108,8 +108,7 @@ Used for exposing your local game server to
 Google's conversational agents' webhook,
 without hosting the game server yourself.
 
-## Project setup:
-{: .no_toc }
+## ⚙️ Project setup:
 
 **(Step 1) Inside game-of-points project's root run:**
 ```shell
@@ -175,9 +174,8 @@ mvnw.cmd clean install
 ```
 
 ## 🚀 **Launching the project**
-{: .no_toc }
 
-Once you've set up the project, you can launch it in a few ways by following the steps described below.
+Once you've set up the environment and the project, you can launch the whole application in a few ways, by following instructions bellow.
 
 **Launching without IntelliJ:**
 {: .no_toc }
