@@ -173,10 +173,16 @@ def prediction_mode():
     model = SentimentAnalysisModel()
     model.load_model("sentiment_model.keras")
 
+    java_host_name = os.getenv("JAVA_GATEWAY_HOST")
+    python_host_name = os.getenv("PYTHON_GATEWAY_HOST")
+
+    gateway_host_name = "localhost" if java_host_name is None else java_host_name
+    callback_host_name = "localhost" if python_host_name is None else python_host_name
+
     # Setup Py4J gateway
     gateway = JavaGateway(
-        gateway_parameters=GatewayParameters(address="backend", port=25335, auto_convert=True),
-        callback_server_parameters=CallbackServerParameters(address="0.0.0.0", port=25336),
+        gateway_parameters=GatewayParameters(address=gateway_host_name, port=25335, auto_convert=True),
+        callback_server_parameters=CallbackServerParameters(address=callback_host_name, port=25336),
         python_server_entry_point=model
     )
     model.set_gateway(gateway)

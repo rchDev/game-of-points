@@ -4,6 +4,7 @@ from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
 import logging
 from py4j.java_collections import MapConverter
+import os
 
 
 # Configure logging
@@ -128,10 +129,16 @@ if __name__ == "__main__":
     # Inicializuojame Bajeso tinkla
     manager = BayesianNetworkManager()
 
+    java_host_name = os.getenv("JAVA_GATEWAY_HOST")
+    python_host_name = os.getenv("PYTHON_GATEWAY_HOST")
+
+    gateway_host_name = "localhost" if java_host_name is None else java_host_name
+    callback_host_name = "localhost" if python_host_name is None else python_host_name
+
     # Startuojame py4j serveri
     gateway = JavaGateway(
-        gateway_parameters=GatewayParameters(address="backend", port=25333, auto_convert=True),
-        callback_server_parameters=CallbackServerParameters(address="0.0.0.0", port=25334),
+        gateway_parameters=GatewayParameters(address=gateway_host_name, port=25333, auto_convert=True),
+        callback_server_parameters=CallbackServerParameters(address=callback_host_name, port=25334),
         python_server_entry_point=manager
     )
 

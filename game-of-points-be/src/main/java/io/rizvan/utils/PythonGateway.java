@@ -19,12 +19,23 @@ public class PythonGateway {
     @PostConstruct
     public void init() throws UnknownHostException {
 
+        String bayesHost = System.getenv("BAYES_HOST");
+        String sentimentHost = System.getenv("SENTIMENT_HOST");
+
+        InetAddress bayesPythonAddress = (bayesHost != null)
+                ? InetAddress.getByName(bayesHost)
+                : GatewayServer.defaultAddress();
+
+        InetAddress sentimentPythonAddress = (sentimentHost != null)
+                ? InetAddress.getByName(sentimentHost)
+                : GatewayServer.defaultAddress();
+
         bayesGatewayServer = new GatewayServer(
                 null,                    // entryPoint
                 25333,                   // port
                 25334,                   // pythonPort
                 InetAddress.getLocalHost(), // GatewayServer.defaultAddress(),  // address
-                InetAddress.getByName("bayesian"), // GatewayServer.defaultAddress(),  // pythonAddress
+                bayesPythonAddress, // GatewayServer.defaultAddress(),  // pythonAddress
                 GatewayServer.DEFAULT_CONNECT_TIMEOUT,  // connectTimeout
                 GatewayServer.DEFAULT_READ_TIMEOUT,     // readTimeout
                 null                      // customCommands
@@ -39,7 +50,7 @@ public class PythonGateway {
                 25335,
                 25336,
                 InetAddress.getLocalHost(), // GatewayServer.defaultAddress(),  // address
-                InetAddress.getByName("sentiment-classifier"),  // GatewayServer.defaultAddress(),  // pythonAddress
+                sentimentPythonAddress,  // GatewayServer.defaultAddress(),  // pythonAddress
                 GatewayServer.DEFAULT_CONNECT_TIMEOUT,  // connectTimeout
                 GatewayServer.DEFAULT_READ_TIMEOUT,
                 null

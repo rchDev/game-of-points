@@ -12,6 +12,9 @@ services:
   backend:
     build:
       context: ./game-of-points-be
+    environment:
+      - BAYES_HOST=bayesian
+      - SENTIMENT_HOST=sentiment-classifier
     ports:
       - "8080:8080"
     depends_on:
@@ -23,6 +26,9 @@ services:
   bayesian:
     build:
       context: ./bayes-net
+    environment:
+      - JAVA_GATEWAY_HOST=backend
+      - PYTHON_GATEWAY_HOST=0.0.0.0
     ports:
       - "25334:25334"
     expose:
@@ -31,6 +37,9 @@ services:
   sentiment-classifier:
     build:
       context: ./sentiment-classifier
+    environment:
+      - JAVA_GATEWAY_HOST=backend
+      - PYTHON_GATEWAY_HOST=0.0.0.0
     ports:
       - "25336:25336"
     expose:
