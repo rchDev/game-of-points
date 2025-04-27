@@ -60,9 +60,9 @@ Overview of the process:
 
 Detailed instructions can be found: [here](/game-of-points/conv-agent-config/).
 
-**(Step 2) Have git version control installed**
+**(Step 2) Have Git version control installed**
 
-**(Step 3) Install git LFS (Large File Storage)**
+**(Step 3) Install Git LFS (Large File Storage)**
 
 Installation instructions can be found here: ["Installing Git Large File Storage"](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage).
 
@@ -108,12 +108,19 @@ Used for exposing your local game server to
 Google's conversational agents' webhook,
 without hosting the game server yourself.
 
-## 🚀 How to launch this project
-
-### Project setup:
+## Project setup:
 {: .no_toc }
 
-**(Step 1): Inside game-of-points project's root directory run:**
+**(Step 1) Inside game-of-points project's root run:**
+```shell
+git lfs pull
+```
+This will download:
+1. The player answers database file.
+2. The sentiment analysis ML model.
+3. Exported conversational agent file.
+
+**(Step 2) Inside game-of-points project's root directory run:**
 
 ```shell
 poetry install
@@ -125,13 +132,13 @@ or activate virtual environment of your choice and run:
 pip install -r ./game-of-points-be/requirements.txt
 ```
 
-**(Step 2): Inside game-of-points/game-of-points-fe, run:**
+**(Step 3) Inside game-of-points/game-of-points-fe, run:**
 
 ```shell
 npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversational agent id> npm install
 ```
 
-**(Optional) (Step 3): Inside game-of-points/game-of-points-be, run:**
+**(Optional) (Step 4) Inside game-of-points/game-of-points-be, run:**
 
 Mac or Linux:
 
@@ -167,7 +174,7 @@ cd ..\game-of-points-be
 mvnw.cmd clean install
 ```
 
-### **Launching the project**
+## 🚀 **Launching the project**
 {: .no_toc }
 
 Once you've set up the project, you can launch it in a few ways by following the steps described below.
