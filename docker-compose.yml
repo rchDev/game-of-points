@@ -6,9 +6,6 @@ services:
       context: ./game-of-points-fe
     ports:
       - "5173:5173"
-    volumes:
-      - ./game-of-points-fe:/app
-      - /app/node_modules
     depends_on:
       - backend
 
@@ -17,21 +14,17 @@ services:
       context: ./game-of-points-be
     ports:
       - "8080:8080"
-    volumes:
-      - ./game-of-points-be:/app
-    environment:
-      - JAVA_OPTS=-Dquarkus.http.host=0.0.0.0
     depends_on:
       - bayesian
       - sentiment-classifier
+    expose:
+      - "8080"
 
   bayesian:
     build:
       context: ./bayes-net
     ports:
       - "25334:25334"
-    volumes:
-      - ./path-to-your-bayesian-project:/app
     expose:
       - "25334"
 
@@ -40,7 +33,5 @@ services:
       context: ./sentiment-classifier
     ports:
       - "25336:25336"
-    volumes:
-      - ./path-to-your-sentiment-classifier:/app
     expose:
       - "25336"

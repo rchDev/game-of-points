@@ -175,8 +175,8 @@ def prediction_mode():
 
     # Setup Py4J gateway
     gateway = JavaGateway(
-        gateway_parameters=GatewayParameters(port=25335, auto_convert=True),
-        callback_server_parameters=CallbackServerParameters(port=25336),
+        gateway_parameters=GatewayParameters(address="backend", port=25335, auto_convert=True),
+        callback_server_parameters=CallbackServerParameters(address="0.0.0.0", port=25336),
         python_server_entry_point=model
     )
     model.set_gateway(gateway)

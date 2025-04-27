@@ -130,8 +130,8 @@ if __name__ == "__main__":
 
     # Startuojame py4j serveri
     gateway = JavaGateway(
-        gateway_parameters=GatewayParameters(port=25333, auto_convert=True),
-        callback_server_parameters=CallbackServerParameters(port=25334),
+        gateway_parameters=GatewayParameters(address="backend", port=25333, auto_convert=True),
+        callback_server_parameters=CallbackServerParameters(address="0.0.0.0", port=25334),
         python_server_entry_point=manager
     )
 

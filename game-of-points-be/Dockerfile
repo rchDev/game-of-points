@@ -13,10 +13,7 @@ WORKDIR /app
 COPY . .
 
 # Give permission to the Maven wrapper script (just in case)
-RUN chmod +x mvnw
-
-# Expose port 8080
-EXPOSE 8080
+RUN chmod +x ./mvnw
 
 # Start the Quarkus development server
 CMD ["./mvnw", "quarkus:dev"]

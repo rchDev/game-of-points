@@ -5,6 +5,9 @@ import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
 import py4j.GatewayServer;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 @Singleton
 @Startup
 public class PythonGateway {
@@ -14,32 +17,37 @@ public class PythonGateway {
     private SentimentPythonManager sentimentPythonManager;
 
     @PostConstruct
-    public void init() {
+    public void init() throws UnknownHostException {
 
         bayesGatewayServer = new GatewayServer(
                 null,                    // entryPoint
                 25333,                   // port
                 25334,                   // pythonPort
-                GatewayServer.defaultAddress(),  // address
-                GatewayServer.defaultAddress(),  // pythonAddress
+                InetAddress.getLocalHost(), // GatewayServer.defaultAddress(),  // address
+                InetAddress.getByName("bayesian"), // GatewayServer.defaultAddress(),  // pythonAddress
                 GatewayServer.DEFAULT_CONNECT_TIMEOUT,  // connectTimeout
                 GatewayServer.DEFAULT_READ_TIMEOUT,     // readTimeout
                 null                      // customCommands
         );
         bayesGatewayServer.start();
 
+        System.out.println("bayesGatewayServer address:" + bayesGatewayServer.getPythonAddress() + ":" + bayesGatewayServer.getPythonPort());
+
         // Initialize the Sentiment Gateway Server with its own Python and callback ports
         sentimentGatewayServer = new GatewayServer(
                 null,
                 25335,
                 25336,
-                GatewayServer.defaultAddress(),  // address
-                GatewayServer.defaultAddress(),  // pythonAddress
+                InetAddress.getLocalHost(), // GatewayServer.defaultAddress(),  // address
+                InetAddress.getByName("sentiment-classifier"),  // GatewayServer.defaultAddress(),  // pythonAddress
                 GatewayServer.DEFAULT_CONNECT_TIMEOUT,  // connectTimeout
                 GatewayServer.DEFAULT_READ_TIMEOUT,
                 null
         );
         sentimentGatewayServer.start();
+
+        System.out.println("bayesGatewayServer address:" + sentimentGatewayServer.getPythonAddress() + ":" + sentimentGatewayServer.getPythonPort());
+
 
         bayesManager = (BayesPythonManager) bayesGatewayServer.getPythonServerEntryPoint(new Class[]{BayesPythonManager.class});
         sentimentPythonManager = (SentimentPythonManager) sentimentGatewayServer.getPythonServerEntryPoint(new Class[]{SentimentPythonManager.class});
