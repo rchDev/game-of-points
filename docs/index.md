@@ -10,7 +10,7 @@ nav_order: 0
 A Simple game where human user competes against AI agent in a battle to collect the most points and survive.
 
 {: .note }
-*This project was created for educational purposes. The ain goal was to explore and play around with various technologies: including bayes nets, neural nets, rule engines, and conversational agent tools.*
+*This project was created for educational purposes. The main goal was to explore and play around with various technologies, including bayes nets, neural nets, rule engines, and conversational agent tools.*
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -23,8 +23,8 @@ A Simple game where human user competes against AI agent in a battle to collect 
 ## 🎲 Game Rules
 1. Game starts with 60s timer. Once the time runs out, whoever (agent or player) collected most points - wins. 
 2. Points appear at random locations and time intervals. 
-3. Both the agent and user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
-4. Whoever kills one another - wins.
+3. Both the agent and the user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
+4. Whoever kills the other - wins.
 
 ## 🏗️ Project overview
 
@@ -123,7 +123,7 @@ npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 ✔ Updated project‑id and agent‑id in index.html
 ```
 
-**Step 4 (Optional):** Have ngrok installed and configured with your account.
+**Step 4 (Optional):** Have **ngrok** installed and configured with your account.
 
 Used for exposing your local game server to
 Google's conversational agent's webhook,
@@ -430,7 +430,7 @@ cd ./game-of-points-be && \
 ./mvnw quarkus:dev
 ```
 
-**Step 4 (Optional):** Run ngrok, if you want your local game back-end communicating with the Google's conversational agent.
+**Step 4 (Optional):** Run **ngrok**, if you want your local game back-end communicating with the Google's conversational agent.
 
 In a new terminal session (keep others alive):
 
@@ -452,5 +452,5 @@ npm run dev
 
 1. Game server depends on working python services (bayes-net and sentiment classifier).
 2. Game front-end depends on a working game server
-3. The Player data collection step in front-end chat depends on ngrok tunnel (if you are not hosting your back-end on public ip address).
+3. The Player data collection step in front-end chat depends on **ngrok** tunnel (if you are not hosting your back-end on public ip address).
    If your conversational agent's webhook isn't pointing to your back-end's public address, game server won't receive user questionnaire results.
