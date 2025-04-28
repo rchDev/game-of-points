@@ -23,24 +23,25 @@ sequenceDiagram
     participant Bayes as Bayes Network Server
 
     %% Chat interaction
-    Player ->> Frontend: Send chat message
-    Frontend ->> Dialogflow: Forward message
-    Dialogflow ->> Dialogflow: Figure out the intent
-    alt Intent needs validation
-        Dialogflow ->> GameServer: Send intent validation request
-        GameServer ->> GameServer: Process and store info (linked to session)
-        GameServer -->> Dialogflow: Send validation response
-    
-    Dialogflow ->> Dialogflow: Transition to other page
-    
-    %% Chat continues until end page
-    alt End Session page reached
-        Dialogflow -->> Frontend: Send the end message
-        Dialogflow -->> Indicate session ending
-    else
-        Dialogflow -->> Send page entry fulfillment response
+    loop until session end
+        Player ->> Frontend: Send chat message
+        Frontend ->> Dialogflow: Forward message
+        Dialogflow ->> Dialogflow: Figure out the intent
+        alt Intent needs validation
+            Dialogflow ->> GameServer: Send intent validation request
+            GameServer ->> GameServer: Process and store info (linked to session)
+            GameServer -->> Dialogflow: Send validation response
+        end
+        Dialogflow ->> Dialogflow: Transition to other page
+        
+        %% Chat continues until end page
+        alt End Session page reached
+            Dialogflow -->> Frontend: Send the end message
+            Dialogflow -->> Frontend: Indicate session ending
+        else otherwise
+            Dialogflow -->> Frontend: Send page entry fulfillment response
+        end
     end
-    
     %% Game creation
     Frontend ->> GameServer: send game creation request (with Dialogflow ID)
     GameServer ->> GameServer: Read stored player answers
@@ -59,8 +60,7 @@ sequenceDiagram
 
     GameServer ->> GameServer: Create agent and game state
     GameServer -->> Frontend: Return session ID + game state
-    Frontend ->> Frontend: Render game view
-
+    Frontend -->> Player: Render game view
 ```
 ### What's going on here:
 User types a greeting message into a chat
