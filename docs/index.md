@@ -28,13 +28,18 @@ A Simple game where human user competes against AI agent in a battle to collect 
 3. Both the agent and user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
 4. Whoever kills one another - wins.
 
-## **🌀 Weird parts**
+## 🌀 Weird parts
 
 This project was created for educational purposes.
 It is in no way "production ready". 
 There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as creative, but objectively bad problem solutions.
 
-## **📋 Environment setup**
+Some rendering bugs:
+1. The frontend-backend game state reconciliation sometimes breaks and the game becomes laggy...
+2. Game timer updates too slow - timer is tied to game update cycle when the server fails to process game state updates fast enough, timer updates lag too.
+3. Error messages get rendered incorrectly in Mozilla browsers.
+
+## 📋 Environment setup
 
 ### Everyone:
 {: .no_toc }
@@ -158,7 +163,7 @@ Maven is not required, because Maven will be installed when running one of these
 
 Helpful for launching individual project modules and editing project files.
 
-## **⚙️ Project setup**
+## ⚙️ Project setup
 
 ### ⭐⭐⭐ Docker specific (Recommended) ⭐⭐⭐
 {: .no_toc }
@@ -312,7 +317,7 @@ npm run dev
 3. The Player data collection step in frontend chat depends on ngrok tunnel (if you are not hosting your backend on public ip address).
    If your conversational agent's webhook isn't pointing to your backend's public address, game server won't receive user questionnaire results.
 
-## **🏗️ System overview**
+## 🏗️ System overview
 
 ### Main components:
 {: .no_toc }
