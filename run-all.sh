@@ -4,9 +4,8 @@ set -e
 PY1_PID=
 PY2_PID=
 QUARKUS_PID=
-NGROK_PID=
 
-trap 'echo "🧹 Cleaning up..."; kill $PY1_PID $PY2_PID $QUARKUS_PID $NGROK_PID 2>/dev/null || true' EXIT
+trap 'echo "🧹 Cleaning up..."; kill $PY1_PID $PY2_PID $QUARKUS_PID 2>/dev/null || true' EXIT
 
 cd ./bayes-net
 source .venv/bin/activate
@@ -30,10 +29,6 @@ QUARKUS_PID=$!
 echo "⏳ Launching game backend..."
 while ! nc -z localhost 8080; do sleep 0.5; done
 echo "✅ Game backend is ready."
-
-# 🌐 Start ngrok
-nohup ngrok http --domain=rizvan.ngrok.dev 8080 > ../logs/ngrok.log 2>&1 &
-NGROK_PID=$!
 
 sleep 1
 

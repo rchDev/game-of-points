@@ -274,7 +274,7 @@ In a terminal session run:
 ngrok http --domain=<your_public_domain> 8080
 ```
 
-**Step 2:**
+**Step 2:** Run the [docker-compose.yml]() file.
 
 Inside project's root, open a new terminal session (while keeping the ngrok session alive) and run:
 ```shell
@@ -289,12 +289,61 @@ docker compose up -d
 docker compose up --build
 ```
 
-After this you can open a front-end at: ``http://localhost:5173``
+After this you can open a front-end at: `` http://localhost:5173 ``
 
-### ☠️ ☠️ ☠️ Non Docker launch ☠️ ☠️ ☠️
+### ☠️ ☠️ ☠️ Non Docker Launch ☠️ ☠️ ☠️
 {: .no_toc }
 
-**macOS, Linux, Windows WSL:**
+{: .note }
+Works only on: macOS, Linux and Windows WSL.
+
+---
+
+### Easy mode:
+{: .no_toc }
+
+**Step 1 (Optional):** Run ngrok, if you want your local game back-end communicating with the Google's conversational agent.
+
+In a terminal session run:
+```shell
+ngrok http --domain=<your_public_domain> 8080
+```
+
+**Step 2:** Run [run-all.sh](https://github.com/rchDev/game-of-points/blob/main/run-all.sh) script.
+
+In another terminal session, run:
+
+```shell
+bash run-all.sh
+
+# You should see a bunch of similar messages.
+
+⏳ Launching bayes-net and sentiment classifier services...
+Connection to localhost port 25334 [tcp/*] succeeded!
+Connection to localhost port 25336 [tcp/*] succeeded!
+✅ Bayes-net and sentiment classifier are ready!
+⏳ Launching game backend...
+Connection to localhost port 8080 [tcp/http-alt] succeeded!
+✅ Game backend is ready.
+⏳ Launching game frontend...
+
+> game-of-points-fe@0.0.0 dev
+> vite
+
+
+  VITE v6.2.6  ready in 49 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+```
+
+---
+
+### Hardcore mode:
+
+{: note }
+Use these steps only if you want to run a specific part of the project, or if `` run-all.sh `` and Docker approaches are not working.
 
 All these steps should be performed from project's root directory.
 
