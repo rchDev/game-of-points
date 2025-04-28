@@ -11,12 +11,12 @@ A Simple game where human user competes against AI agent in a battle to collect 
 ### Here: [https://rchdev.github.io/game-of-points/](https://rchdev.github.io/game-of-points/)
 
 ## 🗂️ Table of contents
-- [🎲 Game Rules]()
+- [🎲 Game Rules](#-game-rules)
 - [🏗️ Project overview](#%EF%B8%8F-project-overview)
-- [🌀 Weird parts]()
-- [📋 Environment setup]()
-- [⚙️ Project setup]()
-- [🚀 Launching the project]()
+- [🌀 Weird parts](#-weird-parts)
+- [📋 Environment setup](#-environment-setup)
+- [⚙️ Project setup](#-project-setup)
+- [🚀 Launching the project](#-launching-the-project)
 ---
 
 ## 🎲 Game Rules
