@@ -37,6 +37,7 @@ There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as
 ## **📋 Environment setup**
 
 ### Everyone:
+{: .no_toc }
 
 **Step 1:** Have Git version control installed.
 
@@ -82,6 +83,7 @@ ngrok version 3.20.0
 ```
 
 ### ⭐⭐⭐ Docker specific (Recommended) ⭐⭐⭐
+{: .no_toc }
 
 **Step 1:** Have docker engine installed and accessible from your terminal
 
@@ -94,6 +96,7 @@ Docker version 28.0.4, build b8034c0
 ```
 
 ### ☠️☠️☠️ Non docker setup (Not recommended) ☠️☠️☠️
+{: .no_toc }
 
 This takes a lot of hassle to get up and working.
 
@@ -158,6 +161,7 @@ Helpful for launching individual project modules and editing project files.
 ## **⚙️ Project setup**
 
 ### ⭐⭐⭐ Docker specific (Recommended) ⭐⭐⭐
+{: .no_toc }
 
 **Step 1:** Inside game-of-points project's root run:
 
@@ -172,6 +176,7 @@ This will download:
 ---
 
 ### ☠️☠️☠️ Non Docker (Not Recommended) ☠️☠️☠️
+{: .no_toc }
 
 **Step 1:** Inside game-of-points project's root run:
 ```shell
@@ -243,6 +248,8 @@ npm install
 Once you've set up the environment and the project, you can launch the whole application in a few ways, by following instructions bellow.
 
 ### ☠️☠️☠️ Non Docker launch ☠️☠️☠️
+{: .no_toc }
+
 **macOS, Linux, Windows WSL:**
 
 All these steps should be performed from project's root directory.
