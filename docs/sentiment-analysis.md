@@ -93,12 +93,12 @@ In the famous bank example, when using traditional embeddings, the word bank wou
 
 ## Used libraries
 
-1. Keras - neural net construction, training, inference 
-2. py4j - communication and translation layer between Python and Java project.
+1. Keras - neural net construction, training, inference.
+2. py4j - communication and translation layer between Python project (sentiment classifier) and Java project (game server).
 3. scikit-learn - various helper functions for processing data, like train_test_split.
 4. pandas - for reading csv files into structures that are supported by other ML libraries.
 5. numpy - same as pandas and for efficiently working with arrays.
-6. tensorflow_hub - for pulling down free embeddings layer neural net. 
+6. tensorflow_hub - for pulling down free embeddings neural net. 
 
 ## The solution
 
