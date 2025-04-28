@@ -20,11 +20,56 @@ A Simple game where human user competes against AI agent in a battle to collect 
 
 ---
 
-## Game Rules:
+## 🎲 Game Rules:
 1. Game starts with 60s timer. Once the time runs out, whoever (agent or player) collected most points - wins. 
 2. Points appear at random locations and time intervals. 
 3. Both the agent and user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
 4. Whoever kills one another - wins.
+
+## 🏗️ Project overview
+
+### Main system components:
+{: .no_toc }
+
+{: .info }
+More info can be found in [deep lore](/game-of-points/deep-lore/) section of the docs.
+
+1. [Front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application. Responsible for communicating with backend to get agents actions and reconcile its game state. Also talks with Google's conversational agent.
+2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be). Responsible for processing player actions, reasoning, validating conversational agent's intents.
+3. [Bayesian network](https://github.com/rchDev/game-of-points/tree/main/bayes-net) server. Used for filling gaps in agent's knowledge.
+4. [Sentiment classifier](https://github.com/rchDev/game-of-points/tree/main/sentiment-classifier) server. Used for assigning a class to player's mood description.
+5. Google's [conversational agent](https://conversational-agents.cloud.google.com/projects). Used to collect information about the player before the match begins.
+6. [Ngrok](https://ngrok.com/) is used as a tunnel service for connecting Google's conversational agent to a local game server.
+
+```mermaid
+graph TD
+  A[Game Front-end Application]
+  B[Game Server]
+  C[Bayesian Network Server]
+  D[Sentiment Classifier Server]
+  E[Google's Conversational Agent]
+  F[Ngrok Tunnel Service]
+
+  A -->|"Player Actions"| B
+  A -->|"Chat message"| E
+  E -->|"Response message"| A
+  B --> |"Authoritative Game State"| A
+  B -->|"MAP query request"| C
+  C -->|"Most probable stat combo"| B
+  E -->|"Validation Requests"| F
+  F -->|"Forwarded Validation Responses"| E
+  F -->|"Forwarded Validation Requests"| B
+  B -->|"Validation Responses"| F
+  B -->|"Player Mood Description"| D
+  D -->|"Mood Class"| B
+
+  style A fill:#90EE90,stroke:#333,stroke-width:2px
+  style B fill:#87CEFA,stroke:#333,stroke-width:2px
+  style C fill:#FFFFE0,stroke:#333,stroke-width:2px
+  style D fill:#FFFFE0,stroke:#333,stroke-width:2px
+  style E fill:pink,stroke:#333,stroke-width:2px
+  style F fill:#D3D3D3,stroke:#333,stroke-width:2px
+```
 
 ## 🌀 Weird parts
 
@@ -400,71 +445,3 @@ npm run dev
 2. Game front-end depends on a working game server
 3. The Player data collection step in front-end chat depends on ngrok tunnel (if you are not hosting your back-end on public ip address).
    If your conversational agent's webhook isn't pointing to your back-end's public address, game server won't receive user questionnaire results.
-
-## 🏗️ System overview
-
-### Main components:
-{: .no_toc }
-
-{: .info }
-More info can be found in [deep lore](/game-of-points/deep-lore/) section of the docs.
-
-1. Game [front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application.
-2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be).
-3. [Bayesian network](https://github.com/rchDev/game-of-points/tree/main/bayes-net) server.
-4. [Sentiment classifier](https://github.com/rchDev/game-of-points/tree/main/sentiment-classifier) server.
-5. Google's [conversational agent](https://conversational-agents.cloud.google.com/projects).
-6. [Ngrok](https://ngrok.com/) as a tunnel service connecting Google's conversational agent to local game server.
-
-```mermaid
-graph TD
-  A[Game Front-end Application]
-  B[Game Server]
-  C[Bayesian Network Server]
-  D[Sentiment Classifier Server]
-  E[Google's Conversational Agent]
-  F[Ngrok Tunnel Service]
-
-  A -->|"Player Actions"| B
-  A -->|"Chat message"| E
-  E -->|"Response message"| A
-  B --> |"Authoritative Game State"| A
-  B -->|"MAP query request"| C
-  C -->|"Most probable stat combo"| B
-  E -->|"Validation Requests"| F
-  F -->|"Forwarded Validation Responses"| E
-  F -->|"Forwarded Validation Requests"| B
-  B -->|"Validation Responses"| F
-  B -->|"Player Mood Description"| D
-  D -->|"Mood Class"| B
-
-  style A fill:#90EE90,stroke:#333,stroke-width:2px
-  style B fill:#87CEFA,stroke:#333,stroke-width:2px
-  style C fill:#FFFFE0,stroke:#333,stroke-width:2px
-  style D fill:#FFFFE0,stroke:#333,stroke-width:2px
-  style E fill:pink,stroke:#333,stroke-width:2px
-  style F fill:#D3D3D3,stroke:#333,stroke-width:2px
-```
-
-### What is going on:
-{: .no_toc }
-
-{: .info }
-<a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">Article that really helped me to implement fast-paced multiplayer client-server communication</a>
-
-{: .info }
-More info can be found in [deep lore](/game-of-points/deep-lore/) section of the docs.
-
-1. Game session initialization involving questioning by the conversational agent. 
-2. Game front-end sends a bunch of game state updates to game server through a websocket connection (i know... tcp is bad for game dev.)
-3. While the game server is processing these updates, front-end app simulates the application of these updates to create an illusion of smooth gameplay experience for a user. 
-4. For each game session, game server stores game updates inside a <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/SessionStorage.java" target="_blank">session storage</a>. 
-5. Once the time for processing comes, server runs the loop through all sessions and starts applying updates for each of game states. See this <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/GameStateUpdateScheduler.java" target="_blank">code</a>. 
-6. Updating starts with cloning a game state, getting all player actions from the session storage and validating them. 
-7. Once actions are deemed valid, they are applied to the game state clone and are registered as **facts** for AI agent. (<a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/GameState.java">See this place</a>.)
-8. Once all facts are registered, [agent.reason](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L271-L307) method which then uses Drools rule engine and Bayesian network to reason about the current game state, and make action choice decisions based on the current state configuration. 
-9. After agent takes these actions, they are applied to the game state clone. 
-10. Clone is then placed into game state update history inside session storage.
-11. For each session update event is published.
-12. [Controller](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/StartWebSocket.java#L100-L118) that's listening for those update events, sends updated game states to each session (front-end).
-13. Front-end reconciles it's predicted game state with authoritative game state that's provided by back-end. ([reconcileWithServerState](https://github.com/rchDev/game-of-points/blob/main/game-of-points-fe/main.js#L341-L354))
