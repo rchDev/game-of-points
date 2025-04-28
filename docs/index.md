@@ -171,7 +171,7 @@ This will download:
 
 ---
 
-### ☠️☠️☠️ Non docker (Not Recommended) ☠️☠️☠️
+### ☠️☠️☠️ Non Docker (Not Recommended) ☠️☠️☠️
 
 **Step 1:** Inside game-of-points project's root run:
 ```shell
@@ -190,8 +190,8 @@ This will download:
 Inside projects root run:
 
 ```shell
-cd ./bayes-net
-pyenv local
+cd ./bayes-net && \
+pyenv local && \
 python -m venv venv/
 ```
 **Step 3:** Activate virtual environment and install dependencies that are specified inside the requirements.txt file.
@@ -201,125 +201,101 @@ source .venv/bin/activate
 pip install requirements.txt
 ```
 
-**Step 4:** While virtual environment is active, launch the bayes net.
-
-```shell
-python bayesian_network.py
-```
-
-**Step 5:** Change directories to /game-of-points/sentiment-classifier and create another virtual environment there
+**Step 4:** Change directories to /game-of-points/sentiment-classifier and create another virtual environment there.
 
 **Example with [venv](https://docs.python.org/3/library/venv.html) and [pyenv](https://github.com/pyenv/pyenv):**
 
 ```shell
-cd ../sentiment-classifier
-pyenv local
+cd ../sentiment-classifier && \
+pyenv local && \
 python -m venv venv/
 ```
 
-**Step 6:** Once again, activate the virtual environment and install dependencies that are specified inside the requirements.txt file, only this this it's inside /game-of-points/sentiment-classifier directory:
+**Step 5:** Once again, activate the virtual environment and install dependencies that are specified inside the requirements.txt file, only this this it's inside /game-of-points/sentiment-classifier directory:
 
 ```shell
-source .venv/bin/activate
+source .venv/bin/activate && \
 pip install requirements.txt
 ```
 
+**Step 6:** We need to set up the frontend. So we change into the /game-of-points/game-of-points-fe and run: ``npm install``.
+
+Here, we change into frontend module's directory and run npm install to install all dependencies:
 ```shell
-cd ./bayes-net
-pip install -r ./game-of-points-be/requirements.txt
-```
-
-**(Step 3) Inside game-of-points/game-of-points-fe, run:**
-
-```shell
-npx cross-env PROJECT_ID=<conversational agents project id> AGENT_ID=<conversational agent id> npm install
-```
-
-**(Optional) (Step 4) Inside game-of-points/game-of-points-be, run:**
-
-Mac or Linux:
-
-```shell
-./mvnw clean install
-```
-
-Windows:
-
-```shell
-mvnw.cmd clean install
+cd ../game-of-points-fe && \
+npm install
 ```
 
 **Full setup command to run inside project root:**
 
-Mac or Linux:
+>macOS, Linux and Windows WSL:
+>
+>```shell
+>poetry install && \
+>cd ./game-of-points-fe && \
+>npx cross-env PROJECT_ID=<conversational_agent_project_id> AGENT_ID=<conversational_agent_id> npm install && \
+>cd ../game-of-points-be && \
+>./mvnw clean install
+>```
 
-```shell
-poetry install && \
-cd ./game-of-points-fe && \
-npx cross-env PROJECT_ID=<conversational_agent_project_id> AGENT_ID=<conversational_agent_id> npm install && \
-cd ../game-of-points-be && \
-./mvnw clean install
-```
-
-Windows:
-
-```shell
-poetry install
-cd game-of-points-fe
-npx cross-env PROJECT_ID=<conversational_agent_project_id> AGENT_ID=<conversational_agent_id> npm install
-cd ..\game-of-points-be
-mvnw.cmd clean install
-```
-
-## **🚀 Launching the project**
+## 🚀 Launching the project
 
 Once you've set up the environment and the project, you can launch the whole application in a few ways, by following instructions bellow.
 
-**Launching without IntelliJ:**
-{: .no_toc }
+### ☠️☠️☠️ Non Docker launch ☠️☠️☠️
+**macOS, Linux, Windows WSL:**
 
 All these steps should be performed from project's root directory.
 
-***Mac or Linux:***
+**Step 1:** Run bayes-net.
 
-(Step 1): Run bayes-net:
+{: note }
+Example shown with [venv](https://docs.python.org/3/library/venv.html), but you can use any virtual environment, or none (good luck with that).
 
 ```shell
-cd ./game-of-points-be/src/main/java/io/rizvan/beans/actors/agent && \
-poetry run python bayesian_network.py
+cd ./bayes-net && \
+source .venv/bin/activate && \
+python bayesian_network.py
 ```
 
-(Step 2): Run sentiment classifier:
+**Step 2:** Run sentiment classifier.
+
+Open a new terminal session in project's root, don't kill the previous where bayes-net is running.
+
+{: .note }
+Example shown with [venv](https://docs.python.org/3/library/venv.html), but you can use any virtual environment, or none (good luck with that).
 
 ```shell
-cd ./sentiment-analysis
-poetry run python sentiment_classifier.py predict
+cd ./sentiment-classifier && \
+source .venv/bin/activate && \
+python sentiment_classifier.py predict
 ```
 
-(Step 3): Run game server:
+**Step 3:** Run game server.
+
+In a new terminal session (keep others alive):
 
 ```shell
-cd ../../../../../../../../../ && \
+cd ./game-of-points-be && \
 ./mvnw quarkus:dev
 ```
 
-(Step 4): Run ngrok:
+**Step 4:** Run ngrok.
+
+In a new terminal session (keep others alive):
 
 ```shell
 ngrok http --domain=<your_public_domain> 8080
 ```
 
-(Step 5): Run game frontend:
+**Step 5:** Run game frontend.
+
+In a new terminal session (keep others alive):
 
 ```shell
 cd ../game-of-points-fe && \
 npm run dev
 ```
-
-**Windows:**
-
-**Launching with IntelliJ:**
-{: .no_toc }
 
 **General launch rules:**
 {: .no_toc }
