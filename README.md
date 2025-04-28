@@ -68,6 +68,9 @@ graph TD
   style D fill:#f39c12,stroke:#ffffff,stroke-width:2px,color:#111111
   style E fill:#e91e63,stroke:#ffffff,stroke-width:2px,color:#111111
   style F fill:#95a5a6,stroke:#ffffff,stroke-width:2px,color:#111111
+
+  classDef boldText fill:none,color:#111111,font-weight:bold;
+  class A,B,C,D,E,F boldText;
 ```
 
 ## 🌀 Weird parts
