@@ -36,77 +36,124 @@ There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as
 
 ## **📋 Environment setup**
 
-❗❗❗ Due to having many small services, the project is hard to launch.
-To mitigate this issue, launch scripts have been created.
-To use these scripts, you have to install optional dependencies. ❗❗❗
+### Everyone:
 
-### Required:
+**Step 1:** Have Git version control installed.
+
+**Step 2:** Install Git LFS (Large File Storage).
+
+Install and setup instructions can be found here: ["Installing Git Large File Storage"](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage).
+
+{: .note}
+Steps 3 and 4 are optional if you want a working conversational to question a player before the game starts.
+The game will work without this step.
+
+**(Optional) Step 3:** Working Google Conversational Agent (~~Dialogflow CX~~)**
 {: .no_toc }
 
-**(Step 1) Working Google Conversational Agent (~~Dialogflow CX~~)**
-{: .no_toc }
+1. Inside project's root directory you'll find a file: **exported_agent_snitch.blob**
+2. Take this file and import it into your own: [Google conversational agent](https://conversational-agents.cloud.google.com/projects) project.
+3. Publish your agent and use provided: *project-id*, *agent-id* in:
 
-Inside project's root directory you'll find a file: **exported_agent_snitch.blob**
+```shell
+npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
+```
 
-Take this file and import it into your own: <a href="https://conversational-agents.cloud.google.com/projects" target="_blank">Google conversational agent</a> project.
+Sanity check:
+```shell
+npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 
-Overview of the process:
-1. Create a new project.
-2. Create new agent.
-3. Restore (import) the agent to use the agent that's inside the repo file.
-4. Set the webhook url to your own. 
-5. Publish the agent.
-6. Use the provided: *project-id*, *agent-id* during npm install.
+# Should print success message similar to this one:
+✔ Updated project‑id and agent‑id in index.html
+```
 
-Detailed instructions can be found: [here](/game-of-points/conv-agent-config/).
+**(Optional) Step 4:** Have ngrok installed and configured with your account
 
-**(Step 2) Have Git version control installed**
+Used for exposing your local game server to
+Google's conversational agent's webhook,
+without hosting the game server yourself.
 
-**(Step 3) Install Git LFS (Large File Storage)**
+Sanity check:
+```shell
+ngrok --version
 
-Installation instructions can be found here: ["Installing Git Large File Storage"](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage).
+# Should print version info similar to this: 
+ngrok version 3.20.0
+```
 
-**(Step 4) Make sure *JDK* 17-22 is installed.**
-{: .no_toc }
+### ⭐⭐⭐ Docker specific **(Recommended)** ⭐⭐⭐
 
-❗Java 23 is not supported and will cause compatibility issues.
+**Step 1:** Have docker engine installed and accessible from your terminal
 
-**(Step 5) Have Python >=3.12 installed**
-{: .no_toc }
+Sanity check:
+```shell
+docker --version
 
-1. Install the version that is specified in <a href="https://github.com/rchDev/game-of-points/blob/main/.python-version" target="_blank">.python-version</a> file (use pyenv)
-2. Install version that is complies with spec in <a href="https://github.com/rchDev/game-of-points/blob/main/pyproject.toml" target="_blank">pyproject.toml</a> file.
+# Should print version info similar to this: 
+Docker version 28.0.4, build b8034c0
+```
 
-**(Step 6) Install Node.js >=v16.20.2**
-{: .no_toc }
+### 🚨🚨🚨 Non docker setup (Not recommended) 🚨🚨🚨
 
-### Optional:
-{: .no_toc }
+This takes a lot of hassle to get up and working.
 
-**(Step 7) Install Maven 3.2+**
-{: .no_toc }
+Tested on: macOS 15.4.1, Ubuntu 24.04, Windows WSL2 Ubuntu.
 
-Maven is not required, because Maven will be installed when running one of these commands:
+{: .warning}
+Won't work on Windows 11 x64. **Reason:** 18 python packages used in a project didn't have wheels for Windows Python versions: 3.8-3.13. I didn't want to play around with versions, so I used Docker.
+
+**Step 1:** Make sure *JDK* 17-22 is installed.
+
+{: .warning}
+Java 23 is not supported and will cause compatibility issues. Some maven packages won't build.
+
+Sanity check:
+```shell
+java --version 
+
+# Should print version info similar to this one:
+openjdk 17.0.14 2025-01-21 LTS
+OpenJDK Runtime Environment Corretto-17.0.14.7.1 (build 17.0.14+7-LTS)
+OpenJDK 64-Bit Server VM Corretto-17.0.14.7.1 (build 17.0.14+7-LTS, mixed mode, sharing)
+
+# and
+
+javac --version
+
+#Should also print version info:
+javac 17.0.14
+```
+
+**Step 2:** Have Python ==3.12 installed
+
+Best bet is to have the version that is specified in [.python-version](https://github.com/rchDev/game-of-points/blob/main/bayes-net/.python-version) file (use pyenv)
+
+Sanity check:
+```shell
+python --version
+
+# Should print a python version:
+Python 3.12.9
+```
+
+**Step 3:** Install Node.js >=v16.20.2
+
+```shell
+node --version
+
+# Should print node version that's >= 16.20.2:
+v22.14.0
+```
+
+**(Optional) Step 4:** Install Maven 3.2+
+
+Maven is not required, because Maven will be installed when running one of these scripts:
 1. ./mvnw shell command on Mac or Linux
 2. mvnw.cmd on Windows
 
-**(Step 8) Install IntelliJ IDEA: <a href="https://www.jetbrains.com/idea/download/?section=mac" target="_blank">Mac</a>, <a href="https://www.jetbrains.com/idea/download/?section=linux" target="_blank">Linux</a>, <a href="https://www.jetbrains.com/idea/download/?section=windows" target="_blank">Windows</a>**
-{: .no_toc }
+**(Optional) Step 5:** Install IntelliJ IDEA: [macOS](https://www.jetbrains.com/idea/download/?section=mac), [Linux](https://www.jetbrains.com/idea/download/?section=linux), [Windows](https://www.jetbrains.com/idea/download/?section=windows).
 
-Helpful for easily launching the project.
-
-**(Step 9) Install <a href="https://python-poetry.org/docs/#installation" target="_blank">Poetry</a>**
-{: .no_toc }
-
-Although not required, but project uses poetry for easy dependency management.
-You can use your own virtual environment and install dependencies from <a href="https://github.com/rchDev/game-of-points/blob/main/requirements.txt" target="_blank">requirements.txt</a> file.
-
-**(Step 10) Install <a href="https://ngrok.com/docs/getting-started/" target="_blank">Ngrok</a>**
-{: .no_toc }
-
-Used for exposing your local game server to
-Google's conversational agents' webhook,
-without hosting the game server yourself.
+Helpful for launching individual project modules and editing project files.
 
 ## **⚙️ Project setup**
 
