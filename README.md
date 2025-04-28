@@ -151,13 +151,16 @@ This takes a lot of hassle to get up and working.
 
 Tested on: macOS 15.4.1, Ubuntu 24.04, Windows WSL2 Ubuntu.
 
-{: .warning}
-Won't work on Windows 11 x64. **Reason:** 18 python packages used in a project didn't have wheels for Windows Python versions: 3.8-3.13. I didn't want to play around with versions, so I used Docker.
+
+>**WARNING**
+> 
+>*Won't work on Windows 11 x64. **Reason:** 18 python packages used in a project didn't have wheels for Windows Python versions: 3.8-3.13. I didn't want to play around with versions, so I used Docker.*
 
 **Step 1:** Make sure *JDK* 17-22 is installed.
 
-{: .warning}
-Java 23 is not supported and will cause compatibility issues. Some maven packages won't build.
+>**WARNING**
+>
+>*Java 23 is not supported and will cause compatibility issues. Some maven packages won't build.*
 
 ```shell
 java --version 
@@ -337,15 +340,14 @@ docker compose up --build
 After this you can open a front-end at: `` http://localhost:5173 ``
 
 ### Non Docker Launch ☠️ ☠️ ☠️
-{: .no_toc }
 
-{: .note }
-Works only on: macOS, Linux and Windows WSL.
+>**NOTE**
+>
+>*Works only on: macOS, Linux and Windows WSL.*
 
 ---
 
 ### Easy mode:
-{: .no_toc }
 
 **Step 1 (Optional):** Run ngrok, if you want your local game back-end communicating with the Google's conversational agent.
 
@@ -386,17 +388,18 @@ Connection to localhost port 8080 [tcp/http-alt] succeeded!
 ---
 
 ### Hardcore mode:
-{: .no_toc }
 
-{: note }
-Use these steps only if you want to run a specific part of the project, or if `` run-all.sh `` and Docker approaches are not working.
+>**NOTE**
+> 
+>*Use these steps only if you want to run a specific part of the project, or if `` run-all.sh `` and Docker approaches are not working.*
 
 All these steps should be performed from project's root directory.
 
 **Step 1:** Run bayes-net.
 
-{: note }
-Example shown with [venv](https://docs.python.org/3/library/venv.html), but you can use any virtual environment, or none (good luck with that).
+>**NOTE**
+> 
+>*Example shown with [venv](https://docs.python.org/3/library/venv.html), but you can use any virtual environment, or none (good luck with that).*
 
 ```shell
 cd ./bayes-net && \
@@ -408,8 +411,9 @@ python bayesian_network.py
 
 Open a new terminal session in project's root, don't kill the previous where bayes-net is running.
 
-{: .note }
-Example shown with [venv](https://docs.python.org/3/library/venv.html), but you can use any virtual environment, or none (good luck with that).
+>**NOTE**
+> 
+>*Example shown with [venv](https://docs.python.org/3/library/venv.html), but you can use any virtual environment, or none (good luck with that).*
 
 ```shell
 cd ./sentiment-classifier && \
@@ -444,7 +448,6 @@ npm run dev
 ```
 
 **General launch rules:**
-{: .no_toc }
 
 1. Game server depends on working python services (bayes-net and sentiment classifier).
 2. Game front-end depends on a working game server
