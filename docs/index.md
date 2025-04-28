@@ -32,7 +32,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 {: .no_toc }
 
 {: .info }
-More info can be found in [deep lore](/game-of-points/deep-lore/) section of the docs.
+More info can be found in [Deep Lore](/game-of-points/deep-lore/) section of the docs.
 
 1. [Front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application. Responsible for communicating with backend to get agents actions and reconcile its game state. Also talks with Google's conversational agent.
 2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be). Responsible for processing player actions, reasoning, validating conversational agent's intents.
@@ -72,6 +72,9 @@ graph TD
 ```
 
 ## 🌀 Weird parts
+
+{: .note}
+All bugs can be solved by restarting stuff...
 
 This project was created for educational purposes.
 It is in no way "production ready".
