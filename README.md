@@ -15,7 +15,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 - [🏗️ Project overview](#%EF%B8%8F-project-overview)
 - [🌀 Weird parts](#-weird-parts)
 - [📋 Environment setup](#-environment-setup)
-- [⚙️ Project setup](#-project-setup)
+- [⚙️ Project setup](#%EF%B8%8F-project-setup)
 - [🚀 Launching the project](#-launching-the-project)
 ---
 
