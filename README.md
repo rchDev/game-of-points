@@ -58,12 +58,12 @@ graph TD
   B -->|"Player Mood Description"| D
   D -->|"Mood Class"| B
 
-  style A fill:#90EE90,stroke:#333,stroke-width:2px
-  style B fill:#87CEFA,stroke:#333,stroke-width:2px
-  style C fill:#FFFFE0,stroke:#333,stroke-width:2px
-  style D fill:#FFFFE0,stroke:#333,stroke-width:2px
-  style E fill:pink,stroke:#333,stroke-width:2px
-  style F fill:#D3D3D3,stroke:#333,stroke-width:2px
+  style A fill:#2ecc71,stroke:#ffffff,stroke-width:2px
+  style B fill:#3498db,stroke:#ffffff,stroke-width:2px
+  style C fill:#f1c40f,stroke:#ffffff,stroke-width:2px
+  style D fill:#f39c12,stroke:#ffffff,stroke-width:2px
+  style E fill:#e91e63,stroke:#ffffff,stroke-width:2px
+  style F fill:#95a5a6,stroke:#ffffff,stroke-width:2px
 ```
 
 ## 🌀 Weird parts
