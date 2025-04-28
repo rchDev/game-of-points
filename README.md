@@ -2,7 +2,7 @@
 
 A Simple game where human user competes against AI agent in a battle to collect the most points and survive.
 
->**NOTE**
+>**✏️ NOTE**
 > 
 >*This project was created for educational purposes. The main goal was to explore and play around with various technologies, including bayes nets, neural nets, rule engines, and conversational agent tools.*
 
@@ -25,7 +25,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 
 ### Main system components:
 
->**INFO**
+>**ℹ️ INFO**
 >
 >*More info can be found in [Deep Lore](/game-of-points/deep-lore/) section of the docs.*
 
@@ -68,7 +68,7 @@ graph TD
 
 ## 🌀 Weird parts
 
->**NOTE**
+>**✏️ NOTE**
 > 
 >*All bugs can be solved by restarting stuff...*
 
@@ -93,14 +93,14 @@ Ohh and the game has no end state...
 
 Install and setup instructions can be found here: ["Installing Git Large File Storage"](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage).
 
->**NOTE**
+>**✏️ NOTE**
 >
 >*Steps 3 and 4 are optional if you want a working conversational to question a player before the game starts.
 The game will work without this step.*
 
 **Step 3 (Optional):** Have a working Google's Conversational Agent (~~Dialogflow CX~~).
 
->**NOTE**
+>**✏️ NOTE**
 > 
 >*[Here](/game-of-points/conv-agent-config/) you can find a full guide on how to set up a conversational agent for this project on Google's platform.*
 
@@ -336,7 +336,7 @@ After this you can open a front-end at: `` http://localhost:5173 ``
 
 ### Non Docker Launch ☠️ ☠️ ☠️
 
->**NOTE**
+>**✏️ NOTE**
 >
 >*Works only on: macOS, Linux and Windows WSL.*
 
@@ -384,7 +384,7 @@ Connection to localhost port 8080 [tcp/http-alt] succeeded!
 
 ### Hardcore mode:
 
->**NOTE**
+>**✏️ NOTE**
 > 
 >*Use these steps only if you want to run a specific part of the project, or if `` run-all.sh `` and Docker approaches are not working.*
 
@@ -392,7 +392,7 @@ All these steps should be performed from project's root directory.
 
 **Step 1:** Run bayes-net.
 
->**NOTE**
+>**✏️ NOTE**
 > 
 >*Example shown with [venv](https://docs.python.org/3/library/venv.html), but you can use any virtual environment, or none (good luck with that).*
 
@@ -406,7 +406,7 @@ python bayesian_network.py
 
 Open a new terminal session in project's root, don't kill the previous where bayes-net is running.
 
->**NOTE**
+>**✏️ NOTE**
 > 
 >*Example shown with [venv](https://docs.python.org/3/library/venv.html), but you can use any virtual environment, or none (good luck with that).*
 
