@@ -29,11 +29,11 @@ A Simple game where human user competes against AI agent in a battle to collect 
 >
 >*More info can be found in [Deep Lore](/game-of-points/deep-lore/) section of the docs.*
 
-1. [Front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application. Responsible for communicating with backend to get agents actions and reconcile its game state. Also talks with Google's conversational agent.
-2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be). Responsible for processing player actions, reasoning, validating conversational agent's intents.
-3. [Bayesian network](https://github.com/rchDev/game-of-points/tree/main/bayes-net) server. Used for filling gaps in agent's knowledge.
+1. [Front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application. Sends player actions to **Game server. Receives authoritative game state from the **game server**. Also talks with **Google's conversational agent**.
+2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be). Responsible for processing player actions, reasoning, validating **Google's conversational agent's** intents.
+3. [Bayesian network](https://github.com/rchDev/game-of-points/tree/main/bayes-net) server. Used for filling gaps in game agent's knowledge, through providing most probable state variable combination queries.
 4. [Sentiment classifier](https://github.com/rchDev/game-of-points/tree/main/sentiment-classifier) server. Used for assigning a class to player's mood description.
-5. [Google's conversational agent](https://conversational-agents.cloud.google.com/projects). Used to collect information about the player before the match begins.
+5. [Google's conversational agent](https://conversational-agents.cloud.google.com/projects). Used for collecting information about the player before the match begins.
 6. [Ngrok](https://ngrok.com/) is used as a tunnel service for connecting Google's conversational agent to a local game server.
 
 ```mermaid
