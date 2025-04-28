@@ -81,7 +81,7 @@ ngrok --version
 ngrok version 3.20.0
 ```
 
-### ⭐⭐⭐ Docker specific **(Recommended)** ⭐⭐⭐
+### ⭐⭐⭐ Docker specific (Recommended) ⭐⭐⭐
 
 **Step 1:** Have docker engine installed and accessible from your terminal
 
@@ -93,7 +93,7 @@ docker --version
 Docker version 28.0.4, build b8034c0
 ```
 
-### 🚨🚨🚨 Non docker setup (Not recommended) 🚨🚨🚨
+### ☠️☠️☠️ Non docker setup (Not recommended) ☠️☠️☠️
 
 This takes a lot of hassle to get up and working.
 
@@ -157,7 +157,10 @@ Helpful for launching individual project modules and editing project files.
 
 ## **⚙️ Project setup**
 
-**(Step 1) Inside game-of-points project's root run:**
+### ⭐⭐⭐ Docker specific (Recommended) ⭐⭐⭐
+
+**Step 1:** Inside game-of-points project's root run:
+
 ```shell
 git lfs pull
 ```
@@ -166,15 +169,63 @@ This will download:
 2. The sentiment analysis ML model.
 3. Exported conversational agent file.
 
-**(Step 2) Inside game-of-points project's root directory run:**
+---
+
+### ☠️☠️☠️ Non docker (Not Recommended) ☠️☠️☠️
+
+**Step 1:** Inside game-of-points project's root run:
+```shell
+git lfs pull
+```
+This will download:
+1. The player answers database file.
+2. The sentiment analysis ML model.
+3. Exported conversational agent file.
+
+
+**Step 2:** If not already created, create a virtual environment of your choosing, using python version provided in this: [.python-version](https://github.com/rchDev/game-of-points/blob/main/sentiment-classifier/.python-version) file.
+
+**Example with [venv](https://docs.python.org/3/library/venv.html) and [pyenv](https://github.com/pyenv/pyenv):**
+
+Inside projects root run:
 
 ```shell
-poetry install
-``` 
-
-or activate virtual environment of your choice and run:
+cd ./bayes-net
+pyenv local
+python -m venv venv/
+```
+**Step 3:** Activate virtual environment and install dependencies that are specified inside the requirements.txt file.
 
 ```shell
+source .venv/bin/activate
+pip install requirements.txt
+```
+
+**Step 4:** While virtual environment is active, launch the bayes net.
+
+```shell
+python bayesian_network.py
+```
+
+**Step 5:** Change directories to /game-of-points/sentiment-classifier and create another virtual environment there
+
+**Example with [venv](https://docs.python.org/3/library/venv.html) and [pyenv](https://github.com/pyenv/pyenv):**
+
+```shell
+cd ../sentiment-classifier
+pyenv local
+python -m venv venv/
+```
+
+**Step 6:** Once again, activate the virtual environment and install dependencies that are specified inside the requirements.txt file, only this this it's inside /game-of-points/sentiment-classifier directory:
+
+```shell
+source .venv/bin/activate
+pip install requirements.txt
+```
+
+```shell
+cd ./bayes-net
 pip install -r ./game-of-points-be/requirements.txt
 ```
 
