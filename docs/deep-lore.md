@@ -123,11 +123,16 @@ sequenceDiagram
 The diagram shows the sequence of actions from when the user submits input to when the server sends the updated game state to the front-end.
 
 1. Each user action such as a mouse movement, character movement, weapon use is sent to the server (i know it's a bad idea).
-2. Server stores these actions in a application wide sessionStorage. 
-3. When the server is ready to process player actions, it launches game update schedulers method: [updateGameState](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/GameStateUpdateScheduler.java#L51-L88). Which run a loop through all active game sessions and starts applying updates for each game state.
-4. Inside a sessions loop, updating starts by cloning the current game state.
-5. Then all actions from sessionStorage are retrieved and validated.
-6. Valid actions are then applied and registered as facts.
-7. Once all actions have been processed, agent.reason() method is called with cloned and updated game state.
-8. This method then calls agent brains [reasoning method](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L271-L307)
-9. 
+2. While the game server is processing player actions, front-end application simulates these updates to create an illusion of smooth gameplay experience for a user. 
+3. Server stores these actions in a application wide sessionStorage. 
+4. When the server is ready to process player actions, it launches game update schedulers method: [updateGameState](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/GameStateUpdateScheduler.java#L51-L88). Which run a loop through all active game sessions and starts applying updates for each game state. 
+5. Inside a sessions loop, updating starts by cloning the current game state. 
+6. Then all actions from sessionStorage are retrieved and validated. 
+7. Valid actions are then applied and registered as facts. 
+8. Once all actions have been processed, agent.reason() method is called with cloned and updated game state. 
+9. This method then calls agent brain's [reasoning method](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L271-L307)
+10. Inside brain's reason method a bunch of [Drools](https://www.drools.org/) rule groups get called. They implement the main reasoning logic of this application. Through firing a bunch of rules, agent actions get derived.
+11. Those agent actions are applied to the cloned game state. 
+12. The updated game state is then placed into session's game state queue and event signaling game state updated is fired. 
+13. Controller that's listening for game update catches the signal, create a json response object with the latest state and sends it to front-end application through a websocket connection. 
+14. Front-end receives the updated game state and considers it to be authoritative. It reconciles predicted game state with received server state and renders the result.
