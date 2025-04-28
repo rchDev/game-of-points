@@ -38,7 +38,7 @@ More info can be found in [Deep Lore](/game-of-points/deep-lore/) section of the
 2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be). Responsible for processing player actions, reasoning, validating conversational agent's intents.
 3. [Bayesian network](https://github.com/rchDev/game-of-points/tree/main/bayes-net) server. Used for filling gaps in agent's knowledge.
 4. [Sentiment classifier](https://github.com/rchDev/game-of-points/tree/main/sentiment-classifier) server. Used for assigning a class to player's mood description.
-5. Google's [conversational agent](https://conversational-agents.cloud.google.com/projects). Used to collect information about the player before the match begins.
+5. [Google's conversational agent](https://conversational-agents.cloud.google.com/projects). Used to collect information about the player before the match begins.
 6. [Ngrok](https://ngrok.com/) is used as a tunnel service for connecting Google's conversational agent to a local game server.
 
 ```mermaid
@@ -136,7 +136,7 @@ ngrok --version
 ngrok version 3.20.0
 ```
 
-### ⭐ ⭐ ⭐ Docker specific (Recommended) ⭐ ⭐ ⭐
+### Docker specific (Recommended) ⭐ ⭐ ⭐
 {: .no_toc }
 
 **Step 1:** Have docker engine installed and accessible from your terminal
@@ -148,7 +148,7 @@ docker --version
 Docker version 28.0.4, build b8034c0
 ```
 
-### ☠️ ☠️ ☠️ Non docker setup (Not recommended) ☠️ ☠️ ☠️
+### Non docker setup (Not recommended) ☠️ ☠️ ☠️
 {: .no_toc }
 
 This takes a lot of hassle to get up and working.
@@ -211,7 +211,7 @@ Helpful for launching individual project modules and editing project files.
 
 ## ⚙️ Project setup
 
-### ⭐ ⭐ ⭐ Docker specific (Recommended) ⭐ ⭐ ⭐
+### Docker specific (Recommended) ⭐ ⭐ ⭐
 {: .no_toc }
 
 **Step 1:** Download files from Git Large File Storage.
@@ -239,7 +239,7 @@ npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 
 ---
 
-### ☠️☠️☠️ Non Docker (Not Recommended) ☠️☠️☠️
+### Non Docker (Not Recommended) ☠️☠️☠️
 {: .no_toc }
 
 **Step 1:** Download files from Git Large File Storage.
@@ -313,7 +313,7 @@ npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 
 Once you've set up the environment and the project, you can launch the whole application in a few ways, by following instructions bellow.
 
-### ⭐ ⭐ ⭐️ Docker specific launch (Recommended) ⭐ ⭐ ⭐
+### Docker specific launch (Recommended) ⭐ ⭐ ⭐
 {: .no_toc }
 
 **Step 1 (Optional):** Run ngrok, if you want your local game back-end communicating with the Google's conversational agent.
@@ -340,7 +340,7 @@ docker compose up --build
 
 After this you can open a front-end at: `` http://localhost:5173 ``
 
-### ☠️ ☠️ ☠️ Non Docker Launch ☠️ ☠️ ☠️
+### Non Docker Launch ☠️ ☠️ ☠️
 {: .no_toc }
 
 {: .note }
