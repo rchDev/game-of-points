@@ -150,13 +150,13 @@ This takes a lot of hassle to get up and working.
 Tested on: macOS 15.4.1, Ubuntu 24.04, Windows WSL2 Ubuntu.
 
 
->**WARNING**
+>**WARNING ‼️**
 > 
 >*Won't work on Windows 11 x64. **Reason:** 18 python packages used in a project didn't have wheels for Windows Python versions: 3.8-3.13. I didn't want to play around with versions, so I used Docker.*
 
 **Step 1:** Make sure *JDK* 17-22 is installed.
 
->**WARNING**
+>WARNING ‼️
 >
 >*Java 23 is not supported and will cause compatibility issues. Some maven packages won't build.*
 
