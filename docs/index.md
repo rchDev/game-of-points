@@ -323,7 +323,7 @@ In a terminal session run:
 ngrok http --domain=<your_public_domain> 8080
 ```
 
-**Step 2:** Run the [docker-compose.yml]() file.
+**Step 2:** Run the [docker-compose.yml](https://github.com/rchDev/game-of-points/blob/main/docker-compose.yml) file.
 
 Inside project's root, open a new terminal session (while keeping the ngrok session alive) and run:
 ```shell

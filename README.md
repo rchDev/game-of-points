@@ -27,7 +27,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 
 >**ℹ️ INFO**
 >
->*More info can be found in [Deep Lore](/game-of-points/deep-lore/) section of the docs.*
+>*More info can be found in [Deep Lore](https://rchdev.github.io/game-of-points/deep-lore/) section of the docs.*
 
 1. [Front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application. Sends player actions to **Game server. Receives authoritative game state from the **game server**. Also talks with **Google's conversational agent**.
 2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be). Responsible for processing player actions, reasoning, validating **Google's conversational agent's** intents.
@@ -102,7 +102,7 @@ The game will work without this step.*
 
 >**✏️ NOTE**
 > 
->*[Here](/game-of-points/conv-agent-config/) you can find a full guide on how to set up a conversational agent for this project on Google's platform.*
+>*[Here](https://rchdev.github.io/game-of-points/conv-agent-config/) you can find a full guide on how to set up a conversational agent for this project on Google's platform.*
 
 1. Inside project's root directory you'll find a file: **exported_agent_snitch.blob**
 2. Take this file and import it into your own: [Google conversational agent](https://conversational-agents.cloud.google.com/projects) project.
@@ -317,7 +317,7 @@ In a terminal session run:
 ngrok http --domain=<your_public_domain> 8080
 ```
 
-**Step 2:** Run the [docker-compose.yml]() file.
+**Step 2:** Run the [docker-compose.yml](https://github.com/rchDev/game-of-points/blob/main/docker-compose.yml) file.
 
 Inside project's root, open a new terminal session (while keeping the ngrok session alive) and run:
 ```shell
