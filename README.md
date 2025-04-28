@@ -12,7 +12,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 
 ## 🗂️ Table of contents
 - [🎲 Game Rules]()
-- [🏗️ Project overview](#-project-overview)
+- [🏗️ Project overview](#%EF%B8%8F-project-overview)
 - [🌀 Weird parts]()
 - [📋 Environment setup]()
 - [⚙️ Project setup]()
