@@ -52,9 +52,9 @@ With traditional methods like: "Word2Vec" or "GloVe" you would get a fixed value
 In the famous bank example, when using traditional embeddings, the word bank would have same meaning in both of the sentences:
 "The bank of the river was flooded." and "I went to the bank to deposit money."
 
-**Layer 1:** The word vectors are first passed to a densely connected layer with 64 neurons, a ReLU activation function and an L2 regularizer, which penalizes large weight values.
+**Layer 1:** Word vectors are first passed to a densely connected layer with 64 neurons, a ReLU activation function and a L2 regularizer, which penalizes large weight values to avoid overfitting.
 
-**Layer 2:** The output of the previous dense layer is then passed to a dropout layer, which randomly drops 30% of neurons during training (no effect during prediction) to help prevent overfitting — another regularization technique.
+**Layer 2:** The output of the previous dense layer is then passed to a dropout layer, which randomly drops 30% of neurons during training (no effect during prediction) to help, again, prevent overfitting — another regularization technique.
 
 **Layer 3:** Another dense layer with 32 neurons, ReLU activation and L2 regularization.
 
@@ -64,13 +64,13 @@ In the famous bank example, when using traditional embeddings, the word bank wou
 
 ### Meta params:
 
-**Optimization target (loss function)** - Categorical crossentropy (don't know why, ChatGPT said it was good for multiclass classification problems)
+**Optimization target (loss function)** - Categorical crossentropy (don't know why, the consensus is that, it is good for multiclass classification problems)
 
 **Optimizer** - Adam (no clue why not RMSprop or some other optimizer. It just works...)
 
 **Learning rate** - 0.001 (don't know what is a good learning rate or how it should change during the training process)
 
-### [Full Code](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L20-L36)
+### Construction code inside SentimentAnalysisModel constructor [Full Code Here](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L20-L36)
 ```python
  def __init__(self):
      # Load the pre-trained model and build the classifier
@@ -91,7 +91,16 @@ In the famous bank example, when using traditional embeddings, the word bank wou
      logger.info("SentimentAnalysisModel initialized.")
 ```
 
-## [sentiment_classifier.py](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py)
+## Used libraries
+
+1. Keras - neural net construction, training, inference 
+2. py4j - communication and translation layer between Python and Java project.
+3. scikit-learn - various helper functions for processing data, like train_test_split.
+4. pandas - for reading csv files into structures that are supported by other ML libraries.
+5. numpy - same as pandas and for efficiently working with arrays.
+6. tensorflow_hub - for pulling down free embeddings layer neural net. 
+
+## The solution
 
 The solution is written in python, but is used in Java project. 
 This is enabled by the [py4j](https://www.py4j.org/) library. 
