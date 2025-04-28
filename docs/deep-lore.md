@@ -122,7 +122,7 @@ sequenceDiagram
 ### What's going on here:
 {: .no_toc }
 
-The diagram shows the sequence of actions from when the user submits input to when the server sends the updated game state to the front-end.
+The diagram shows the sequence of actions from the moment the user submits its actions to the moment the server sends processed and updated game state to the front-end.
 
 1. Each user action such as a mouse movement, character movement, weapon use is sent to the server (i know it's a bad idea).
 2. While the game server is processing player actions, front-end application simulates these updates to create an illusion of smooth gameplay experience for a user. 
