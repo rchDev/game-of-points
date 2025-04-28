@@ -22,5 +22,6 @@ mermaid:
 back_to_top: true
 back_to_top_text: "Back to top"
 
-just_the_docs:
-  auxiliary_js: "/assets/js/fix-anchor-scroll.js"
+aux_links:
+  Game Of Points GitHub:
+    - https://github.com/rchDev/game-of-points
