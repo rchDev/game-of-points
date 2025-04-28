@@ -1,23 +1,18 @@
----
-layout: default
-title: Home
-nav_order: 0
----
-
 # Game Of Points
-{: .no_toc }
 
 A Simple game where human user competes against AI agent in a battle to collect the most points and survive.
 
-{: .note }
-*This project was created for educational purposes. The main goal was to explore and play around with various technologies, including bayes nets, neural nets, rule engines, and conversational agent tools.*
+>**NOTE**
+> 
+>*This project was created for educational purposes. The main goal was to explore and play around with various technologies, including bayes nets, neural nets, rule engines, and conversational agent tools.*
 
 ## Table of contents
-{: .no_toc .text-delta }
-
-- TOC
-  {:toc}
-
+- [🎲 Game Rules]()
+- [🏗️ Project overview]()
+- [🌀 Weird parts]()
+- [📋 Environment setup]()
+- [⚙️ Project setup]()
+- [🚀 Launching the project]()
 ---
 
 ## 🎲 Game Rules
@@ -73,8 +68,9 @@ graph TD
 
 ## 🌀 Weird parts
 
-{: .note}
-All bugs can be solved by restarting stuff...
+>**NOTE**
+> 
+>*All bugs can be solved by restarting stuff...*
 
 This project was created for educational purposes.
 It is in no way "production ready".
@@ -90,7 +86,6 @@ Ohh and the game has no end state...
 ## 📋 Environment setup
 
 ### Everyone:
-{: .no_toc }
 
 **Step 1:** Have Git version control installed.
 
@@ -98,9 +93,10 @@ Ohh and the game has no end state...
 
 Install and setup instructions can be found here: ["Installing Git Large File Storage"](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage).
 
-{: .note}
-Steps 3 and 4 are optional if you want a working conversational to question a player before the game starts.
-The game will work without this step.
+>**NOTE**
+>
+>*Steps 3 and 4 are optional if you want a working conversational to question a player before the game starts.
+The game will work without this step.*
 
 **Step 3 (Optional):** Have a working Google's Conversational Agent (~~Dialogflow CX~~).
 {: .no_toc }
