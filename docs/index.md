@@ -54,7 +54,7 @@ Install and setup instructions can be found here: ["Installing Git Large File St
 Steps 3 and 4 are optional if you want a working conversational to question a player before the game starts.
 The game will work without this step.
 
-**(Optional) Step 3:** Working Google Conversational Agent (~~Dialogflow CX~~)**
+**Step 3 (Optional):** Working Google Conversational Agent (~~Dialogflow CX~~)**
 {: .no_toc }
 
 1. Inside project's root directory you'll find a file: **exported_agent_snitch.blob**
@@ -73,7 +73,7 @@ npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 ✔ Updated project‑id and agent‑id in index.html
 ```
 
-**(Optional) Step 4:** Have ngrok installed and configured with your account
+**Step 4 (Optional):** Have ngrok installed and configured with your account
 
 Used for exposing your local game server to
 Google's conversational agent's webhook,
@@ -153,13 +153,13 @@ node --version
 v22.14.0
 ```
 
-**(Optional) Step 4:** Install Maven 3.2+
+**Step 4 (Optional):** Install Maven 3.2+
 
 Maven is not required, because Maven will be installed when running one of these scripts:
 1. ./mvnw shell command on Mac or Linux
 2. mvnw.cmd on Windows
 
-**(Optional) Step 5:** Install IntelliJ IDEA: [macOS](https://www.jetbrains.com/idea/download/?section=mac), [Linux](https://www.jetbrains.com/idea/download/?section=linux), [Windows](https://www.jetbrains.com/idea/download/?section=windows).
+**Step 5 (Optional):** Install IntelliJ IDEA: [macOS](https://www.jetbrains.com/idea/download/?section=mac), [Linux](https://www.jetbrains.com/idea/download/?section=linux), [Windows](https://www.jetbrains.com/idea/download/?section=windows).
 
 Helpful for launching individual project modules and editing project files.
 
