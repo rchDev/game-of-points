@@ -8,7 +8,7 @@ permalink: /deep-lore/
 
 # Deep lore
 
-Delve deeper into the inner workings of a project
+Delve deeper into the inner workings of a project.
 
 ## Overview of game initialization sequence:
 {: .no_toc }
