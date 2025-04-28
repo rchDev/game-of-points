@@ -68,7 +68,6 @@ The game will work without this step.
 npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 ```
 
-Sanity check:
 ```shell
 npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 
@@ -82,7 +81,6 @@ Used for exposing your local game server to
 Google's conversational agent's webhook,
 without hosting the game server yourself.
 
-Sanity check:
 ```shell
 ngrok --version
 
@@ -95,7 +93,6 @@ ngrok version 3.20.0
 
 **Step 1:** Have docker engine installed and accessible from your terminal
 
-Sanity check:
 ```shell
 docker --version
 
@@ -118,7 +115,6 @@ Won't work on Windows 11 x64. **Reason:** 18 python packages used in a project d
 {: .warning}
 Java 23 is not supported and will cause compatibility issues. Some maven packages won't build.
 
-Sanity check:
 ```shell
 java --version 
 
@@ -139,7 +135,6 @@ javac 17.0.14
 
 Best bet is to have the version that is specified in [.python-version](https://github.com/rchDev/game-of-points/blob/main/bayes-net/.python-version) file (use pyenv)
 
-Sanity check:
 ```shell
 python --version
 
