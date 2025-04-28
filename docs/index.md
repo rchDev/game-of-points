@@ -21,7 +21,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 ---
 
 ## 🎲 Game Rules
-1. Game starts with 60s timer. Once the time runs out, whoever (agent or player) collected most points - wins. 
+1. Game starts with 60s timer. Once the time runs out, whoever (agent or player) collected the most points - wins. 
 2. Points appear at random locations and time intervals. 
 3. Both the agent and the user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
 4. Whoever kills the other - wins.
