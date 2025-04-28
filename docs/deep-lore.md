@@ -97,7 +97,7 @@ sequenceDiagram
     participant Server as Game Server
     participant BayesNet as Bayes Network Server
     
-    par collect player actions
+    par Collect player actions
        %% === Continuous Action Flow ===
        User ->> Front-end: Interact with game (e.g., move, click)
        Front-end ->> Server: Send player actions

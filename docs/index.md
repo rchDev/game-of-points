@@ -20,7 +20,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 
 ---
 
-## 🎲 Game Rules:
+## 🎲 Game Rules
 1. Game starts with 60s timer. Once the time runs out, whoever (agent or player) collected most points - wins. 
 2. Points appear at random locations and time intervals. 
 3. Both the agent and user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
@@ -102,7 +102,7 @@ Install and setup instructions can be found here: ["Installing Git Large File St
 Steps 3 and 4 are optional if you want a working conversational to question a player before the game starts.
 The game will work without this step.
 
-**Step 3 (Optional):** Have a working Google's Conversational Agent (~~Dialogflow CX~~)**
+**Step 3 (Optional):** Have a working Google's Conversational Agent (~~Dialogflow CX~~).
 {: .no_toc }
 
 {: .note }
@@ -123,7 +123,7 @@ npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 ✔ Updated project‑id and agent‑id in index.html
 ```
 
-**Step 4 (Optional):** Have ngrok installed and configured with your account
+**Step 4 (Optional):** Have ngrok installed and configured with your account.
 
 Used for exposing your local game server to
 Google's conversational agent's webhook,
@@ -179,7 +179,7 @@ javac --version
 javac 17.0.14
 ```
 
-**Step 2:** Have Python ==3.12 installed
+**Step 2:** Have Python ==3.12 installed.
 
 Best bet is to have the version that is specified in [.python-version](https://github.com/rchDev/game-of-points/blob/main/bayes-net/.python-version) file (use pyenv)
 
@@ -190,7 +190,7 @@ python --version
 Python 3.12.9
 ```
 
-**Step 3:** Install Node.js >=v16.20.2
+**Step 3:** Install Node.js >=v16.20.2.
 
 ```shell
 node --version
@@ -199,7 +199,7 @@ node --version
 v22.14.0
 ```
 
-**Step 4 (Optional):** Install Maven 3.2+
+**Step 4 (Optional):** Install Maven 3.2+.
 
 Maven is not required, because Maven will be installed when running one of these scripts:
 1. ./mvnw shell command on Mac or Linux
@@ -214,11 +214,14 @@ Helpful for launching individual project modules and editing project files.
 ### ⭐ ⭐ ⭐ Docker specific (Recommended) ⭐ ⭐ ⭐
 {: .no_toc }
 
-**Step 1:** Inside game-of-points project's root run:
+**Step 1:** Download files from Git Large File Storage.
+
+Inside game-of-points project's root run:
 
 ```shell
 git lfs pull
 ```
+
 This will download:
 1. The player answers database file.
 2. The sentiment analysis ML model.
@@ -239,7 +242,10 @@ npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 ### ☠️☠️☠️ Non Docker (Not Recommended) ☠️☠️☠️
 {: .no_toc }
 
-**Step 1:** Inside game-of-points project's root run:
+**Step 1:** Download files from Git Large File Storage.
+
+Inside game-of-points project's root run:
+
 ```shell
 git lfs pull
 ```
@@ -278,7 +284,7 @@ pyenv local && \
 python -m venv venv/
 ```
 
-**Step 5:** Once again, activate the virtual environment and install dependencies that are specified inside the requirements.txt file, only this this it's inside /game-of-points/sentiment-classifier directory:
+**Step 5:** Once again, activate the virtual environment and install dependencies that are specified inside the requirements.txt file, only this time inside /game-of-points/sentiment-classifier directory:
 
 ```shell
 source .venv/bin/activate && \
