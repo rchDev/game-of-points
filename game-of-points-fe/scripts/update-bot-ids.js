@@ -45,10 +45,10 @@ const html       = await fs.readFile(htmlPath, 'utf8');
 
 // ---------- do the replacement (one pass, regex is safe) ------------------
 const updated = html
-    .replace(/(<df-messenger[^>]*\bproject-id=")([^"]+)(")/i,
-        `$1${projectId}$3`)
-    .replace(/(<df-messenger[^>]*\bagent-id=")([^"]+)(")/i,
-        `$1${agentId}$3`);
+    .replace(/(<df-messenger[^>]*\bproject-id=")[^"]*(")/i,
+        `$1${projectId}$2`)
+    .replace(/(<df-messenger[^>]*\bagent-id=")[^"]*(")/i,
+        `$1${agentId}$2`);
 
 await fs.writeFile(htmlPath, updated, 'utf8');
 console.log(`✔ Updated project‑id and agent‑id in ${path.relative(process.cwd(), htmlPath)}`);
