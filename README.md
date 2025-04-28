@@ -6,6 +6,8 @@ A Simple game where human user competes against AI agent in a battle to collect 
 > 
 >*This project was created for educational purposes. The main goal was to explore and play around with various technologies, including bayes nets, neural nets, rule engines, and conversational agent tools.*
 
+## Full docs: [https://rchdev.github.io/game-of-points/](https://rchdev.github.io/game-of-points/)
+
 ## Table of contents
 - [🎲 Game Rules]()
 - [🏗️ Project overview]()
