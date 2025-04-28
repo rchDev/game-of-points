@@ -87,7 +87,7 @@ sequenceDiagram
 16. The front-end parses the response, renders the game state, and, using provided session ID, establishes a websocket connection with the game server.
 17. Front-end is now ready to send player actions to the game server.
 
-## Overview of gameplay and reasoning sequence
+## Overview of player action processing and reasoning sequence
 {: .no_toc }
 
 ```mermaid
@@ -118,3 +118,16 @@ sequenceDiagram
 ```
 
 ### What's going on here:
+{: .no_toc }
+
+The diagram shows the sequence of actions from when the user submits input to when the server sends the updated game state to the front-end.
+
+1. Each user action such as a mouse movement, character movement, weapon use is sent to the server (i know it's a bad idea).
+2. Server stores these actions in a application wide sessionStorage. 
+3. When the server is ready to process player actions, it launches game update schedulers method: [updateGameState](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/GameStateUpdateScheduler.java#L51-L88). Which run a loop through all active game sessions and starts applying updates for each game state.
+4. Inside a sessions loop, updating starts by cloning the current game state.
+5. Then all actions from sessionStorage are retrieved and validated.
+6. Valid actions are then applied and registered as facts.
+7. Once all actions have been processed, agent.reason() method is called with cloned and updated game state.
+8. This method then calls agent brains [reasoning method](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L271-L307)
+9. 
