@@ -54,8 +54,11 @@ Install and setup instructions can be found here: ["Installing Git Large File St
 Steps 3 and 4 are optional if you want a working conversational to question a player before the game starts.
 The game will work without this step.
 
-**Step 3 (Optional):** Working Google Conversational Agent (~~Dialogflow CX~~)**
+**Step 3 (Optional):** Have a working Google's Conversational Agent (~~Dialogflow CX~~)**
 {: .no_toc }
+
+{: .note }
+[Here](/game-of-points/conv-agent-config/) you can find a full guide on how to set up a conversational agent for this project on Google's platform.
 
 1. Inside project's root directory you'll find a file: **exported_agent_snitch.blob**
 2. Take this file and import it into your own: [Google conversational agent](https://conversational-agents.cloud.google.com/projects) project.
@@ -87,7 +90,7 @@ ngrok --version
 ngrok version 3.20.0
 ```
 
-### ⭐⭐⭐ Docker specific (Recommended) ⭐⭐⭐
+### ⭐ ⭐ ⭐ Docker specific (Recommended) ⭐ ⭐ ⭐
 {: .no_toc }
 
 **Step 1:** Have docker engine installed and accessible from your terminal
@@ -100,7 +103,7 @@ docker --version
 Docker version 28.0.4, build b8034c0
 ```
 
-### ☠️☠️☠️ Non docker setup (Not recommended) ☠️☠️☠️
+### ☠️ ☠️ ☠️ Non docker setup (Not recommended) ☠️ ☠️ ☠️
 {: .no_toc }
 
 This takes a lot of hassle to get up and working.
@@ -165,7 +168,7 @@ Helpful for launching individual project modules and editing project files.
 
 ## ⚙️ Project setup
 
-### ⭐⭐⭐ Docker specific (Recommended) ⭐⭐⭐
+### ⭐ ⭐ ⭐ Docker specific (Recommended) ⭐ ⭐ ⭐
 {: .no_toc }
 
 **Step 1:** Inside game-of-points project's root run:
@@ -178,6 +181,16 @@ This will download:
 2. The sentiment analysis ML model.
 3. Exported conversational agent file.
 
+**Step 2 (Optional):** If you haven't already during the environment setup, connect the frontend application to the conversational agent.
+
+```shell
+cd ./game-of-points-fe && \
+npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
+
+# You should see a success message similar to this one:
+✔ Updated project‑id and agent‑id in index.html
+```
+
 ---
 
 ### ☠️☠️☠️ Non Docker (Not Recommended) ☠️☠️☠️
@@ -187,6 +200,7 @@ This will download:
 ```shell
 git lfs pull
 ```
+
 This will download:
 1. The player answers database file.
 2. The sentiment analysis ML model.
@@ -236,23 +250,45 @@ cd ../game-of-points-fe && \
 npm install
 ```
 
-**Full setup command to run inside project root:**
+**Step 7 (Optional):** If you haven't already during the environment setup, connect the frontend application to the conversational agent.
 
->macOS, Linux and Windows WSL:
->
->```shell
->poetry install && \
->cd ./game-of-points-fe && \
->npx cross-env PROJECT_ID=<conversational_agent_project_id> AGENT_ID=<conversational_agent_id> npm install && \
->cd ../game-of-points-be && \
->./mvnw clean install
->```
+```shell
+cd ./game-of-points-fe && \
+npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
+
+# You should see a success message similar to this one:
+✔ Updated project‑id and agent‑id in index.html
+```
 
 ## 🚀 Launching the project
 
 Once you've set up the environment and the project, you can launch the whole application in a few ways, by following instructions bellow.
 
-### ☠️☠️☠️ Non Docker launch ☠️☠️☠️
+### ⭐ ⭐ ⭐️ Docker specific launch ⭐ ⭐ ⭐
+
+**Step 1 (Optional):** Run ngrok, if you want your local game backend communicating with the Google's conversational agent.
+
+In a terminal session run:
+```shell
+ngrok http --domain=<your_public_domain> 8080
+```
+
+**Step 2:**
+
+Inside project's root, open a new terminal session (while keeping the ngrok session alive) and run:
+```shell
+docker compose up
+
+# or for detached version
+
+docker compose up -d
+
+# or if you want to fully rebuild all containers from their images
+
+docker compose up --build
+```
+
+### ☠️ ☠️ ☠️ Non Docker launch ☠️ ☠️ ☠️
 {: .no_toc }
 
 **macOS, Linux, Windows WSL:**
@@ -292,7 +328,7 @@ cd ./game-of-points-be && \
 ./mvnw quarkus:dev
 ```
 
-**Step 4:** Run ngrok.
+**Step 4 (Optional):** Run ngrok, if you want your local game backend communicating with the Google's conversational agent.
 
 In a new terminal session (keep others alive):
 
