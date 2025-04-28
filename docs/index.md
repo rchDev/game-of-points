@@ -10,7 +10,7 @@ nav_order: 0
 A Simple game where human user competes against AI agent in a battle to collect the most points and survive.
 
 {: .note }
-*This project was created for educational purposes. Main goal was to explore and play with various technologies: including bayes net, neural net, rule engine libraries, and conversational agent tools.*
+*This project was created for educational purposes. The ain goal was to explore and play around with various technologies: including bayes nets, neural nets, rule engines, and conversational agent tools.*
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -20,10 +20,8 @@ A Simple game where human user competes against AI agent in a battle to collect 
 
 ---
 
-### Game Rules:
-{: .no_toc }
-
-1. Game starts with 60s timer, once the time runs out, whoever collected most points - wins. 
+## Game Rules:
+1. Game starts with 60s timer. Once the time runs out, whoever (agent or player) collected most points - wins. 
 2. Points appear at random locations and time intervals. 
 3. Both the agent and user start with a random weapon that affects stats like damage, speed, recharge time, and usage count.
 4. Whoever kills one another - wins.
@@ -31,13 +29,15 @@ A Simple game where human user competes against AI agent in a battle to collect 
 ## 🌀 Weird parts
 
 This project was created for educational purposes.
-It is in no way "production ready". 
+It is in no way "production ready".
 There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as creative, but objectively bad problem solutions.
 
 Some rendering bugs:
 1. The front-end to back-end game state reconciliation sometimes breaks and the game becomes laggy...
 2. Game timer updates too slow - timer is tied to game update cycle when the server fails to process game state updates fast enough, timer updates lag too.
 3. Error messages get rendered incorrectly in Mozilla browsers.
+
+Ohh and the game has no end state...
 
 ## 📋 Environment setup
 
@@ -406,12 +406,15 @@ npm run dev
 ### Main components:
 {: .no_toc }
 
-1. Game front-end application.
-2. Game server.
-3. Bayesian network server.
-4. Sentiment classifier server.
-5. Google's conversational agent.
-6. Ngrok as a tunnel service connecting Google's conversational agent to local game server.
+{: .info }
+More info can be found in [deep lore](/game-of-points/deep-lore/) section of the docs.
+
+1. Game [front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application.
+2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be).
+3. [Bayesian network](https://github.com/rchDev/game-of-points/tree/main/bayes-net) server.
+4. [Sentiment classifier](https://github.com/rchDev/game-of-points/tree/main/sentiment-classifier) server.
+5. Google's [conversational agent](https://conversational-agents.cloud.google.com/projects).
+6. [Ngrok](https://ngrok.com/) as a tunnel service connecting Google's conversational agent to local game server.
 
 ```mermaid
 graph TD
@@ -447,10 +450,10 @@ graph TD
 {: .no_toc }
 
 {: .info }
-<a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">*Article that was really helpful while implementing fast-paced multiplayer client-server communication*</a>
+<a href="https://www.gabrielgambetta.com/client-server-game-architecture.html" target="_blank">Article that really helped me to implement fast-paced multiplayer client-server communication</a>
 
 {: .info }
-More info on [Agent Reasoning](/game-of-points/agent-reasoning/).
+More info can be found in [deep lore](/game-of-points/deep-lore/) section of the docs.
 
 1. Game session initialization involving questioning by the conversational agent. 
 2. Game front-end sends a bunch of game state updates to game server through a websocket connection (i know... tcp is bad for game dev.)
