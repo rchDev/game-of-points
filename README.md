@@ -24,10 +24,10 @@ A Simple game where human user competes against AI agent in a battle to collect 
 ## 🏗️ Project overview
 
 ### Main system components:
-{: .no_toc }
 
-{: .info }
-More info can be found in [Deep Lore](/game-of-points/deep-lore/) section of the docs.
+>**INFO**
+>
+>*More info can be found in [Deep Lore](/game-of-points/deep-lore/) section of the docs.*
 
 1. [Front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application. Responsible for communicating with backend to get agents actions and reconcile its game state. Also talks with Google's conversational agent.
 2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be). Responsible for processing player actions, reasoning, validating conversational agent's intents.
@@ -99,10 +99,10 @@ Install and setup instructions can be found here: ["Installing Git Large File St
 The game will work without this step.*
 
 **Step 3 (Optional):** Have a working Google's Conversational Agent (~~Dialogflow CX~~).
-{: .no_toc }
 
-{: .note }
-[Here](/game-of-points/conv-agent-config/) you can find a full guide on how to set up a conversational agent for this project on Google's platform.
+>**NOTE**
+> 
+>*[Here](/game-of-points/conv-agent-config/) you can find a full guide on how to set up a conversational agent for this project on Google's platform.*
 
 1. Inside project's root directory you'll find a file: **exported_agent_snitch.blob**
 2. Take this file and import it into your own: [Google conversational agent](https://conversational-agents.cloud.google.com/projects) project.
@@ -133,7 +133,6 @@ ngrok version 3.20.0
 ```
 
 ### Docker specific (Recommended) ⭐ ⭐ ⭐
-{: .no_toc }
 
 **Step 1:** Have docker engine installed and accessible from your terminal
 
@@ -145,7 +144,6 @@ Docker version 28.0.4, build b8034c0
 ```
 
 ### Non docker setup (Not recommended) ☠️ ☠️ ☠️
-{: .no_toc }
 
 This takes a lot of hassle to get up and working.
 
@@ -211,7 +209,6 @@ Helpful for launching individual project modules and editing project files.
 ## ⚙️ Project setup
 
 ### Docker specific (Recommended) ⭐ ⭐ ⭐
-{: .no_toc }
 
 **Step 1:** Download files from Git Large File Storage.
 
@@ -239,7 +236,6 @@ npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 ---
 
 ### Non Docker (Not Recommended) ☠️☠️☠️
-{: .no_toc }
 
 **Step 1:** Download files from Git Large File Storage.
 
@@ -313,7 +309,6 @@ npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 Once you've set up the environment and the project, you can launch the whole application in a few ways, by following instructions bellow.
 
 ### Docker specific launch (Recommended) ⭐ ⭐ ⭐
-{: .no_toc }
 
 **Step 1 (Optional):** Run ngrok, if you want your local game back-end communicating with the Google's conversational agent.
 
