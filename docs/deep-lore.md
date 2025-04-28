@@ -10,9 +10,9 @@ permalink: /deep-lore/
 
 Delve deeper into the inner workings of a project
 
-## Overview of what's going on:
+## Overview of game initialization sequence:
+{: .no_toc }
 
-**Full game initialization sequence:**
 ```mermaid
 sequenceDiagram
     participant Player
@@ -25,13 +25,22 @@ sequenceDiagram
     %% Chat interaction
     Player ->> Frontend: Send chat message
     Frontend ->> Dialogflow: Forward message
-    Dialogflow ->> GameServer: Send intent validation request
-    GameServer ->> GameServer: Process and store info (linked to session)
-    GameServer -->> Dialogflow: Send validation response
-
+    Dialogflow ->> Dialogflow: Figure out the intent
+    alt Intent needs validation
+        Dialogflow ->> GameServer: Send intent validation request
+        GameServer ->> GameServer: Process and store info (linked to session)
+        GameServer -->> Dialogflow: Send validation response
+    
+    Dialogflow ->> Dialogflow: Transition to other page
+    
     %% Chat continues until end page
-    Dialogflow -->> Frontend: Indicate chat complete
-
+    alt End Session page reached
+        Dialogflow -->> Frontend: Send the end message
+        Dialogflow -->> Indicate session ending
+    else
+        Dialogflow -->> Send page entry fulfillment response
+    end
+    
     %% Game creation
     Frontend ->> GameServer: send game creation request (with Dialogflow ID)
     GameServer ->> GameServer: Read stored player answers
@@ -53,8 +62,12 @@ sequenceDiagram
     Frontend ->> Frontend: Render game view
 
 ```
+### What's going on here:
+User types a greeting message into a chat
 
-**Gameplay and reasoning sequence:**
+## Overview of gameplay and reasoning sequence
+{: .no_toc }
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -81,3 +94,5 @@ sequenceDiagram
         Frontend ->> Frontend: Reconcile authoritative server state with local simulation
     end
 ```
+
+### What's going on here:
