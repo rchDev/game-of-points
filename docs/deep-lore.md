@@ -94,26 +94,28 @@ sequenceDiagram
 sequenceDiagram
     participant User
     participant Front-end
-    participant Server
+    participant Server as Game Server
     participant BayesNet as Bayes Network Server
     
-    %% === Continuous Action Flow ===
-    User ->> Front-end: Interact with game (e.g., move, click)
-    Front-end ->> Server: Send player actions
-    note right of Front-end: Simulates action locally
-    Server ->> Server: Store player actions for processing
-    note right of Server: Action queuing runs concurrently
+    par collect player actions
+       %% === Continuous Action Flow ===
+       User ->> Front-end: Interact with game (e.g., move, click)
+       Front-end ->> Server: Send player actions
+       note right of Front-end: Simulates action locally
+       Server ->> Server: Store player actions for processing
     
-    %% === Periodic Server Tick Loop ===
-    loop Every 20ms (server tick)
-        Server ->> Server: Validate and apply player actions
-        Server ->> Server: Store player actions as facts
-        Server ->> Server: Call agent.reason(gameState)
-        Server ->> BayesNet: Request most probable player stat combo
-        BayesNet -->> Server: Return the most probable stat combo
-        Server ->> Server: Finish reasoning and apply agent actions to game state
-        Server -->> Front-end: Send updated game state
-        Front-end ->> Front-end: Reconcile authoritative server state with local simulation
+    and Process player actions and reason 
+       %% === Periodic Server Tick Loop ===
+       loop Every 20ms (server tick)
+           Server ->> Server: Validate and apply player actions
+           Server ->> Server: Store player actions as facts
+           Server ->> Server: Call agent.reason(gameState)
+           Server ->> BayesNet: Request most probable player stat combo
+           BayesNet -->> Server: Return the most probable stat combo
+           Server ->> Server: Finish reasoning and apply agent actions to game state
+           Server -->> Front-end: Send updated game state
+           Front-end ->> Front-end: Reconcile authoritative server state with local simulation
+       end
     end
 ```
 
