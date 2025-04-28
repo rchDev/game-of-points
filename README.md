@@ -314,7 +314,7 @@ Once you've set up the environment and the project, you can launch the whole app
 ### General launch rules:
 
 1. Game server depends on working python services (bayes-net and sentiment classifier).
-2. Game front-end depends on a working game server
+2. Game front-end depends on a working game server.
 3. The Player data collection step in front-end chat depends on **ngrok** tunnel (if you are not hosting your back-end on public ip address).
    If your conversational agent's webhook isn't pointing to your back-end's public address, game server won't receive user questionnaire results.
 
