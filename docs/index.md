@@ -264,7 +264,8 @@ npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 
 Once you've set up the environment and the project, you can launch the whole application in a few ways, by following instructions bellow.
 
-### ⭐ ⭐ ⭐️ Docker specific launch ⭐ ⭐ ⭐
+### ⭐ ⭐ ⭐️ Docker specific launch (Recommended) ⭐ ⭐ ⭐
+{: .no_toc }
 
 **Step 1 (Optional):** Run ngrok, if you want your local game back-end communicating with the Google's conversational agent.
 
@@ -395,7 +396,6 @@ graph TD
   style D fill:#FFFFE0,stroke:#333,stroke-width:2px
   style E fill:pink,stroke:#333,stroke-width:2px
   style F fill:#D3D3D3,stroke:#333,stroke-width:2px
-
 ```
 
 ### What is going on:
