@@ -117,10 +117,6 @@ The game will work without this step.*
 
 ```shell
 npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
-```
-
-```shell
-npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 
 # Should print success message similar to this one:
 ✔ Updated project‑id and agent‑id in index.html
