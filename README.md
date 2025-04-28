@@ -311,6 +311,13 @@ npm run update-bot-ids -- --project-id=<project_id> --agent-id=<agent_id>
 
 Once you've set up the environment and the project, you can launch the whole application in a few ways, by following instructions bellow.
 
+### General launch rules:
+
+1. Game server depends on working python services (bayes-net and sentiment classifier).
+2. Game front-end depends on a working game server
+3. The Player data collection step in front-end chat depends on **ngrok** tunnel (if you are not hosting your back-end on public ip address).
+   If your conversational agent's webhook isn't pointing to your back-end's public address, game server won't receive user questionnaire results.
+
 ### Docker specific launch (Recommended) ⭐ ⭐ ⭐
 
 **Step 1 (Optional):** Run ngrok, if you want your local game back-end communicating with the Google's conversational agent.
@@ -345,7 +352,7 @@ After this you can open a front-end at: `` http://localhost:5173 ``
 
 ---
 
-### Easy mode:
+### Using run-all.sh script
 
 **Step 1 (Optional):** Run ngrok, if you want your local game back-end communicating with the Google's conversational agent.
 
@@ -385,7 +392,7 @@ Connection to localhost port 8080 [tcp/http-alt] succeeded!
 
 ---
 
-### Hardcore mode:
+### Using manual labor
 
 >**✏️ NOTE**
 > 
@@ -444,10 +451,3 @@ In a new terminal session (keep others alive):
 cd ../game-of-points-fe && \
 npm run dev
 ```
-
-**General launch rules:**
-
-1. Game server depends on working python services (bayes-net and sentiment classifier).
-2. Game front-end depends on a working game server
-3. The Player data collection step in front-end chat depends on **ngrok** tunnel (if you are not hosting your back-end on public ip address).
-   If your conversational agent's webhook isn't pointing to your back-end's public address, game server won't receive user questionnaire results.
