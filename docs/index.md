@@ -12,7 +12,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 {: .note }
 *This project was created for educational purposes. The main goal was to explore and play around with various technologies, including bayes nets, neural nets, rule engines, and conversational agent tools.*
 
-## Table of contents
+## 🗂️ Table of contents
 {: .no_toc .text-delta }
 
 - TOC
