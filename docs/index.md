@@ -341,6 +341,7 @@ Connection to localhost port 8080 [tcp/http-alt] succeeded!
 ---
 
 ### Hardcore mode:
+{: .no_toc }
 
 {: note }
 Use these steps only if you want to run a specific part of the project, or if `` run-all.sh `` and Docker approaches are not working.
