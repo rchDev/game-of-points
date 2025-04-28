@@ -35,7 +35,7 @@ It is in no way "production ready".
 There are a bunch of unhandled edge cases, bugs and quirky behaviours as well as creative, but objectively bad problem solutions.
 
 Some rendering bugs:
-1. The frontend-backend game state reconciliation sometimes breaks and the game becomes laggy...
+1. The front-end to back-end game state reconciliation sometimes breaks and the game becomes laggy...
 2. Game timer updates too slow - timer is tied to game update cycle when the server fails to process game state updates fast enough, timer updates lag too.
 3. Error messages get rendered incorrectly in Mozilla browsers.
 
@@ -181,7 +181,7 @@ This will download:
 2. The sentiment analysis ML model.
 3. Exported conversational agent file.
 
-**Step 2 (Optional):** If you haven't already during the environment setup, connect the frontend application to the conversational agent.
+**Step 2 (Optional):** If you haven't already during the environment setup, connect the front-end application to the conversational agent.
 
 ```shell
 cd ./game-of-points-fe && \
@@ -242,15 +242,15 @@ source .venv/bin/activate && \
 pip install requirements.txt
 ```
 
-**Step 6:** We need to set up the frontend. So we change into the /game-of-points/game-of-points-fe and run: ``npm install``.
+**Step 6:** We need to set up the front-end. So we change into the /game-of-points/game-of-points-fe and run: ``npm install``.
 
-Here, we change into frontend module's directory and run npm install to install all dependencies:
+Here, we change into front-end module's directory and run npm install to install all dependencies:
 ```shell
 cd ../game-of-points-fe && \
 npm install
 ```
 
-**Step 7 (Optional):** If you haven't already during the environment setup, connect the frontend application to the conversational agent.
+**Step 7 (Optional):** If you haven't already during the environment setup, connect the front-end application to the conversational agent.
 
 ```shell
 cd ./game-of-points-fe && \
@@ -266,7 +266,7 @@ Once you've set up the environment and the project, you can launch the whole app
 
 ### ⭐ ⭐ ⭐️ Docker specific launch ⭐ ⭐ ⭐
 
-**Step 1 (Optional):** Run ngrok, if you want your local game backend communicating with the Google's conversational agent.
+**Step 1 (Optional):** Run ngrok, if you want your local game back-end communicating with the Google's conversational agent.
 
 In a terminal session run:
 ```shell
@@ -287,6 +287,8 @@ docker compose up -d
 
 docker compose up --build
 ```
+
+After this you can open a front-end at: ``http://localhost:5173``
 
 ### ☠️ ☠️ ☠️ Non Docker launch ☠️ ☠️ ☠️
 {: .no_toc }
@@ -328,7 +330,7 @@ cd ./game-of-points-be && \
 ./mvnw quarkus:dev
 ```
 
-**Step 4 (Optional):** Run ngrok, if you want your local game backend communicating with the Google's conversational agent.
+**Step 4 (Optional):** Run ngrok, if you want your local game back-end communicating with the Google's conversational agent.
 
 In a new terminal session (keep others alive):
 
@@ -336,7 +338,7 @@ In a new terminal session (keep others alive):
 ngrok http --domain=<your_public_domain> 8080
 ```
 
-**Step 5:** Run game frontend.
+**Step 5:** Run game front-end.
 
 In a new terminal session (keep others alive):
 
@@ -349,16 +351,16 @@ npm run dev
 {: .no_toc }
 
 1. Game server depends on working python services (bayes-net and sentiment classifier).
-2. Game frontend depends on a working game server
-3. The Player data collection step in frontend chat depends on ngrok tunnel (if you are not hosting your backend on public ip address).
-   If your conversational agent's webhook isn't pointing to your backend's public address, game server won't receive user questionnaire results.
+2. Game front-end depends on a working game server
+3. The Player data collection step in front-end chat depends on ngrok tunnel (if you are not hosting your back-end on public ip address).
+   If your conversational agent's webhook isn't pointing to your back-end's public address, game server won't receive user questionnaire results.
 
 ## 🏗️ System overview
 
 ### Main components:
 {: .no_toc }
 
-1. Game frontend application.
+1. Game front-end application.
 2. Game server.
 3. Bayesian network server.
 4. Sentiment classifier server.
@@ -367,7 +369,7 @@ npm run dev
 
 ```mermaid
 graph TD
-  A[Game Frontend Application]
+  A[Game Front-end Application]
   B[Game Server]
   C[Bayesian Network Server]
   D[Sentiment Classifier Server]
@@ -406,8 +408,8 @@ graph TD
 More info on [Agent Reasoning](/game-of-points/agent-reasoning/).
 
 1. Game session initialization involving questioning by the conversational agent. 
-2. Game frontend sends a bunch of game state updates to game server through a websocket connection (i know... tcp is bad for game dev.)
-3. While the game server is processing these updates, frontend app simulates the application of these updates to create an illusion of smooth gameplay experience for a user. 
+2. Game front-end sends a bunch of game state updates to game server through a websocket connection (i know... tcp is bad for game dev.)
+3. While the game server is processing these updates, front-end app simulates the application of these updates to create an illusion of smooth gameplay experience for a user. 
 4. For each game session, game server stores game updates inside a <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/SessionStorage.java" target="_blank">session storage</a>. 
 5. Once the time for processing comes, server runs the loop through all sessions and starts applying updates for each of game states. See this <a href="https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/GameStateUpdateScheduler.java" target="_blank">code</a>. 
 6. Updating starts with cloning a game state, getting all player actions from the session storage and validating them. 
@@ -416,5 +418,5 @@ More info on [Agent Reasoning](/game-of-points/agent-reasoning/).
 9. After agent takes these actions, they are applied to the game state clone. 
 10. Clone is then placed into game state update history inside session storage.
 11. For each session update event is published.
-12. [Controller](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/StartWebSocket.java#L100-L118) that's listening for those update events, sends updated game states to each session (frontend).
-13. Frontend reconciles it's predicted game state with authoritative game state that's provided by backend. ([reconcileWithServerState](https://github.com/rchDev/game-of-points/blob/main/game-of-points-fe/main.js#L341-L354))
+12. [Controller](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/StartWebSocket.java#L100-L118) that's listening for those update events, sends updated game states to each session (front-end).
+13. Front-end reconciles it's predicted game state with authoritative game state that's provided by back-end. ([reconcileWithServerState](https://github.com/rchDev/game-of-points/blob/main/game-of-points-fe/main.js#L341-L354))
