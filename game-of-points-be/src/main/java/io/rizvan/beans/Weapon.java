@@ -119,7 +119,7 @@ public class Weapon {
         this.speedModifier = speedModifier;
         this.ammo = ammo;
         this.ammoCapacity = ammo;
-        this.range = range;
+        this.range = scaleRangeStat(range, 1);
         this.rechargeTimeMs = rechargeTimeMs;
 
         this.stats = new HashMap<>();
@@ -225,5 +225,9 @@ public class Weapon {
         } else {
             throw new ClassCastException("Cannot cast value to " + type.getName());
         }
+    }
+
+    private double scaleRangeStat(double value, int scaleFactor) {
+        return value * Math.pow(10.0, scaleFactor);
     }
 }
