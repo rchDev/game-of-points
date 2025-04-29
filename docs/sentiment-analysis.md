@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Sentiment Analysis
-nav_order: 2
+nav_order: 4
 parent: Deep Lore
 permalink: /sentiment-analysis/
 ---
