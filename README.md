@@ -9,6 +9,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 <p align="center">
   <img src="./docs/assets/videos/game-of-points-showcase.gif" alt="Demo"/>
 </p>
+
 ## 📖 Full docs
 
 ### Here: [https://rchdev.github.io/game-of-points/](https://rchdev.github.io/game-of-points/)
