@@ -78,15 +78,58 @@ backend-1               | --------------------------
 ### Most important classes in reasoning
 
 - **GameState** - a class containing variables which hold information about game environment. Also has methods for validating and applying **PlayerActions** and **AgentActions**, also stores information about **Player** and **Agent** (positions, hp, speed, weapon uses count...)
-- **AgentPossibilities** - (add later.)
-- **BayesPythonManager** -
-- **AgentChoice** - (add later.)
-- **AgentAction** - interface that defines **apply(GameState) -> void** and **getType() -> ActionType** methods. Concrete implementations of this class have various GameState altering effects that spring into action when **apply** method is called.
-- **PlayerAction** - (add later.)
-- **Facts** - validated, applied and registered player actions, that happened since the last **agent.reason()** method call.
-- **AgentKnowledge** - Agent doesn't have direct access to **GameState**. So this class acts as a collection of gathered truths about the game environment during the course of game and is used in agents decision making.
-- **AgentsBrain** - interface which defines a contract for creating various types of agents. Its centerpoint is a **reason** method, which takes in a **GameState** as an argument and applies changes to it.
-- **DroolsBrain** - concrete implementation of **AgentsBrain** which uses Drools rule engine and a Bayes net to make gameplay decisions.
+- **AgentPossibilities** - a class which contains a bunch of booleans representing various agent capabilities.
+- **BayesPythonManager** - a class that's responsible for managing py4j gateway servers. Those servers ensure that Java backend is able to communicate with Bayesian network and sentiment classifier. Those services are integral to reasoning process.
+- **AgentChoice** - an interfaces that describes a collection of classes that represent agent strategy.
+- **AgentAction** - interface that defines a contract for a bunch of classes that represent possible agent actions. It is a way of allowing Agent's brain to modify the GameState in a legal way. Most import method, defined by this interface is **apply(gameState)**. this method takes in a **GameState** and modifies it. The **apply** method contains logic for a particular agent action. Example:
+```java
+public void apply(GameState gameState) {
+    int movementAngle = chooseBestMovementAngle(gameState);
+    gameState.applyAction(new AgentMovesAction(movementAngle));
+}
+```
+- **PlayerAction** - interface that defines a bunch of contract methods to a collection of classes that represent player actions. Most important is the **apply(gameState)** method, which takes in a game state and modifies it. 
+Usually this the game logic in these player actions is really simple, 
+because all decisions and calculations are performed in the player's head.
+Apply method only registers what the user did in the front-end by updating the game state. 
+Apply is only called by GameState.applyAction() method, once the action has been validated.
+```java
+public boolean apply(GameState gameState) {
+    gameState.getPlayer().setMouseX(mouseX);
+    gameState.getPlayer().setMouseY(mouseY);
+
+    return true;
+}
+```
+- **Facts** - validated, applied and registered player actions, that happened since the last **agent.reason()** method call. They are a method of informing the agenet about important changes in the GameState. Facts are stored in a FactStorage every time a player action or other server action modifies the game state. A few examples below:
+```java
+// Once the other server action calls addResource method inside a GameState object,
+// Fact storage receives a ResourcesChangeFact.
+ public void addResource(double x, double y) {
+     resources.add(new ResourcePoint(x, y, RESOURCE_SIZE, RESOURCE_SIZE, POINTS_PER_RESOURCE));
+     factStorage.add(new ResourcesChangeFact(resources, true));
+ }
+```
+```java
+// Every time an action is applied, registerFact is called and player action fact is added to the storage.
+ public void applyAction(PlayerAction action) {
+     if (!action.isLegal(this)) {
+         return;
+     }
+
+     var succeeded = action.apply(this);
+     if (succeeded) {
+         registerAppliedAction(action);
+         registerFact(action, true);
+     } else if (action instanceof PlayerShootingAction) {
+         registerFact(action, false);
+     }
+ }
+```
+- **FacStorage** - a class that's responsible for storing GameState facts in server memory. It lives inside a GameState. Every GameState object has its own unique FactStorage object.
+- **AgentKnowledge** - Agent doesn't have direct access to **GameState**. So this class acts as a collection of gathered truths about the game environment during the course of game and is used in agent's decision-making. It's updated by the inference rule group and used by other rule groups.
+- **AgentsBrain** - interface which defines a contract for creating various types of agents. Its centerpoint is a **reason** method, which takes in a **GameState** object as an argument and applies changes to it in a form of **AgentActions**.
+- **DroolsBrain** - concrete implementation of **AgentsBrain** which uses Drools rule engine and a Bayes net for deciding which **AgentAction** should be taken.
 
 ### A Journey from player action to agent action
 
