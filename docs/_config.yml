@@ -16,8 +16,11 @@ callouts:
     title: Note
     color: yellow
 
-number_sections: true
-
+just_the_docs:
+  collections:
+    docs:
+      nav_order: 1
+  number_sections: true
 
 mermaid:
   version: "11.6.0"
