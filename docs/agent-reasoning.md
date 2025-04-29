@@ -126,7 +126,7 @@ public boolean apply(GameState gameState) {
      }
  }
 ```
-- **FacStorage** - a class that's responsible for storing GameState facts in server memory. It lives inside a GameState. Every GameState object has its own unique FactStorage object.
+- **FactStorage** - a class that's responsible for storing GameState facts in server memory. It lives inside a GameState. Every GameState object has its own unique FactStorage object.
 - **AgentKnowledge** - Agent doesn't have direct access to **GameState**. So this class acts as a collection of gathered truths about the game environment during the course of game and is used in agent's decision-making. It's updated by the inference rule group and used by other rule groups.
 - **AgentsBrain** - interface which defines a contract for creating various types of agents. Its centerpoint is a **reason** method, which takes in a **GameState** object as an argument and applies changes to it in a form of **AgentActions**.
 - **DroolsBrain** - concrete implementation of **AgentsBrain** which uses Drools rule engine and a Bayes net for deciding which **AgentAction** should be taken.
@@ -137,10 +137,12 @@ public boolean apply(GameState gameState) {
 block-beta
    columns 5
    A["PlayerAction"] space B["Fact"] space C["AgentKnowledge"]
+   I["Server Action"] space space space space
    space space space space space
    F["AgentAction"] space E["AgentChoice"] space D["AgentPossibilities"]
 
    A --> B
+   I --> B
    B --> C
    C --> D
    D --> E
