@@ -225,7 +225,7 @@ def train_mode(csv_file, epochs=15, batch_size=32):
     logger.info(f"Evaluation result: {evaluation_result}")
 
     # Save the model
-    model.save_model("./sentiment_model.keras")
+    model.save_model("sentiment_model.keras")
 ```
 
 Inside the **train_model** method:
@@ -326,7 +326,7 @@ In this mode, fa unction called: [prediction_mode()](https://github.com/rchDev/g
 def prediction_mode():
     # Initialize model and load pre-trained weights
     model = SentimentAnalysisModel()
-    model.load_model("./sentiment_model.keras")
+    model.load_model("sentiment_model.keras")
 
     # Setup Py4J gateway
     gateway = JavaGateway(

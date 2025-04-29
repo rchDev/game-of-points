@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Agent Reasoning
+title: Reasoning
 nav_order: 1
 parent: Deep Lore
-permalink: /agent-reasoning/
+permalink: /reasoning/
 ---
 
 # Agent Reasoning
