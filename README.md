@@ -1,6 +1,6 @@
 # Game Of Points
 
-A Simple game where human user competes against AI agent in a battle to collect the most points and survive.
+A Simple game where a human user competes against AI agent in a battle to collect the most points and survive.
 
 >**✏️ NOTE**
 > 
