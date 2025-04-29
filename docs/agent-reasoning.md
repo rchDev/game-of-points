@@ -53,6 +53,28 @@ the agent gathers information about the player (**evidence**).
 2. Based on those capabilities a strategy is chosen (**make a choice**).
 3. Then, the most appropriate action that best implements the selected strategy is chosen and applied.
 
+**You can kinda see reasoning process in the server logs:**
+
+```shell
+backend-1               | --------------------------
+bayesian-1              | INFO:py4j.java_gateway:Received command c on object id t
+bayesian-1              | INFO:__main__:query type: <class 'py4j.java_collections.JavaArray'>
+bayesian-1              | INFO:__main__:evidence: <class 'py4j.java_collections.JavaArray'>
+bayesian-1              | INFO:__main__:evidence: <class 'dict'>
+bayesian-1              | INFO:__main__:dict key: damage
+bayesian-1              | INFO:__main__:dict key type: <class 'str'>
+bayesian-1              | INFO:__main__:dict value: 2
+bayesian-1              | INFO:__main__:dict value type: <class 'int'>
+Finding Elimination Order: : : 0it [00:00, ?it/s]
+0it [00:00, ?it/s]      | 
+backend-1               | inference-group: player-stat-inference-ran
+bayesian-1              | INFO:__main__:MAP query result: {'speed_mod': 3, 'range': 5, 'uses': 1, 'recharge_time': 0}
+backend-1               | agent-choices-group: SAFE-COLLECT
+bayesian-1              | INFO:__main__:POST MAP query
+backend-1               | agent-action-group: AGENT-CHOSE-COLLECTION: 😨, REACH: ❌
+backend-1               | --------------------------
+```
+
 ### Most important classes in reasoning
 
 - **GameState** - a class containing variables which hold information about game environment. Also has methods for validating and applying **PlayerActions** and **AgentActions**, also stores information about **Player** and **Agent** (positions, hp, speed, weapon uses count...)
