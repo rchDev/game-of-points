@@ -103,16 +103,16 @@ public class AggressiveCollectChoice implements AgentChoice {
    }
 }
 ```
-- **AgentAction** - interface that defines a contract for a bunch of classes that represent possible agent actions. It is a way of allowing Agent's brain to modify the GameState in a legal way. Most import method, defined by this interface is **apply(gameState)**. this method takes in a **GameState** and modifies it. The **apply** method contains logic for a particular agent action. Example:
+- **AgentAction** - an interface that defines a contract for a bunch of classes that represent possible agent actions. It is a way of allowing Agent's brain to modify the GameState in a legal way. Most import method, defined by this interface is **apply(gameState)**. this method takes in a **GameState** and modifies it. The **apply** method contains logic for a particular agent action. Example:
 ```java
 public void apply(GameState gameState) {
     int movementAngle = chooseBestMovementAngle(gameState);
     gameState.applyAction(new AgentMovesAction(movementAngle));
 }
 ```
-- **PlayerAction** - interface that defines a bunch of contract methods to a collection of classes that represent player actions. Most important is the **apply(gameState)** method, which takes in a game state and modifies it. 
-Usually this the game logic in these player actions is really simple, 
-because all decisions and calculations are performed in the player's head.
+- **PlayerAction** - an interface that defines a bunch of contract methods to a collection of classes that represent player actions. The most important method is the: **apply(gameState)** method, which takes in a **GameState** object and modifies it. 
+Usually the game logic in these player actions is really simple, 
+because all decisions and calculations are performed in the player's mind.
 Apply method only registers what the user did in the front-end by updating the game state. 
 Apply is only called by GameState.applyAction() method, once the action has been validated.
 ```java
@@ -149,7 +149,8 @@ public boolean apply(GameState gameState) {
  }
 ```
 - **FactStorage** - a class that's responsible for storing GameState facts in server memory. It lives inside a GameState. Every GameState object has its own unique FactStorage object.
-- **AgentKnowledge** - Agent doesn't have direct access to **GameState**. So this class acts as a collection of gathered truths about the game environment during the course of game and is used in agent's decision-making. It's updated by the inference rule group and used by other rule groups.
+- **AgentKnowledge** - agent doesn't have direct access to **GameState**. So this class acts as a collection of gathered truths about the game environment, during the course of game and is used in agent's decision-making. 
+It's updated by the inference rule group and used by other rule groups.
 - **AgentsBrain** - interface which defines a contract for creating various types of agents. Its centerpoint is a **reason** method, which takes in a **GameState** object as an argument and applies changes to it in a form of **AgentActions**.
 - **DroolsBrain** - concrete implementation of **AgentsBrain** which uses Drools rule engine and a Bayes net for deciding which **AgentAction** should be taken.
 
@@ -173,10 +174,10 @@ block-beta
 
 ## Reasoning process
 
-The reasoning starts once the **GameUpdateScheduler** updates the game state,
-inserts facts into a facts storage. After that the agent's **reason()** method gets called.
+The reasoning starts once the **GameUpdateScheduler** updates the GameState object.
+After that the agent's **reason()** method gets called which, then calls **DroolBrains.reason()** method.
 
-Agents reason method calls Drools brain's reason method. Which looks pretty simple:
+The **reason** method itself is pretty simple:
 ```java
     @Override
     public void reason(GameState gameState) {
@@ -225,10 +226,10 @@ Agents reason method calls Drools brain's reason method. Which looks pretty simp
         }
     }
 ```
-In this method we essentially insert a bunch of items that will be used by
-[Drools rules](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be/src/main/resources/drools)
+In this method we insert a bunch of items that will be used by [Drools rules](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be/src/main/resources/drools)
 into a stateless Drools session which is called **KieSession**.
-Then we run rule groups one after the other. This process modifies **GameState**.
+Then, we run rule groups one after the other. 
+This process derives agent's actions, that are then applied to the **GameState**.
 
 ## Drools Rules
 
