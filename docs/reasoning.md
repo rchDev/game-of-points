@@ -6,7 +6,7 @@ parent: Deep Lore
 permalink: /reasoning/
 ---
 
-# Agent Reasoning
+# Reasoning
 {: .no_toc }
 
 An overview of agent's decision-making process.

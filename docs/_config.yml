@@ -16,6 +16,9 @@ callouts:
     title: Note
     color: yellow
 
+number_sections: true
+
+
 mermaid:
   version: "11.6.0"
 
