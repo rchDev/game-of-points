@@ -34,24 +34,24 @@ Agent has some knowledge about game environment, but doesn't know anything about
 
 **Agent doesn't know:** player stats (damage, mov. speed, weapon uses, weapon reach).
 
-Agent fills information gaps by querying the [**bayes net**]() for the most probable combination of player stats,
-with a set of query (unknown) and a set of evidence (known) variables.
+Agent fills gaps in its information by querying the [**bayes net**](/bayes) for the most probable combination of player stats,
+with a set of variables: **query** (unknown) and **evidence** (known).
 
 **Agent gathers information:**
-at the start of a match, all variables are unknown (**query**).
+t the start of a match, all variables are unknown (**query**).
 As both the player and the agent act in the environment,
 the agent gathers information about the player (**evidence**).
 
-**Reasoning** (in the context of this simulation) is the process of finding the most appropriate decision to achieve the **desired outcome**.
+**Reasoning** (in the context of this simulation) is the process of finding the most appropriate action to take, given the current **GameState** to achieve **desired outcome**.
 
 **Desired outcome** - winning the game. Which can be achieved by:
 1. Collecting the most points until the game time runs out (60s.)
 2. Killing the player.
 
 **During the reasoning process:**
-1. gathered information from agent's knowledge base: queries, evidence are used to evaluate agent's capabilities (**possibilities**).
-2. Based on those capabilities a strategy is chosen (**make a choice**).
-3. Then, the most appropriate action that best implements the selected strategy is chosen and applied.
+1. gathered information from agent's knowledge base: queries, evidence are used to evaluate agent's capabilities (**possibilities**),
+2. based on those capabilities, a strategy is chosen (**make a choice**),
+3. then, the most appropriate action, that best implements the selected strategy is chosen and applied.
 
 **You can kinda see reasoning process in the server logs:**
 
@@ -77,10 +77,32 @@ backend-1               | --------------------------
 
 ### Most important classes in reasoning
 
-- **GameState** - a class containing variables which hold information about game environment. Also has methods for validating and applying **PlayerActions** and **AgentActions**, also stores information about **Player** and **Agent** (positions, hp, speed, weapon uses count...)
-- **AgentPossibilities** - a class which contains a bunch of booleans representing various agent capabilities.
-- **BayesPythonManager** - a class that's responsible for managing py4j gateway servers. Those servers ensure that Java backend is able to communicate with Bayesian network and sentiment classifier. Those services are integral to reasoning process.
-- **AgentChoice** - an interfaces that describes a collection of classes that represent agent strategy.
+- **GameState** - a class containing variables that hold information about the game environment. Also contains methods for validating and applying **PlayerActions** and **AgentActions**, also stores information about resource points, **Player** and **Agent** (positions, hp, speed, weapon uses count...). For each game session new GameState object is created.
+- **AgentPossibilities** - a class which contains a bunch of booleans representing various agent capabilities:
+```java
+public class AgentPossibilities {
+    private boolean canOneShootPlayer;
+    private boolean oneShotByPlayer;
+    private boolean fasterThanPlayer;
+    private boolean slowerThanPlayer;
+    private boolean canReachPlayer;
+    private boolean reachedByPlayer;
+    private boolean canKillPlayer;
+    private boolean killedByPlayer;
+   ...
+}
+```
+- **BayesPythonManager** - an interface that is used on the Java side of py4j relationship. It's used inside PythonGatewayServer's py4j GatewayServers to inform the py4j library about python-side method names, parameter names and types, and return values.  that's responsible for mana
+- **PythonGateway** - is a class that manages python gateway servers. Those servers ensure that Java backend is able to communicate with Bayesian network and sentiment classifier. Those services are integral to reasoning process.
+- **AgentChoice** - an interfaces that describes a collection of classes that act as an enumeration for possible agent's strategies. Example:
+```java
+public class AggressiveCollectChoice implements AgentChoice {
+   @Override
+   public ChoiceType getType() {
+      return ChoiceType.AGGRESSIVE_COLLECT;
+   }
+}
+```
 - **AgentAction** - interface that defines a contract for a bunch of classes that represent possible agent actions. It is a way of allowing Agent's brain to modify the GameState in a legal way. Most import method, defined by this interface is **apply(gameState)**. this method takes in a **GameState** and modifies it. The **apply** method contains logic for a particular agent action. Example:
 ```java
 public void apply(GameState gameState) {
