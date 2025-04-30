@@ -49,6 +49,20 @@ agent-choices-group --> agent-actions-group
 ```
 ### [Inference rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
 
+```mermaid
+flowchart TD
+subgraph inference-group
+    player-moved
+    player-aimed
+    player-shot
+    player-collected
+    player-hp-changed
+    player-stat-inference
+    resource-point-changed
+    game-time-changed
+end
+```
+
 These rules fire on inserted facts and update agent's knowledge base.
 
 **Example:** a fact about player using their weapon was inserted into kieSession
