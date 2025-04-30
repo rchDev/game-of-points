@@ -16,7 +16,7 @@ import io.rizvan.beans.actors.agent.actions.AgentCollectsAction
 import io.rizvan.beans.actors.agent.actions.AgentAvoidsAction
 import io.rizvan.beans.actors.CompetingEntity
 
-rule "agent-chose-kill-and-can-reach-player"
+rule "agent-chose-kill-can-reach-player"
 agenda-group "agent-actions-group"
 when
     $gameState : GameState()
@@ -29,7 +29,7 @@ then
     System.out.println("agent-action-group: AGENT-CHOSE-KILLING: 🔫, REACH: ✅");
 end
 
-rule "agent-chose-kill-and-cannot-reach-player"
+rule "agent-chose-kill-cannot-reach-player"
 agenda-group "agent-actions-group"
 when
     $gameState : GameState()
@@ -58,7 +58,7 @@ then
     System.out.println("agent-action-group: AGENT-CHOSE-COLLECTION: 😨, REACH: ✅");
 end
 
-rule "agent-chose-collect-cannot-reach-target-selected"
+rule "agent-collect-cannot-reach-target-selected"
 agenda-group "agent-actions-group"
 no-loop true
 when
@@ -75,7 +75,7 @@ then
     System.out.println("agent-action-group: AGENT-CHOSE-COLLECTION:, TARGET FOUND: ⌖");
 end
 
-rule "agent-chose-collect-cannot-reach-aggresive"
+rule "agent-collect-cannot-reach-aggresive"
 agenda-group "agent-actions-group"
 when
     $gameState : GameState()
@@ -99,7 +99,7 @@ then
     System.out.println("agent-action-group: AGENT-CHOSE-COLLECTING: 🤬, REACH: ❌");
 end
 
-rule "agent-chose-collect-cannot-reach-safe"
+rule "agent-collect-cannot-reach-safe"
 agenda-group "agent-actions-group"
 when
     $gameState : GameState() and
