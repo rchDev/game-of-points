@@ -12,40 +12,40 @@ permalink: /drools/
 Based on their functional responsibility, rules are divided into four distinct groups:
 
 ```mermaid
+---
+title: Diagram showing incomplete rule sets in each layer
+---
 flowchart TD
 subgraph inference-group
     player-moved
     player-aimed
-    player-shot
-    player-collected
     player-hp-changed
     player-stat-inference
     resource-point-changed
-    game-time-changed
 end
 subgraph possibilities-group
     can-agent-kill-player
-    is-player-low-on-health
-    can-player-kill-agent
-    is-agent-low-on-health
-    is-agent-faster
     is-agent-slower
     agent-can-reach-player
     player-can-reach-agent
-    agent-can-win-by-collecting
 end
 subgraph agent-choices-group
-    E
-    F
-    G
+    agent-kill-player
+    agent-avoid-player
+    agent-safe-collect
+    agent-aggresive-collect
 end
 subgraph agent-actions-group
-    H
+    agent-chose-kill-can-reach-player
+    agent-collect-cannot-reach-aggresive
+    agent-collect-cannot-reach-safe
+    agent-chose-avoid
 end
 
 inference-group --> possibilities-group
 possibilities-group --> agent-choices-group
 agent-choices-group --> agent-actions-group
+
 ```
 ### [Inference rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
 
