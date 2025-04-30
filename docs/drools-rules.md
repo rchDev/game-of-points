@@ -9,7 +9,7 @@ permalink: /drools/
 # Drools rules
 
 {: .note }
-This solution is prehistoric, when compared to modern AI solutions for similar problems.
+This solution is prehistoric, when compared to modern AI solutions.
 What makes it prehistoric: every decision, strategy and their selection thresholds were designed manually.
 It's just an educational step towards understanting how AI systems work.
 
@@ -31,11 +31,11 @@ You can choose to create however many layers you need, and however many rules yo
 
 In this game, during every time step, agent has to make a decision what action should it take next.
 I've designed this action derivation pipeline:
-1. Gather facts that occured since the last time step and update AgentKnowledge,
-2. Try do fill the gaps in agent's knowledge by using a Bayesian network.
-3. Evaluate the AgentKnowledge and derive agent's capabilities.
-4. Choose an action strategy.
-5. Evaluate the current environment and choose an action that implements or moves the agent towards implementing the current strategy.
+1. Gather facts that occured since the last time step and update AgentKnowledge. (inference-group)
+2. Try to fill gaps in the agent's knowledge by using a Bayesian network. (infirence-group)
+3. Evaluate the AgentKnowledge and derive agent's capabilities. (possiblities-group)
+4. Choose an action strategy. (agent-choices-group)
+5. Evaluate the current environment and choose an action that implements or moves the agent towards implementing the current strategy. (agent-actions-group)
 
 Based on their functional responsibility, rules are divided into four distinct groups:
 
