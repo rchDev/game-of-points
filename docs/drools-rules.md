@@ -138,6 +138,10 @@ flowchart LR
     end
 ```
 
+{: .note }
+This layer could have been implemented by using a neural net and passing the parameter vector, derived from the variables found inside the AgentPossibilities class. 
+Another possibility was, to use a decision tree, produced by automatic node splitting function.
+
 This layer is execuced once agent's capabilities have been set by the agent-possibilities layer rules.
 Having the knowledge of what agent can and cannot do, rules in this layer are responsible for choosing the best strategy for the current situation.
 This group basically implements the decision tree structure seen below and
