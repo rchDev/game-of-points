@@ -12,13 +12,13 @@ Based on their functional responsibility, rules are divided into four distinct g
 
 ```mermaid
 ---
-title: Diagram showing incomplete rule sets in each layer
+title: Diagram showing incomplete rule sets of each layer
 ---
 flowchart TD
     subgraph inference-group
         player-moved
         player-aimed
-        player-hp-changed
+        player-shot
     end
     subgraph possibilities-group
         is-agent-slower
@@ -42,20 +42,17 @@ flowchart TD
     agent-choices-group --> agent-actions-group
 ```
 
-### [Inference rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
+### [Inference group rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
 
 ```mermaid
-flowchart TD
-subgraph inference-group
-    player-moved
-    player-aimed
-    player-shot
-    player-collected
-    player-hp-changed
-    player-stat-inference
-    resource-point-changed
-    game-time-changed
-end
+---
+title: Incomplete view of inference rule group
+flowchart LR
+    subgraph inference-group
+        player-moved
+        player-aimed
+        player-shot
+    end
 ```
 
 These rules fire on inserted facts and update agent's knowledge base.
@@ -64,8 +61,19 @@ These rules fire on inserted facts and update agent's knowledge base.
 and the damage was felt by an agent, a rule: ["Player shot"](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
 will fire and update [agent's knowledge base](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/knowledge/AgentKnowledge.java).
 
-### [Possibilities rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/possibilities_rules.drl)
+### [Possibilities group rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/possibilities_rules.drl)
 
+```mermaid
+---
+title: Incomplete view of possibilities rule group
+---
+flowchart LR
+    subgraph possibilities-group
+        is-agent-slower
+        agent-can-reach-player
+        player-can-reach-agent
+    end
+```
 Once inference rules have updated the knowledge base, possibilities group is ran.
 These rules fire, based on variable relationships inside knowledge base and agent classes.
 
@@ -87,9 +95,21 @@ public class AgentPossibilities {
 }
 ```
 
-This class represents agent's relationship with player.
+This class represents agent's relationship with the player.
 
-### [Agent choices rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl)
+### [Agent choices group rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl)
+
+```mermaid
+---
+title: Incomplete view of an agent choices rule group
+---
+flowchart LR
+    subgraph agent-choices-group
+        agent-kill-player
+        agent-avoid-player
+        agent-safe-collect
+    end
+```
 
 Now that we have agent's possibilities, that were inserted by the previous layer rules.
 We know what agent can and cannot do. We have to make a strategy choice. That is what this layer is responsible for.
@@ -151,8 +171,19 @@ flowchart TD
     AD -->|yes| AF[avoid]
     AD -->|no| AG[safe-collect]
 ```
-### [Agent Action Rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/agent_action_rules.drl)
-{: .no_toc }
+### [Agent actions group rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/agent_action_rules.drl)
+
+```mermaid
+---
+title: Incomplete view of an agent actions rule group
+---
+flowchart LR
+    subgraph agent-actions-group
+        agent-chose-kill-can-reach-player
+        agent-collect-cannot-reach-aggresive
+        agent-collect-cannot-reach-safe
+    end
+```
 
 Once the previous layer rules have successfully run and inserted agent's strategy choice, this layer runs.
 
