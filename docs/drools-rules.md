@@ -106,7 +106,7 @@ flowchart LR
 This layer is responbile for determining the agent's relationship with the player and the rest of environment. Rules in this layer run once the inference group rules have updated the knowledge base.
 These rules fire, based on various variable combinations found inside the AgentKnowlege class.
 
-These rules are really simple, they just set variables inside AgentPossibilities class which you can se bellow:
+When firing, these rules set boolean variable values inside AgentPossibilities class, see below:
 ```java
 public class AgentPossibilities {
     private boolean canOneShootPlayer;
