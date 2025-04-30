@@ -138,10 +138,10 @@ flowchart LR
     end
 ```
 
-Now that we have agent's possibilities, that were inserted by the previous layer rules.
-We know what agent can and cannot do. We have to make a strategy choice. That is what this layer is responsible for.
+This layer is execuced once agent's capabilities have been set by the agent-possibilities layer rules.
+Having the knowledge of what agent can and cannot do, rules in this layer are responsible for choosing the best strategy for the current situation.
 This group basically implements the decision tree structure seen below and
-produces strategy choice for an agent. Possible strategies include:
+produces one of these strategy choices:
 1. Avoid player.
 2. Collect points - safely (while avoiding player).
 3. Collect points - aggressively (while ignoring player).
