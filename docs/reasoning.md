@@ -76,6 +76,7 @@ backend-1               | --------------------------
 ```
 
 ### Most important classes in reasoning
+{: .no_toc }
 
 - **GameState** - a class containing variables that hold information about the game environment. Also contains methods for validating and applying **PlayerActions** and **AgentActions**, also stores information about resource points, **Player** and **Agent** (positions, hp, speed, weapon uses count...). For each game session new GameState object is created.
 - **AgentPossibilities** - a class which contains a bunch of booleans representing various agent capabilities:
@@ -155,6 +156,7 @@ It's updated by the inference rule group and used by other rule groups.
 - **DroolsBrain** - concrete implementation of **AgentsBrain** which uses Drools rule engine and a Bayes net for deciding which **AgentAction** should be taken.
 
 ### A Journey from player action to agent action
+{: .no_toc }
 
 ```mermaid
 block-beta
