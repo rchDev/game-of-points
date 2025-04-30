@@ -87,7 +87,7 @@ flowchart LR
 
 These rules fire on inserted facts and update agent's knowledge base.
 
-**Example:** a fact about the player's usage of its weapon was inserted into **kieSession**. The damage was felt by an agent as it's HP was subtracted. in this case a rule: ["player-shot"](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
+**Example:** a fact about the player using its weapon gets inserted into **kieSession**. The damage was felt by an agent as it's HP was subtracted. In this case a rule: ["player-shot"](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
 will fire and update [agent's knowledge base](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/knowledge/AgentKnowledge.java) with a new damage value.
 
 ### [Possibilities group rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/possibilities_rules.drl)
@@ -103,8 +103,8 @@ flowchart LR
         player-can-reach-agent
     end
 ```
-Once inference rules have updated the knowledge base, possibilities group is ran.
-These rules fire, based on variable relationships inside knowledge base and agent classes.
+This layer is responbile for determining the agent's relationship with the player and the rest of environment. Rules in this layer run once the inference group rules have updated the knowledge base.
+These rules fire, based on various variable combinations found inside the AgentKnowlege class.
 
 These rules are really simple, they just set variables inside AgentPossibilities class which you can se bellow:
 ```java
@@ -123,8 +123,6 @@ public class AgentPossibilities {
     ...
 }
 ```
-
-This class represents agent's relationship with the player.
 
 ### [Agent choices group rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/behavioural_rules.drl)
 
