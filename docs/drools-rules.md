@@ -47,6 +47,7 @@ flowchart TD
 ```mermaid
 ---
 title: Incomplete view of inference rule group
+---
 flowchart LR
     subgraph inference-group
         player-moved
