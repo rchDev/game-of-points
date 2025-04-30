@@ -6,7 +6,7 @@ import io.rizvan.beans.knowledge.AgentPossibilities
 import io.rizvan.beans.GameState
 import io.rizvan.utils.Coord;
 
-rule "Determine if agent can kill a player"
+rule "can-agent-kill-player"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -20,7 +20,7 @@ no-loop true
         }
 end
 
-rule "Determine if player is low on health"
+rule "is-player-low-on-health"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -34,7 +34,7 @@ no-loop true
         }
 end
 
-rule "Determine if player can kill an agent"
+rule "can-player-kill-agent"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -48,7 +48,7 @@ no-loop true
         }
 end
 
-rule "Determine if agent is low on health"
+rule "is-agent-low-on-health"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -62,7 +62,7 @@ no-loop true
         }
 end
 
-rule "Determine if agent is faster than player"
+rule "is-agent-faster"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -77,7 +77,7 @@ no-loop true
         }
 end
 
-rule "Determine if agent is slower than player"
+rule "is-agent-slower"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -92,7 +92,7 @@ no-loop true
         }
 end
 
-rule "Determine if agent can reach player"
+rule "agent-can-reach-player"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -108,7 +108,7 @@ no-loop true
         }
 end
 
-rule "Determine if player can reach agent"
+rule "player-can-reach-agent"
 agenda-group "possibilities-group"
 no-loop true
     when
@@ -127,7 +127,7 @@ no-loop true
         }
 end
 
-rule "Determine if agent can win by collecting points"
+rule "agent-can-win-by-collecting"
 agenda-group "possibilities-group"
 no-loop true
     when
