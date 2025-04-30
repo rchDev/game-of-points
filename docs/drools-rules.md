@@ -8,7 +8,6 @@ permalink: /drools/
 
 # Drools rules
 
-
 Based on their functional responsibility, rules are divided into four distinct groups:
 
 ```mermaid
@@ -16,37 +15,33 @@ Based on their functional responsibility, rules are divided into four distinct g
 title: Diagram showing incomplete rule sets in each layer
 ---
 flowchart TD
-subgraph inference-group
-    player-moved
-    player-aimed
-    player-hp-changed
-    player-stat-inference
-    resource-point-changed
-end
-subgraph possibilities-group
-    can-agent-kill-player
-    is-agent-slower
-    agent-can-reach-player
-    player-can-reach-agent
-end
-subgraph agent-choices-group
-    agent-kill-player
-    agent-avoid-player
-    agent-safe-collect
-    agent-aggresive-collect
-end
-subgraph agent-actions-group
-    agent-chose-kill-can-reach-player
-    agent-collect-cannot-reach-aggresive
-    agent-collect-cannot-reach-safe
-    agent-chose-avoid
-end
-
-inference-group --> possibilities-group
-possibilities-group --> agent-choices-group
-agent-choices-group --> agent-actions-group
-
+    subgraph inference-group
+        player-moved
+        player-aimed
+        player-hp-changed
+    end
+    subgraph possibilities-group
+        is-agent-slower
+        agent-can-reach-player
+        player-can-reach-agent
+    end
+    subgraph agent-choices-group
+        agent-kill-player
+        agent-avoid-player
+        agent-safe-collect
+    end
+    subgraph agent-actions-group
+        agent-chose-kill-can-reach-player
+        agent-collect-cannot-reach-aggresive
+        agent-collect-cannot-reach-safe
+    end
+    
+    %% Connections
+    inference-group --> possibilities-group
+    possibilities-group --> agent-choices-group
+    agent-choices-group --> agent-actions-group
 ```
+
 ### [Inference rules](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/resources/drools/fact_rules.drl)
 
 ```mermaid
