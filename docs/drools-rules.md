@@ -140,7 +140,7 @@ flowchart LR
 
 {: .note }
 This layer could have been implemented by using a neural net and passing the parameter vector, derived from the variables found inside the AgentPossibilities class. 
-Another possibility was, to use a decision tree, produced by automatic node splitting function.
+Another possibility was, to use a decision tree, produced by an automatic node splitting function.
 
 This layer is execuced once agent's capabilities have been set by the agent-possibilities layer rules.
 Having the knowledge of what agent can and cannot do, rules in this layer are responsible for choosing the best strategy for the current situation.
@@ -220,8 +220,6 @@ Once the previous layer rules have successfully run and inserted agent's strateg
 
 Rules in this layer are responsible for evaluating the current environment and picking the most appropriate action that contributes to current strategy.
 
-For example: **agent chose to kill player**,
-because the player is really effective at collecting points and
-there is no way the agent will outpace him.
-In this case a combination of rules will fire that determine if a player is within agents reach,
-in that case - **attack**, otherwise - **move** in player's direction.
+For example: the previous layer derived this strategy: **agent-kill-player**, reason being the player is effective at collecting points and
+there is no way the agent will outpace him. In this case agent-actions group will fire a combination of rules, evaluating if a player is within agents reach,
+in the case that it is - **attack** action will be chosen, otherwise - **move** action will be used, to transport agent closer to the player.
