@@ -6,7 +6,7 @@ parent: Deep Lore
 permalink: /bayes/
 ---
 
-# Bayesian network
+## Bayesian network
 
 Drools rule engine gains information about player's stats from facts, but not all info can be known right away, at the start of a game.
 Most of the time, rules engine has only partial information about the player stats,
@@ -15,11 +15,11 @@ The Solution to this partial information problem is **Bayesian network**.
 
 Known stats are presented as **evidence** and unknown ones are given as **query** variables.
 
-### Main use:
+# Main use:
 
 The main use for a Bayes net in my application is to: **get the most probable combination of player stats.**
 
-### Used libraries:
+## Used libraries:
 
 [pgmpy (Probabilistic Graphical Models using Python)](https://pgmpy.org/) - Python library designed for working with probabilistic graphical models (PGMs) such as Bayesian Networks and Markov Networks.
 
@@ -165,7 +165,7 @@ class BayesianNetworkManager:
             raise
     ...
 ```
-### Construction:
+## Construction:
 
 Now that we have Python objects available to us on the Java, we can use methods:
 1. add_nodes
@@ -190,18 +190,14 @@ Which version get created depends on multiple factors, such as:
     - yes - create a network with a mood variable.
     - no - create a network without a mood variable.
 
-**Construction process:**
+### Construction process:
 
 1. Go through the whole weapon list, **count** how many times each value of every weapon stat showed up.
-2. Divide stat counts by the total weapon count to get the **marginal probability** of that stat showing up.
+2. Divide stat counts by the total weapon count, to get **marginal stat probabilities**.
 3. If the stat is fully independent, we already have all the info we need.
-4. Otherwise, when weapon stat is only conditionally independent while knowing some other stat, we count how many times did the query-evidence combo occur and divide the count by the total number of weapons. This way we get joint probability: P(query, evidence). To get P(query | evidence), we divide joint probability by marginal probability of evidence: P(evidence).
-   At the end of this we get conditional probability distribution table in a form of matrix, that we could then feed into **add_cpd** function.
-
-{: .note}
-There's a bunch of additional stuff going on this function. Most of it is just convenience metadata.
-In an instance when we can add mood variable
-
+4. Otherwise, when the weapon stat is only conditionally independent while knowing some other stat, we count how many times did the query-evidence combo occur and divide the occurence count by the total number of weapons.
+This way we get joint probabilities: P(query, evidence). To get the P(query | evidence), we divide joint probabilities by the marginal probability of evidence: P(evidence).
+   At the end of this we get CPD table in a form of matrix, that we, then feed into the **add_cpd** function. All the calculation can be found: [getConditionalProbabilities()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L358-L411).
 ```java
     private ConditionalResult getConditionalProbabilities(
         List<Weapon> weapons,
