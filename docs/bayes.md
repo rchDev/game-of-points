@@ -15,9 +15,106 @@ The Solution to this partial information problem is **Bayesian network**.
 
 Known stats are presented as **evidence** and unknown ones are given as **query** variables.
 
-# Main use:
+## Usage
+{: no_toc }
 
 The main use for a Bayes net in my application is to: **get the most probable combination of player stats.**
+
+I'm using the Bayes net inside one of the inference layer Drools rules. What this rule does, is query the Bayes net to get the most probable stat combination and uses received values to update variables inside the AgentKnowledge class.
+Each AgentKnowledgeItem inside AgentKnowledge has a value field and and a boolean field, indicating if that value is known or approximated. Items become known, only when they are experienced by the agent during the gameplay.
+Items that have been set by the Bayes net, have their values set, but are not considered unknown. 
+This means that values derived from experience take precedence over values that were derived from the Bayes net.
+
+When querying the Bayes net, known values from the AgentKnowledge get set as a list of **evidence variables** and unknown values are converted into a list of **query variables**.
+These lists, containing query and evidence values, are then passed into a `` bayesNetwork.map_query(query, evidence); `` call.
+
+**What's really going on:**
+
+Inside a rule, updateKnowledge callable gets called with a query and an evidence list.
+```java
+rule "player-stat-inference"
+agenda-group "inference-group"
+salience -100
+    when
+        $knowledge : AgentKnowledge()
+        $getQueryList : GetQueriesCallable()
+        $getEvidenceList : GetEvidenceCallable()
+        $updateKnowledge: UpdateKnowledgeCallable()
+    then
+        String[] queries = (String[]) $getQueryList.call();
+        String[][] evidence = (String[][]) $getEvidenceList.call();
+
+        $updateKnowledge.setParameters(queries, evidence);
+        $updateKnowledge.call();
+        System.out.println("inference-group: player-stat-inference-ran");
+end
+```
+
+UpdateKnowledgeCallable then calls updateKnowledge() function with the two lists.
+```java
+public class UpdateKnowledgeCallable implements Callable<Void> {
+    private String[] query;
+    private String[][] evidence;
+
+    public void setParameters(String[] query, String[][] evidence) {
+        this.query = query;
+        this.evidence = evidence;
+    }
+
+    @Override
+    public Void call() {
+        updateKnowledge(query, evidence);
+        return null;
+    }
+}
+```
+
+Inside updateKnowledge() function, a Bayesian network on the Python side is called. This call returns a hash map of key value pairs, where the key is player stat name e.g. damage, reload speed... and the value is a weapon stat value index.
+Then the function loops over every entry inside a map and uses the received name and the value index to derive the actual stat value. Then it uses that value to set the value field of a corresponding knowledge item, inside the AgentKnowledge object.
+```java
+private void updateKnowledge(String[] query, String[][] evidence) {
+    Map<String, Integer> mapResult = bayesNetwork.map_query(query, evidence);
+    for (var entry : mapResult.entrySet()) {
+        var index = entry.getValue();
+        var statName = entry.getKey();
+        var weaponStat = Weapon.Stat.fromName(statName);
+        switch (statName) {
+            case "damage":
+            var damageValue = (Integer) conditionals.queryValues.get(weaponStat).get(index);
+            knowledge.setPlayerDamage(damageValue, false);
+            // WAY MORE CASES BELLOW
+        }
+        // WAY MORE LOGIC BELLOW
+    }
+}
+```
+
+On the python side, query variable, which is of JavaList type, is converted to a python list. Evidence variable - into python dictionary. Once the conversion is done, self.infer.map_query(variables=query, evicence=evidence_dict) is called. Then the map_query result is converted to a JavaMap python class and returned.
+
+{: .note }
+`` self.infer = VariableElimination(self.model) `` - a Bayesian network querying class provided by pgmpy library. It uses variable elimination technique to query the Bayes net. I could have used some of the sampling techniques, that allow exchanging compunational efficiency for accuracy, but my network is small enough, that I can still get the benefits of using the exact querying technique such as a variable elimination.
+
+```python
+def map_query(self, query, evidence):
+    try:
+        queryList = list(query)
+        evidence_dict = {entry[0]: int(entry[1]) for entry in list(evidence)}
+        result = self.infer.map_query(variables=queryList, evidence=evidence_dict)
+    java_map = MapConverter().convert(result, self.gateway._gateway_client)
+    return java_map
+except Exception as e:
+    logger.error(f"Error performing MAP query: {e}")
+    raise
+
+```
+
+### MAP (Maximum A Posteriori) query
+
+$$
+\operatorname{MAP}(Q \mid E = e) = \arg\max_{q} \sum_{z} P(Q = q, Z = z, E = e)
+$$
+
+To get the the most probable stat combination, I'm using MAP query, which is, essentially, an argmax query over every possible variable combination, given the evidence variables. I don't use hidden variables, because I care about each value.
 
 ## Used libraries:
 
@@ -201,105 +298,6 @@ This way we get joint probabilities: P(query, evidence). To get the P(query | ev
 5. Once the probability calculations are done, all nodes are added to the network by calling bayesNetwork.add_nodes() and passing it the nodes list.
 6. After adding the nodes, we connect all the nodes by calling bayesNetwork.add_edges() and passing it a list of string arrays, each containing related nodes.
 7. We call an [addMoodNode](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L107-L199) function, which conditionally adds mood node if all the weapon: speed and damage values have showed up at least once.
-
-## Usage
-{: no_toc }
-
-I'm using the Bayes net inside one of the inference layer Drools rules. What this rule does, is query the Bayes net to get the most probable stat combination and uses received values to update variables inside the AgentKnowledge class.
-Each AgentKnowledgeItem inside AgentKnowledge has a value field and and a boolean field, indicating if that value is known or approximated. Items become known, only when they are experienced by the agent during the gameplay.
-Items that have been set by the Bayes net, have their values set, but are not considered unknown. 
-This means that values derived from experience take precedence over values that were derived from the Bayes net.
-
-When querying the Bayes net, known values from the AgentKnowledge get set as a list of **evidence variables** and unknown values are converted into a list of **query variables**.
-These lists, containing query and evidence values, are then passed into a `` bayesNetwork.map_query(query, evidence); `` call.
-
-**What's really going on:**
-
-Inside a rule, updateKnowledge callable gets called with a query and an evidence list.
-```java
-rule "player-stat-inference"
-agenda-group "inference-group"
-salience -100
-    when
-        $knowledge : AgentKnowledge()
-        $getQueryList : GetQueriesCallable()
-        $getEvidenceList : GetEvidenceCallable()
-        $updateKnowledge: UpdateKnowledgeCallable()
-    then
-        String[] queries = (String[]) $getQueryList.call();
-        String[][] evidence = (String[][]) $getEvidenceList.call();
-
-        $updateKnowledge.setParameters(queries, evidence);
-        $updateKnowledge.call();
-        System.out.println("inference-group: player-stat-inference-ran");
-end
-```
-
-UpdateKnowledgeCallable then calls updateKnowledge() function with the two lists.
-```java
-public class UpdateKnowledgeCallable implements Callable<Void> {
-    private String[] query;
-    private String[][] evidence;
-
-    public void setParameters(String[] query, String[][] evidence) {
-        this.query = query;
-        this.evidence = evidence;
-    }
-
-    @Override
-    public Void call() {
-        updateKnowledge(query, evidence);
-        return null;
-    }
-}
-```
-
-Inside updateKnowledge() function, a Bayesian network on the Python side is called. This call returns a hash map of key value pairs, where the key is player stat name e.g. damage, reload speed... and the value is a weapon stat value index.
-Then the function loops over every entry inside a map and uses the received name and the value index to derive the actual stat value. Then it uses that value to set the value field of a corresponding knowledge item, inside the AgentKnowledge object.
-```java
-private void updateKnowledge(String[] query, String[][] evidence) {
-    Map<String, Integer> mapResult = bayesNetwork.map_query(query, evidence);
-    for (var entry : mapResult.entrySet()) {
-        var index = entry.getValue();
-        var statName = entry.getKey();
-        var weaponStat = Weapon.Stat.fromName(statName);
-        switch (statName) {
-            case "damage":
-            var damageValue = (Integer) conditionals.queryValues.get(weaponStat).get(index);
-            knowledge.setPlayerDamage(damageValue, false);
-            // WAY MORE CASES BELLOW
-        }
-        // WAY MORE LOGIC BELLOW
-    }
-}
-```
-
-On the python side, query variable, which is of JavaList type, is converted to a python list. Evidence variable - into python dictionary. Once the conversion is done, self.infer.map_query(variables=query, evicence=evidence_dict) is called. Then the map_query result is converted to a JavaMap python class and returned.
-
-{: .note }
-`` self.infer = VariableElimination(self.model) `` - a Bayesian network querying class provided by pgmpy library. It uses variable elimination technique to query the Bayes net. I could have used some of the sampling techniques, that allow exchanging compunational efficiency for accuracy, but my network is small enough, that I can still get the benefits of using the exact querying technique such as a variable elimination.
-
-```python
-def map_query(self, query, evidence):
-    try:
-        queryList = list(query)
-        evidence_dict = {entry[0]: int(entry[1]) for entry in list(evidence)}
-        result = self.infer.map_query(variables=queryList, evidence=evidence_dict)
-    java_map = MapConverter().convert(result, self.gateway._gateway_client)
-    return java_map
-except Exception as e:
-    logger.error(f"Error performing MAP query: {e}")
-    raise
-
-```
-
-### MAP (Maximum A Posteriori) query
-
-To get the the most probable stat combination, I'm using MAP query, which is, essentially, an argmax query over every possible variable combination, given the evidence variables. I don't use hidden variables, because I care about each value.
-
-$$
-\operatorname{MAP}(Q \mid E = e) = \arg\max_{q} \sum_{z} P(Q = q, Z = z, E = e)
-$$
 
 ## Bayes net versions:
 {: .no_toc }
