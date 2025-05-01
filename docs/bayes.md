@@ -205,12 +205,77 @@ This way we get joint probabilities: P(query, evidence). To get the P(query | ev
 ## Usage
 {: no_toc }
 
-I'm using the Bayes net inside one of the Drools engine rules, in the inference layer to update variables inside the AgentKnowledge class.
-AgentKnowledgeItems inside that class can have a set value and either be known or unknown. Items become known, only when they are experienced by an agent during the gameplay.
+I'm using the Bayes net inside one of inference layer Drools rules. What this rule does is query the Bayes net to get the most probable stat combination and uses those values to update variables inside the AgentKnowledge class.
+Each AgentKnowledgeItem inside AgentKnowledge has value and and a boolean indicating if that value is known or approximated. Items become known, only when they are experienced by an agent during the gameplay.
 Items that have been set by the Bayes net, have their values set, but are not considered unknown. 
-This means that the values derived from experience, override the values that were received, when querying the Bayes net.
+This means that the values derived from experience take precedence over values that were derived from the Bayes net.
 
 When querying the Bayes net, known values from the AgentKnowledge get set as a list of **evidence variables** and unknown values are converted into a list of **query variables**.
+These lists containing query and evidence values are then passed into a bayesPythonManager
+
+**What's really going on:**
+
+Inside a rule, updateKnowledge callable gets called with queries and evidence.
+```java
+rule "player-stat-inference"
+agenda-group "inference-group"
+salience -100
+    when
+        $knowledge : AgentKnowledge()
+        $getQueryList : GetQueriesCallable()
+        $getEvidenceList : GetEvidenceCallable()
+        $updateKnowledge: UpdateKnowledgeCallable()
+    then
+        String[] queries = (String[]) $getQueryList.call();
+        String[][] evidence = (String[][]) $getEvidenceList.call();
+
+        $updateKnowledge.setParameters(queries, evidence);
+        $updateKnowledge.call();
+        System.out.println("inference-group: player-stat-inference-ran");
+end
+```
+
+UpdateKnowledgeCallable then calls updateKnowledge() function with two lists: query, evidence.
+```java
+public class UpdateKnowledgeCallable implements Callable<Void> {
+    private String[] query;
+    private String[][] evidence;
+
+    public void setParameters(String[] query, String[][] evidence) {
+        this.query = query;
+        this.evidence = evidence;
+    }
+
+    @Override
+    public Void call() {
+        updateKnowledge(query, evidence);
+        return null;
+    }
+}
+```
+
+Inside updateKnowledge() function, a Bayesian network on the Python side is called. This call returns a hash map of key value pairs, where key is the name of a player stat e.g. damage, reload speed... and the value - weapon stat value index.
+Then the function loops over every entry inside a map and uses the received name and value index to derive the actual stat value and set the value of the corresponding knowledge item inside the AgentKnowledge object.
+```java
+private void updateKnowledge(String[] query, String[][] evidence) {
+    Map<String, Integer> mapResult = bayesNetwork.map_query(query, evidence);
+    for (var entry : mapResult.entrySet()) {
+        var index = entry.getValue();
+        var statName = entry.getKey();
+        var weaponStat = Weapon.Stat.fromName(statName);
+        switch (statName) {
+            case "damage":
+            var damageValue = (Integer) conditionals.queryValues.get(weaponStat).get(index);
+            knowledge.setPlayerDamage(damageValue, false);
+            // WAY MORE CASES BELLOW
+        }
+        // WAY MORE LOGIC BELLOW
+    }
+}
+```
+
+```python
+```
 
 ## Bayes net versions:
 {: .no_toc }
