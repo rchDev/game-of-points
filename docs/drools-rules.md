@@ -219,8 +219,8 @@ flowchart LR
 
 Once the previous layer rules have successfully run and inserted agent's strategy choice into a **kieSession**, this layer runs.
 
-Rules in this layer are responsible for evaluating the current environment and picking the most appropriate action that contributes to the current strategy, that's in a kieSession.
+Rules in this layer are responsible for evaluating the current environment and picking the most appropriate action that contributes to the currently selected strategy.
 
-**For example:** the previous layer has derived this strategy: **agent-kill-player**, reason being player's effectiveness at collecting points. 
+**Example:** the previous layer has derived this strategy: **agent-kill-player**, reason being player's effectiveness at collecting points. 
 In this case **agent-actions** group will fire a combination of rules, evaluating if a player is within agent's reach,
 in the case that it is - **attack** action will be chosen, otherwise - **move** action will be used, to transport agent closer to the player.
