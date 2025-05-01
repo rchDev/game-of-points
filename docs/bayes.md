@@ -126,7 +126,7 @@ $$
 
 To get the the most probable stat combination, I'm using MAP query, which is, essentially, an argmax query over every possible variable combination, given the evidence variables. I don't use hidden variables, because I care about each value.
 
-## Used libraries:
+## Used libraries
 
 [pgmpy (Probabilistic Graphical Models using Python)](https://pgmpy.org/) - Python library designed for working with probabilistic graphical models (PGMs) such as Bayesian Networks and Markov Networks.
 
@@ -272,7 +272,7 @@ class BayesianNetworkManager:
             raise
     ...
 ```
-## Construction:
+## Construction
 
 Now that we have Python objects available to us on the Java, we can use methods:
 1. add_nodes
@@ -297,21 +297,6 @@ Which version get created depends on multiple factors, such as:
     - yes - create a network with a mood variable.
     - no - create a network without a mood variable.
 
-### Construction process:
-{: .no_toc }
-1. Go through the whole weapon list, **count** how many times each value of every weapon stat showed up.
-2. Divide stat counts by the total weapon count, to get **marginal stat probabilities**.
-3. If the stat is fully independent, we already have all the info we need.
-4. Otherwise, when the weapon stat is only conditionally independent while knowing some other stat, we count how many times did the query-evidence combo occur and divide the occurence count by the total number of weapons.
-This way we get joint probabilities: P(query, evidence). To get the P(query | evidence), we divide joint probabilities by the marginal probability of evidence: P(evidence).
-   At the end of this we get CPD table in a form of matrix, that we, then feed into the **add_cpd** function. Function with the calculations can be found here: [getConditionalProbabilities()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L358-L411).
-5. Once the probability calculations are done, all nodes are added to the network by calling bayesNetwork.add_nodes() and passing it the nodes list.
-6. After adding the nodes, we connect all the nodes by calling bayesNetwork.add_edges() and passing it a list of string arrays, each containing related nodes.
-7. We call an [addMoodNode](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L107-L199) function, which conditionally adds mood node if all the weapon: speed and damage values have showed up at least once.
-
-## Bayes net versions:
-{: .no_toc }
-
 ### Version 1 (with mood)
 {: .no_toc }
 
@@ -335,3 +320,16 @@ flowchart TD
     Ammo --> RechargeTime["recharge_time"]
     Damage --> Range["range"]
 ```
+
+### Construction process:
+{: .no_toc }
+1. Go through the whole weapon list, **count** how many times each value of every weapon stat showed up.
+2. Divide stat counts by the total weapon count, to get **marginal stat probabilities**.
+3. If the stat is fully independent, we already have all the info we need.
+4. Otherwise, when the weapon stat is only conditionally independent while knowing some other stat, we count how many times did the query-evidence combo occur and divide the occurence count by the total number of weapons.
+This way we get joint probabilities: P(query, evidence). To get the P(query | evidence), we divide joint probabilities by the marginal probability of evidence: P(evidence).
+   At the end of this we get CPD table in a form of matrix, that we, then feed into the **add_cpd** function. Function with the calculations can be found here: [getConditionalProbabilities()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L358-L411).
+5. Once the probability calculations are done, all nodes are added to the network by calling bayesNetwork.add_nodes() and passing it the nodes list.
+6. After adding the nodes, we connect all the nodes by calling bayesNetwork.add_edges() and passing it a list of string arrays, each containing related nodes.
+7. We call an [addMoodNode](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L107-L199) function, which conditionally adds mood node if all the weapon: speed and damage values have showed up at least once.
+
