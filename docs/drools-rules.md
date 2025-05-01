@@ -36,6 +36,7 @@ I've designed this action derivation pipeline:
 3. Evaluate the AgentKnowledge and derive agent's capabilities. (possiblities-group)
 4. Choose an action strategy. (agent-choices-group)
 5. Evaluate the current environment and choose an action that implements or moves the agent towards implementing the current strategy. (agent-actions-group)
+6. Apply the action to the game state. (agent-actions-group)
 
 Based on their functional responsibility, rules are divided into four distinct groups:
 
@@ -216,10 +217,10 @@ flowchart LR
     end
 ```
 
-Once the previous layer rules have successfully run and inserted agent's strategy choice, this layer runs.
+Once the previous layer rules have successfully run and inserted agent's strategy choice into a **kieSession**, this layer runs.
 
-Rules in this layer are responsible for evaluating the current environment and picking the most appropriate action that contributes to current strategy.
+Rules in this layer are responsible for evaluating the current environment and picking the most appropriate action that contributes to the current strategy, that's in a kieSession.
 
-For example: the previous layer derived this strategy: **agent-kill-player**, reason being the player is effective at collecting points and
-there is no way the agent will outpace him. In this case agent-actions group will fire a combination of rules, evaluating if a player is within agents reach,
+**For example:** the previous layer has derived this strategy: **agent-kill-player**, reason being player's effectiveness at collecting points. 
+In this case **agent-actions** group will fire a combination of rules, evaluating if a player is within agent's reach,
 in the case that it is - **attack** action will be chosen, otherwise - **move** action will be used, to transport agent closer to the player.
