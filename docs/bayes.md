@@ -8,17 +8,16 @@ permalink: /bayes/
 
 # Bayesian network
 
-Drools rule engine gains information about player's stats from facts.
-Not all info can be known right away, at the start of a game.
-Most of the time, rules engine only has partial information about player stats,
-while agent's capability assessment process heavily depends on having complete information.
+Drools rule engine gains information about player's stats from facts, but not all info can be known right away, at the start of a game.
+Most of the time, rules engine has only partial information about the player stats,
+while the agent's capability assessment process heavily depends on having complete information.
 The Solution to this partial information problem is **Bayesian network**.
 
-Known stats are presented as **evidence** and unknown are given as **query** variables.
+Known stats are presented as **evidence** and unknown ones are given as **query** variables.
 
 ### Main use:
 
-The main use for Bayes net in my app is to: **get the most probable combination of random variables.**
+The main use for a Bayes net in my application is to: **get the most probable combination of player stats.**
 
 ### Used libraries:
 
@@ -26,12 +25,11 @@ The main use for Bayes net in my app is to: **get the most probable combination 
 
 [py4j (A Bridge between Python and Java)](https://www.py4j.org/) - Py4J enables Python programs running in a Python interpreter to dynamically access Java objects in a Java Virtual Machine.
 
-**pgmpy** was used for creating the actual bayes network in python: [here](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/bayesian_network.py),
-but the game server, where this bayes net will be used, is written in Java. So i used **py4j** to translate
-and the exchange JVM objects with Python interpreter.
+**pgmpy** was used for creating the actual bayes network in python [seen here](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/bayesian_network.py),
+but the game server, where this Bayes net will be used, is written in Java. So i used **py4j** library to translate and the exchange JVM objects with Python interpreter.
 
-For **py4j** to work, it needs a Gateway server on Python side, that runs on some port and listens on another,
-then on Java side you instantiate a Gateway server which at the point of calling:
+For **py4j** to work, it needs a Gateway server on the Python side, that runs on some port and listens on another,
+then on Java side you instantiate a Gateway server which, at the point of calling:
 
 ```java
 bayesGatewayServer.getPythonServerEntryPoint(
@@ -42,11 +40,9 @@ bayesGatewayServer.getPythonServerEntryPoint(
 creates a connection between two servers.
 
 {: .note }
-The Python-side server must be running before the Java-side server, as the Java side initiates the connection. Since this class is instantiated during server startup, the Python servers must be up before the Java game server starts.
+The Python-side server must be running before the Java-side server, as the server on the Java side initiates the connection. Since the class seen in the code sample bellow, is instantiated during the Java game server startup, the Python servers must be up and running before the Java game server starts.
 
 ```java
-...
-
 @Singleton
 @Startup
 public class PythonGateway {
@@ -98,8 +94,8 @@ public class PythonGateway {
 ```
 
 **What is BayesPythonManager?**
-It's an interface that defines a contract which Python side has to implement. It is probably used to inform **py4j's** serializers and mappers.
-You pass it to a gateway server and get an object which contains all those methods that you can then use to call the actual Bayes-net on the Python side.
+It's an interface that defines a contract which is implemented on the Python side. Concretely, it defines Bayesian network methods that are implemented inside [bayesian_network.py](https://github.com/rchDev/game-of-points/blob/main/bayes-net/bayesian_network.py) script and will be used inside the Java game server. 
+Under the hood, this interface is probably used to inform **py4j's** serializers and mappers about implemented: function signatures, data types, variable names an so on.
 ```java
 ...
 public interface BayesPythonManager {
@@ -115,6 +111,59 @@ public interface BayesPythonManager {
 }
 ```
 
+You pass it to a gateway server on the Java side and get an object, which contains all those methods that you can then use to call the actual Bayes-net that lives on the Python side.
+```java
+public class PythonGateway {
+    ...
+    @PostConstruct
+    public void init() {
+        ...
+        bayesManager = (BayesPythonManager) bayesGatewayServer.getPythonServerEntryPoint(new Class[]{BayesPythonManager.class});
+        ...
+    }
+    ...
+}
+```
+
+An example usage of of a BayesPythonManager:
+```java
+public class DroolsBrain implements AgentsBrain {
+    ...
+    private final BayesPythonManager bayesNetwork;
+    ...
+    public DroolsBrain(
+        PythonGateway pythonGateway,
+        Optional<PlayerAnswers> playerAnswers,
+        List<WeaponEntity> weaponMoodOccurrences
+    ) {
+        ...
+        bayesNetwork = pythonGateway.getBayesNetwork();
+        ...
+        bayesNetwork.add-nodes(nodes);
+    }
+}
+```
+
+A Python method that was called from the Java side:
+```python
+class BayesianNetworkManager:
+    ...
+    def add_nodes(self, nodes):
+        """
+        Funkcija prideda nauja atsitiktini kintamaji i Bajeso tinkla
+        :param nodes:
+        :return:
+        """
+        try:
+            nodes = list(nodes.toArray())
+            logger.info(f"Adding nodes: {nodes}")
+            self.model.add_nodes_from(nodes)
+            logger.info("Nodes added successfully.")
+        except Exception as e:
+            logger.error(f"Error adding nodes: {e}")
+            raise
+    ...
+```
 ### Construction:
 
 Now that we have Python objects available to us, we can use methods:
