@@ -293,6 +293,11 @@ except Exception as e:
 
 ```
 
+### MAP (Maximum A Posteriori) query
+
+To get the the most probable stat combination, I'm using MAP query, which is, essentially, an argmax query over every possible variable combination, given the evidence variables. I don't use hidden variables, because I care about each value.
+
+
 ## Bayes net versions:
 {: .no_toc }
 
