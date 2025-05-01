@@ -128,18 +128,19 @@ public class PythonGateway {
 An example usage of of a BayesPythonManager:
 ```java
 public class DroolsBrain implements AgentsBrain {
-    ...
+    // ...
     private final BayesPythonManager bayesNetwork;
-    ...
+    // ...
     public DroolsBrain(
         PythonGateway pythonGateway,
         Optional<PlayerAnswers> playerAnswers,
         List<WeaponEntity> weaponMoodOccurrences
     ) {
-        ...
+        // ...
         bayesNetwork = pythonGateway.getBayesNetwork();
-        ...
+        // ...
         bayesNetwork.add-nodes(nodes);
+        // ...
     }
 }
 ```
@@ -166,31 +167,28 @@ class BayesianNetworkManager:
 ```
 ### Construction:
 
-Now that we have Python objects available to us, we can use methods:
+Now that we have Python objects available to us on the Java, we can use methods:
 1. add_nodes
 2. add_edges
 3. add_cpd
 4. finalize_model
-
 to construct the Bayes-net.
-
 
 Bayesian network gets created inside DroolsBrain class,
 during agent's creation, when a game session gets initialized.
 
 Network is created by using weapon cache data and player answers database, which consists of weapon-mood combinations.
 
-There are two version of a network: one with mood node and one without it.
+There are two version of a network: the one with a mood node and the one without it.
 Which version get created depends on multiple factors, such as:
-1. Did we receive player mood answer from the conversational agent session during the session initialization phase:
+1. Did the system receive the player mood answer from the conversational agent's session during the game session initialization phase:
     - yes - check the other condition,
     - no - create bayes net without mood variable.
-2. Does the player answers database contain all possible damage and speed values.
-   Mood variable depends on speed and damage variables,
-   so you cannot connect mood with speed and damage if some of the values are missing,
-   unless you create a truncated speed/damage variable.
-    - yes - create with mood variable.
-    - no - create without mood variable.
+2. Does the player answers database contain all the possible damage and speed values.
+   It is important that it does, because mood variable depends on speed and damage variables,
+   so you cannot connect mood with speed and damage if some of the value combinations are missing.
+    - yes - create a network with a mood variable.
+    - no - create a network without a mood variable.
 
 **Construction process:**
 
