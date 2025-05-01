@@ -205,7 +205,12 @@ This way we get joint probabilities: P(query, evidence). To get the P(query | ev
 ## Usage
 {: no_toc }
 
-dasdasdsaasd
+I'm using the Bayes net inside one of the Drools engine rules, in the inference layer to update variables inside the AgentKnowledge class.
+AgentKnowledgeItems inside that class can have a set value and either be known or unknown. Items become known, only when they are experienced by an agent during the gameplay.
+Items that have been set by the Bayes net, have their values set, but are not considered unknown. 
+This means that the values derived from experience, override the values that were received, when querying the Bayes net.
+
+When querying the Bayes net, known values from the AgentKnowledge get set as a list of **evidence variables** and unknown values are converted into a list of **query variables**.
 
 ## Bayes net versions:
 {: .no_toc }
