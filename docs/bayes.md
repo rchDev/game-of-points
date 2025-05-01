@@ -197,70 +197,12 @@ Which version get created depends on multiple factors, such as:
 3. If the stat is fully independent, we already have all the info we need.
 4. Otherwise, when the weapon stat is only conditionally independent while knowing some other stat, we count how many times did the query-evidence combo occur and divide the occurence count by the total number of weapons.
 This way we get joint probabilities: P(query, evidence). To get the P(query | evidence), we divide joint probabilities by the marginal probability of evidence: P(evidence).
-   At the end of this we get CPD table in a form of matrix, that we, then feed into the **add_cpd** function. All the calculation can be found: [getConditionalProbabilities()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L358-L411).
-```java
-    private ConditionalResult getConditionalProbabilities(
-        List<Weapon> weapons,
-        MarginalResult marginalResult,
-        List<Pair<Weapon.Stat, Weapon.Stat>> conditionalRelations
-) {
-        // evidence -> query -> cpd for evidence-query     
-        HashMap<Weapon.Stat, HashMap<Weapon.Stat, double[][]>> statCPDs = new HashMap<>();
-        
-        // query and evidence values stored separately for convenient access later
-        HashMap<Weapon.Stat, List<Number>> statQueryValues = new HashMap<>();
-        HashMap<Weapon.Stat, List<Number>> statEvidenceValues = new HashMap<>();
+   At the end of this we get CPD table in a form of matrix, that we, then feed into the **add_cpd** function. Function with the calculations can be found here: [getConditionalProbabilities()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L358-L411).
+5. Once the probability calculations are done, all nodes are added to the network by calling bayesNetwork.add_nodes() and passing it the nodes list.
+6. After adding the nodes, we connect all the nodes by calling bayesNetwork.add_edges() and passing it a list of string arrays, each containing related nodes.
+7. We call an [addMoodNode](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L107-L199) function, which conditionally adds mood node if all the weapon: speed and damage values have showed up at least once.
 
-        for (var relation : conditionalRelations) {
-            var queryStat = relation.getFirst();
-            var evidenceStat = relation.getSecond();
-
-            var queryValues = marginalResult.values.get(queryStat);
-            var evidenceValues = marginalResult.values.get(evidenceStat);
-
-            // Init conditional probability distribution table from query-evidence pair
-            double[][] cpd = new double[queryValues.size()][evidenceValues.size()];
-            for (int i = 0; i < queryValues.size(); i++) {
-                for (int j = 0; j < evidenceValues.size(); j++) {
-                    cpd[i][j] = 0.0;
-                }
-            }
-
-            // Count how many times each query-evidence combo occur
-            for (var weapon : weapons) {
-                int queryIndex = queryValues.indexOf(weapon.getStat(queryStat));
-                int evidenceIndex = evidenceValues.indexOf(weapon.getStat(evidenceStat));
-
-                cpd[queryIndex][evidenceIndex]++;
-            }
-
-            // Calculate conditional prob P(query|evidence) by:
-            // 1. computing joint probability P(query,evidence) by dividing query-evidence occurrences by total weapon count
-            // 2. dividing joint probability by the marginal probability of P(evidence) to get P(query|evidence)
-           for (int i = 0; i < queryValues.size(); i++) {
-                for (int j = 0; j < evidenceValues.size(); j++) {
-                    var evidenceProb = marginalResult.probabilities.get(evidenceStat).get(j);
-                    cpd[i][j] /= weapons.size();
-                    cpd[i][j] /= evidenceProb;
-                }
-            }
-
-           var statCPDValues = new HashMap<Weapon.Stat, double[][]>();
-           statCPDValues.put(evidenceStat, cpd);
-           statCPDs.put(queryStat, statCPDValues);
-           statQueryValues.put(queryStat, queryValues);
-           statEvidenceValues.put(evidenceStat, evidenceValues);
-        }
-        
-        return new ConditionalResult(statQueryValues, statEvidenceValues, statCPDs);
-    }
-```
-
-5. We add all nodes to the network by calling bayesNetwork.add_nodes() and passing it nodes list.
-6. We connect all the nodes by calling bayesNetwork.add_edges() and pass a list of string lists of each containing a related nodes.
-7. We call [**addMoodNode**](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L107-L199) method, which conditionally adds mood node if all weapon: speed and damage values have shown up at least once.
-
-### Versions:
+## Bayes net versions:
 {: .no_toc}
 
 **Version 1 (with mood)**
