@@ -33,7 +33,7 @@ then on Java side you instantiate a Gateway server which, at the point of callin
 
 ```java
 bayesGatewayServer.getPythonServerEntryPoint(
-        new Class[]{ BayesPythonManager.class }
+    new Class[]{ BayesPythonManager.class }
 );
 ```
 
@@ -205,17 +205,17 @@ This way we get joint probabilities: P(query, evidence). To get the P(query | ev
 ## Usage
 {: no_toc }
 
-I'm using the Bayes net inside one of inference layer Drools rules. What this rule does is query the Bayes net to get the most probable stat combination and uses those values to update variables inside the AgentKnowledge class.
-Each AgentKnowledgeItem inside AgentKnowledge has value and and a boolean indicating if that value is known or approximated. Items become known, only when they are experienced by an agent during the gameplay.
+I'm using the Bayes net inside one of the inference layer Drools rules. What this rule does, is query the Bayes net to get the most probable stat combination and uses received values to update variables inside the AgentKnowledge class.
+Each AgentKnowledgeItem inside AgentKnowledge has a value field and and a boolean field, indicating if that value is known or approximated. Items become known, only when they are experienced by the agent during the gameplay.
 Items that have been set by the Bayes net, have their values set, but are not considered unknown. 
-This means that the values derived from experience take precedence over values that were derived from the Bayes net.
+This means that values derived from experience take precedence over values that were derived from the Bayes net.
 
 When querying the Bayes net, known values from the AgentKnowledge get set as a list of **evidence variables** and unknown values are converted into a list of **query variables**.
-These lists containing query and evidence values are then passed into a bayesPythonManager
+These lists, containing query and evidence values, are then passed into a `` bayesNetwork.map_query(query, evidence); `` call.
 
 **What's really going on:**
 
-Inside a rule, updateKnowledge callable gets called with queries and evidence.
+Inside a rule, updateKnowledge callable gets called with a query and an evidence list.
 ```java
 rule "player-stat-inference"
 agenda-group "inference-group"
@@ -235,7 +235,7 @@ salience -100
 end
 ```
 
-UpdateKnowledgeCallable then calls updateKnowledge() function with two lists: query, evidence.
+UpdateKnowledgeCallable then calls updateKnowledge() function with the two lists.
 ```java
 public class UpdateKnowledgeCallable implements Callable<Void> {
     private String[] query;
@@ -254,8 +254,8 @@ public class UpdateKnowledgeCallable implements Callable<Void> {
 }
 ```
 
-Inside updateKnowledge() function, a Bayesian network on the Python side is called. This call returns a hash map of key value pairs, where key is the name of a player stat e.g. damage, reload speed... and the value - weapon stat value index.
-Then the function loops over every entry inside a map and uses the received name and value index to derive the actual stat value and set the value of the corresponding knowledge item inside the AgentKnowledge object.
+Inside updateKnowledge() function, a Bayesian network on the Python side is called. This call returns a hash map of key value pairs, where the key is player stat name e.g. damage, reload speed... and the value is a weapon stat value index.
+Then the function loops over every entry inside a map and uses the received name and the value index to derive the actual stat value. Then it uses that value to set the value field of a corresponding knowledge item, inside the AgentKnowledge object.
 ```java
 private void updateKnowledge(String[] query, String[][] evidence) {
     Map<String, Integer> mapResult = bayesNetwork.map_query(query, evidence);
