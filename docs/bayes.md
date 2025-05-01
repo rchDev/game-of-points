@@ -202,10 +202,15 @@ This way we get joint probabilities: P(query, evidence). To get the P(query | ev
 6. After adding the nodes, we connect all the nodes by calling bayesNetwork.add_edges() and passing it a list of string arrays, each containing related nodes.
 7. We call an [addMoodNode](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L107-L199) function, which conditionally adds mood node if all the weapon: speed and damage values have showed up at least once.
 
-## Bayes net versions:
-{: .no_toc}
+## Usage
+{: no_toc }
 
-**Version 1 (with mood)**
+dasdasdsaasd
+
+## Bayes net versions:
+{: .no_toc }
+
+### Version 1 (with mood)
 
 ```mermaid
 flowchart TD
@@ -217,7 +222,7 @@ flowchart TD
     Damage --> Mood
 ```
 
-**Version 2 (without mood)**
+### Version 2 (without mood)
 
 ```mermaid
 flowchart TD
