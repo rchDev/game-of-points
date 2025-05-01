@@ -274,7 +274,20 @@ private void updateKnowledge(String[] query, String[][] evidence) {
 }
 ```
 
+On the python side:
+
 ```python
+def map_query(self, query, evidence):
+    try:
+        queryList = list(query)
+        evidence_dict = {entry[0]: int(entry[1]) for entry in list(evidence)}
+        result = self.infer.map_query(variables=queryList, evidence=evidence_dict)
+    java_map = MapConverter().convert(result, self.gateway._gateway_client)
+    return java_map
+except Exception as e:
+    logger.error(f"Error performing MAP query: {e}")
+    raise
+
 ```
 
 ## Bayes net versions:
