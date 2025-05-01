@@ -118,7 +118,7 @@ except Exception as e:
 ```
 
 ### MAP (Maximum A Posteriori) query
-{: no_toc }
+{: .no_toc }
 
 $$
 \operatorname{MAP}(Q \mid E = e) = \arg\max_{q} \sum_{z} P(Q = q, Z = z, E = e)
@@ -298,7 +298,7 @@ Which version get created depends on multiple factors, such as:
     - no - create a network without a mood variable.
 
 ### Construction process:
-{: no_toc }
+{: .no_toc }
 1. Go through the whole weapon list, **count** how many times each value of every weapon stat showed up.
 2. Divide stat counts by the total weapon count, to get **marginal stat probabilities**.
 3. If the stat is fully independent, we already have all the info we need.
@@ -313,7 +313,7 @@ This way we get joint probabilities: P(query, evidence). To get the P(query | ev
 {: .no_toc }
 
 ### Version 1 (with mood)
-{: no_toc }
+{: .no_toc }
 
 ```mermaid
 flowchart TD
@@ -326,7 +326,7 @@ flowchart TD
 ```
 
 ### Version 2 (without mood)
-{: no_toc }
+{: .no_toc }
 
 ```mermaid
 flowchart TD
