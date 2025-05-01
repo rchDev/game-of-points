@@ -6,7 +6,7 @@ parent: Deep Lore
 permalink: /bayes/
 ---
 
-## Bayesian network
+# Bayesian network
 
 Drools rule engine gains information about player's stats from facts, but not all info can be known right away, at the start of a game.
 Most of the time, rules engine has only partial information about the player stats,
