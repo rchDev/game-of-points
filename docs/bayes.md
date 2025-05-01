@@ -297,6 +297,9 @@ except Exception as e:
 
 To get the the most probable stat combination, I'm using MAP query, which is, essentially, an argmax query over every possible variable combination, given the evidence variables. I don't use hidden variables, because I care about each value.
 
+$$
+\operatorname{MAP}(Q \mid E = e) = \arg\max_{q} \sum_{z} P(Q = q, Z = z, E = e)
+$$
 
 ## Bayes net versions:
 {: .no_toc }
