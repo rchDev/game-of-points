@@ -40,7 +40,7 @@ bayesGatewayServer.getPythonServerEntryPoint(
 creates a connection between two servers.
 
 {: .note }
-The Python-side server must be running before the Java-side server, as the server on the Java side initiates the connection. Since the class seen in the code sample bellow, is instantiated during the Java game server startup, the Python servers must be up and running before the Java game server starts.
+The Python-side server must be running before the Java-side one, because the Java-side initiates the connection. Since the Java Game server starts connecting with two Python servers during its startup, Python servers must be up and running before the Java game server starts.
 
 ```java
 @Singleton
