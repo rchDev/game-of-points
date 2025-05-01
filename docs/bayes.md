@@ -274,7 +274,10 @@ private void updateKnowledge(String[] query, String[][] evidence) {
 }
 ```
 
-On the python side:
+On the python side we convert query Javalist to a python list evidence JavaList of pairs into a python dictionary and call map_query on self.infer to get the result. Then the result is converted to a JavaMap python class and returned.
+
+{: .note }
+`` self.infer = VariableElimination(self.model) `` - a Bayesian network querying class provided by pgmpy library. It uses variable elimination technique to query the Bayes net. I could have used some of the sampling techniques, that allow exchanging compunational efficiency for accuracy, but my network is small enough, that I can still get the benefits of using the exact querying technique such as a variable elimination.
 
 ```python
 def map_query(self, query, evidence):
