@@ -10,13 +10,6 @@ permalink: /bayes/
 # **Bayesian network**
 {: .no_toc }
 
-Drools rule engine gains information about player's stats from facts, but not all info can be known right away, at the start of a game.
-Most of the time, rules engine has only partial information about the player stats,
-while the agent's capability assessment process heavily depends on having complete information.
-The Solution to this partial information problem is **Bayesian network**.
-
-Known stats are presented as **evidence** and unknown ones are given as **query** variables.
-
 ## Table of contents
 {: .no_toc .text-delta }
 
@@ -24,6 +17,13 @@ Known stats are presented as **evidence** and unknown ones are given as **query*
 {:toc}
 
 ---
+
+Drools rule engine gains information about player's stats from facts, but not all info can be known right away, at the start of a game.
+Most of the time, rules engine has only partial information about the player stats,
+while the agent's capability assessment process heavily depends on having complete information.
+The Solution to this partial information problem is **Bayesian network**.
+
+Known stats are presented as **evidence** and unknown ones are given as **query** variables.
 
 ## Usage
 
