@@ -6,7 +6,9 @@ parent: Deep Lore
 permalink: /bayes/
 ---
 
-# Bayesian network
+
+# **Bayesian network**
+{: .no_toc }
 
 Drools rule engine gains information about player's stats from facts, but not all info can be known right away, at the start of a game.
 Most of the time, rules engine has only partial information about the player stats,
@@ -15,8 +17,15 @@ The Solution to this partial information problem is **Bayesian network**.
 
 Known stats are presented as **evidence** and unknown ones are given as **query** variables.
 
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
+
 ## Usage
-{: no_toc }
 
 The main use for a Bayes net in my application is to: **get the most probable combination of player stats.**
 
@@ -109,6 +118,7 @@ except Exception as e:
 ```
 
 ### MAP (Maximum A Posteriori) query
+{: no_toc }
 
 $$
 \operatorname{MAP}(Q \mid E = e) = \arg\max_{q} \sum_{z} P(Q = q, Z = z, E = e)
@@ -288,7 +298,7 @@ Which version get created depends on multiple factors, such as:
     - no - create a network without a mood variable.
 
 ### Construction process:
-
+{: no_toc }
 1. Go through the whole weapon list, **count** how many times each value of every weapon stat showed up.
 2. Divide stat counts by the total weapon count, to get **marginal stat probabilities**.
 3. If the stat is fully independent, we already have all the info we need.
@@ -303,6 +313,7 @@ This way we get joint probabilities: P(query, evidence). To get the P(query | ev
 {: .no_toc }
 
 ### Version 1 (with mood)
+{: no_toc }
 
 ```mermaid
 flowchart TD
@@ -315,6 +326,7 @@ flowchart TD
 ```
 
 ### Version 2 (without mood)
+{: no_toc }
 
 ```mermaid
 flowchart TD
