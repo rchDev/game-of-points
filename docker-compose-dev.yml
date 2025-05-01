@@ -15,6 +15,9 @@ services:
     environment:
       - BAYES_HOST=bayesian
       - SENTIMENT_HOST=sentiment-classifier
+    volumes:
+      - ./game-of-points-be/.mvn:/app/.mvn
+      - ~/.m2:/root/.m2
     ports:
       - "8080:8080"
     depends_on:
