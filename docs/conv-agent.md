@@ -66,20 +66,25 @@ graph TD
     WeaponRechargeTimeCollection --> WeaponRechargeTimeSubmission["Weapon recharge tim..."]
     WeaponRechargeTimeSubmission --> ThankYouPage["Thank You Page"]
     ThankYouPage --> EndSession["End Session"]
+    RefusalPage --> ThankYouPage
 
     UserMoodCollection --> UserMoodSubmission["User mood submission"]
     UserMoodSubmission --> WeaponNameCollection["Weapon name collect..."]
     WeaponNameCollection --> WeaponNameSubmission["Weapon name submi..."]
-    WeaponNameSubmission --> ThankYouPage
 
     RefusalPage --> UserMoodCollection
-    WeaponSpeedSubmission --> ShamingPage
-    WeaponDamageSubmission --> WeaponDamageCollection
-    ShamingPage --> ThankYouPage
-    ShamingPage --> WeaponNameCollection
-    WeaponAmmoSubmission --> ThankYouPage
-    WeaponRangeSubmission --> ThankYouPage
+    WeaponDamageSubmission --> WeaponAmmoCollection
     WeaponRechargeTimeSubmission --> WeaponNameCollection
+
+    WeaponNameSubmission --> ShamingPage
+    WeaponSpeedSubmission --> ShamingPage
+    WeaponDamageSubmission --> ShamingPage
+    WeaponAmmoSubmission --> ShamingPage
+
+    ShamingPage --> WeaponNameCollection
+    ShamingPage --> WeaponSpeedCollection
+    ShamingPage --> WeaponDamageCollection
+    ShamingPage --> WeaponAmmoCollection
 ```
 
 ### Example confessional flow:
