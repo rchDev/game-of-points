@@ -2,7 +2,7 @@
 layout: default
 title: Conversational Agent
 nav_order: 4
-parent: Deep Lore
+parent: Lore
 permalink: /conv-agent/
 ---
 
