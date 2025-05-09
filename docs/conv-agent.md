@@ -48,26 +48,26 @@ flowchart LR
 
 ```mermaid
 graph TD
-    StartPage["Start..."] --> RefusalPage["Refusal..."]
-    StartPage --> UserMoodCollection["Mood coll..."]
-    RefusalPage --> WeaponSpeedCollection["Speed coll..."]
-    WeaponSpeedCollection --> WeaponSpeedSubmission["Speed subm..."]
-    WeaponSpeedSubmission --> WeaponDamageCollection["Damage coll..."]
-    WeaponDamageCollection --> WeaponDamageSubmission["Damage subm..."]
-    ShamingPage["Shaming..."] --> WeaponAmmoCollection["Ammo coll.."]
-    ThankYouPage --> EndSession["End Session..."]
-    WeaponAmmoCollection --> WeaponAmmoSubmission["Ammo subm..."]
+    StartPage["Start Page"] --> RefusalPage["Refusal page"]
+    StartPage --> UserMoodCollection["Mood collection page"]
+    RefusalPage --> WeaponSpeedCollection["Speed collection page"]
+    WeaponSpeedCollection --> WeaponSpeedSubmission["Speed submition page"]
+    WeaponSpeedSubmission --> WeaponDamageCollection["Damage collection page"]
+    WeaponDamageCollection --> WeaponDamageSubmission["Damage submition page"]
+    ShamingPage["Shaming page"] --> WeaponAmmoCollection["Ammo collection page"]
+    ThankYouPage --> EndSession["End Session page"]
+    WeaponAmmoCollection --> WeaponAmmoSubmission["Ammo submition page"]
     WeaponAmmoSubmission --> WeaponRangeCollection
-    ShamingPage --> WeaponRangeCollection["Range coll..."]
-    WeaponRangeCollection --> WeaponRangeSubmission["Range subm..."]
-    WeaponRangeSubmission --> WeaponRechargeTimeCollection["Recharge time coll..."]
-    WeaponRechargeTimeCollection --> WeaponRechargeTimeSubmission["Recharge time subm..."]
-    WeaponRechargeTimeSubmission --> ThankYouPage["Thank..."]
+    ShamingPage --> WeaponRangeCollection["Range collection page"]
+    WeaponRangeCollection --> WeaponRangeSubmission["Range submition page"]
+    WeaponRangeSubmission --> WeaponRechargeTimeCollection["Recharge time collection page"]
+    WeaponRechargeTimeCollection --> WeaponRechargeTimeSubmission["Recharge time submition page"]
+    WeaponRechargeTimeSubmission --> ThankYouPage["Thank You Page"]
     RefusalPage --> ThankYouPage
 
-    UserMoodCollection --> UserMoodSubmission["Mood subm..."]
-    UserMoodSubmission --> WeaponNameCollection["Name coll..."]
-    WeaponNameCollection --> WeaponNameSubmission["Name subm..."]
+    UserMoodCollection --> UserMoodSubmission["Mood submission page"]
+    UserMoodSubmission --> WeaponNameCollection["Name collection page"]
+    WeaponNameCollection --> WeaponNameSubmission["Name submition page"]
     WeaponNameSubmission --> WeaponSpeedCollection
     WeaponDamageSubmission --> WeaponAmmoCollection
 
