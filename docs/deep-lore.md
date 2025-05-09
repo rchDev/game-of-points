@@ -12,16 +12,6 @@ Delve deeper into the inner workings of a project.
 
 ### System Components:
 
-{: .info }
-More info can be found in [Deep Lore](/game-of-points/deep-lore/) section of the docs.
-
-1. [Front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application. A javascript project using vite for bundling p5.js for drawing on canvas. Sends player actions to Game server. Receives authoritative game state from the game server. Also talks with Google's conversational agent.
-2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be). A Java Quarkus server project that's using [Drools](https://www.drools.org/) rule engine as a backbone for its reasoning process. The server acts as a platform to run AI for many game front-ends. It is responsible for processing player actions, reasoning, validating Google's conversational agent's intents.
-3. [Bayesian network](https://github.com/rchDev/game-of-points/tree/main/bayes-net) server. A Python [pgmpy](https://pgmpy.org/index.html) Bayesian network project, used for filling gaps in game agent's knowledge, through providing most probable state variable combination queries.
-4. [Sentiment classifier](https://github.com/rchDev/game-of-points/tree/main/sentiment-classifier) server. A Python [Keras](https://keras.io/) neural network project, used for assigning a class to player's mood description.
-5. [Google's conversational agent](https://conversational-agents.cloud.google.com/projects). Used for collecting information about the player before the match begins.
-6. [Ngrok](https://ngrok.com/) is used as a tunnel service for connecting Google's conversational agent to a local game server.
-
 ```mermaid
 graph TD
   A[Game Front-end Application]
@@ -51,6 +41,13 @@ graph TD
   style E fill:pink,stroke:#333,stroke-width:2px
   style F fill:#D3D3D3,stroke:#333,stroke-width:2px
 ```
+
+1. [Front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application. A javascript project using vite for bundling p5.js for drawing on canvas. Sends player actions to Game server. Receives authoritative game state from the game server. Also talks with Google's conversational agent.
+2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be). A Java Quarkus server project that's using [Drools](https://www.drools.org/) rule engine as a backbone for its reasoning process. The server acts as a platform to run AI for many game front-ends. It is responsible for processing player actions, reasoning, validating Google's conversational agent's intents.
+3. [Bayesian network](https://github.com/rchDev/game-of-points/tree/main/bayes-net) server. A Python [pgmpy](https://pgmpy.org/index.html) Bayesian network project, used for filling gaps in game agent's knowledge, through providing most probable state variable combination queries.
+4. [Sentiment classifier](https://github.com/rchDev/game-of-points/tree/main/sentiment-classifier) server. A Python [Keras](https://keras.io/) neural network project, used for assigning a class to player's mood description.
+5. [Google's conversational agent](https://conversational-agents.cloud.google.com/projects). Used for collecting information about the player before the match begins.
+6. [Ngrok](https://ngrok.com/) is used as a tunnel service for connecting Google's conversational agent to a local game server.
 
 ## Overview of game initialization sequence:
 {: .no_toc }
