@@ -56,5 +56,9 @@ flowchart LR
 9. Refuse intent sets parameter: ***came-from*** to a value: *"your mood"* and transitions to a ***Refusal page***.
 10. Refusal page sends a message to front-end client and based on the parameter's: ***came-from*** value, selects a route which, in this case, transitions from a ***Refusal page*** to a ***Weapon name collection*** page.
 11. Lets say, user refuses to answer almost every question, except for ***Weapon recharge time collection*** page's question.
-12. Once the player sends a message to the server when it's on the previously mentioned page, route that is based on a condition *$page.params.weapon-recharge-time.status == UPDATED* activates.
-13. During the game setup (pre-game), if the player chooses to participate in the questioning, conversational agent gets activated for the particular client.
+12. Once the player sends a message to the server, one of the page's conditional routes: *$page.params.weapon-recharge-time.status == UPDATED* - activates.
+13. Once this route runs, it sends a input validation request to the game server and after receiving the response - transitions to ***Weapon recharge time submission*** page.
+14. Inside the submission page, there are two routes based on a session param that was set by the game server validation response. WEAPON_RECHARGE_TIME.
+15. If the recharge time was set by the game server, user is redirected to ***Thank you page***, otherwise: ***Shaming page***.
+16. If the user gets redirected to a ***Shaming page***.
+17. 
