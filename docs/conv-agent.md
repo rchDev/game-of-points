@@ -43,6 +43,45 @@ flowchart LR
 5. **Entry fullfilment messages** that display text to a user on a page transition.
 6. Various other building blocks...
 
+
+### Confession flow diagram
+
+```mermaid
+---
+title: Confession flow
+---
+graph TD
+    StartPage["Start Page"] --> RefusalPage["Refusal page"]
+    StartPage --> UserMoodCollection["User mood collection"]
+    RefusalPage --> WeaponSpeedCollection["Weapon speed collec..."]
+    WeaponSpeedCollection --> WeaponSpeedSubmission["Weapon speed submi..."]
+    WeaponSpeedSubmission --> WeaponDamageCollection["Weapon damage coll..."]
+    WeaponDamageCollection --> WeaponDamageSubmission["Weapon damage sub..."]
+    WeaponDamageSubmission --> ShamingPage["Shaming page"]
+    ShamingPage --> WeaponAmmoCollection["Weapon ammo collec..."]
+    WeaponAmmoCollection --> WeaponAmmoSubmission["Weapon ammo submi..."]
+    ShamingPage --> WeaponRangeCollection["Weapon range collect..."]
+    WeaponRangeCollection --> WeaponRangeSubmission["Weapon range submi..."]
+    WeaponRangeSubmission --> WeaponRechargeTimeCollection["Weapon recharge tim..."]
+    WeaponRechargeTimeCollection --> WeaponRechargeTimeSubmission["Weapon recharge tim..."]
+    WeaponRechargeTimeSubmission --> ThankYouPage["Thank You Page"]
+    ThankYouPage --> EndSession["End Session"]
+
+    UserMoodCollection --> UserMoodSubmission["User mood submission"]
+    UserMoodSubmission --> WeaponNameCollection["Weapon name collect..."]
+    WeaponNameCollection --> WeaponNameSubmission["Weapon name submi..."]
+    WeaponNameSubmission --> ThankYouPage
+
+    RefusalPage --> UserMoodCollection
+    WeaponSpeedSubmission --> ShamingPage
+    WeaponDamageSubmission --> WeaponDamageCollection
+    ShamingPage --> ThankYouPage
+    ShamingPage --> WeaponNameCollection
+    WeaponAmmoSubmission --> ThankYouPage
+    WeaponRangeSubmission --> ThankYouPage
+    WeaponRechargeTimeSubmission --> WeaponNameCollection
+```
+
 ### Example confessional flow:
 
 1. Dialogflow client, inside a front-end application, sends user message to conversational agent server.
