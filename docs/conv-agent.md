@@ -55,19 +55,20 @@ graph TD
     WeaponSpeedSubmission --> WeaponDamageCollection["Damage collection"]
     WeaponDamageCollection --> WeaponDamageSubmission["Damage submition"]
     ShamingPage["Shaming page"] --> WeaponAmmoCollection["Ammo collection"]
+    ThankYouPage --> EndSession["End Session"]
     WeaponAmmoCollection --> WeaponAmmoSubmission["Ammo submition"]
+    WeaponAmmoSubmission --> WeaponRangeCollection
     ShamingPage --> WeaponRangeCollection["Range collection"]
     WeaponRangeCollection --> WeaponRangeSubmission["Range submition"]
     WeaponRangeSubmission --> WeaponRechargeTimeCollection["Recharge time collection"]
     WeaponRechargeTimeCollection --> WeaponRechargeTimeSubmission["Recharge time submition"]
     WeaponRechargeTimeSubmission --> ThankYouPage["Thank You Page"]
-    ThankYouPage --> EndSession["End Session"]
     RefusalPage --> ThankYouPage
 
     UserMoodCollection --> UserMoodSubmission["Mood submission"]
     UserMoodSubmission --> WeaponNameCollection["Name collection"]
     WeaponNameCollection --> WeaponNameSubmission["Name submition"]
-
+    WeaponNameSubmission --> WeaponSpeedCollection
     RefusalPage --> UserMoodCollection
     WeaponDamageSubmission --> WeaponAmmoCollection
 
@@ -77,6 +78,7 @@ graph TD
     WeaponAmmoSubmission --> ShamingPage
     WeaponRechargeTimeSubmission --> ShamingPage
     WeaponRangeSubmission --> ShamingPage
+
 
     ShamingPage --> WeaponNameCollection
     ShamingPage --> WeaponSpeedCollection
