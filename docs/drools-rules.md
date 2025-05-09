@@ -2,7 +2,7 @@
 layout: default
 title: Drools Rules
 nav_order: 2
-parent: Deep Lore
+parent: Lore
 permalink: /drools/
 ---
 
