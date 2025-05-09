@@ -86,8 +86,10 @@ graph TD
     ShamingPage --> WeaponRechargeTimeCollection
 ```
 
-The diagram looks really messy, but the bread and butter of this flow are collection-submition page combinations.
-Collection pages get user messages and match them against their intents. If the user has expressed the refusal intent, a route transitions to a refusal page, otherwise the message is validated and sent to the corresponding submition page, where
+The diagram looks really messy, but the bread and butter of this flow are the two following page types: ***collection*** and ***submition***, to be more exact - their combinations.
+Collection pages receive user messages and match them against their intents. If the user has expressed the ***refusal intent***, a route transitions to a ***Refusal page***, otherwise the message is sent to the game server to validate and after that, sent to the corresponding ***Submition page***, where one of two routes get triggered:
+1. If the data validation fails - transition to ***Shaming page***
+2. Otherwise, if the data validation succeeds - transition to other ***collection*** page.
 
 ### Example confessional flow:
 
