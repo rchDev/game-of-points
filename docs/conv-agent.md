@@ -16,6 +16,18 @@ This project uses Google's flow conversational agent, formerly Dialogflow CX to 
 
 Flow based conversational agent is comprised of multiple **flows**, containing varying amount of **pages**. 
 
+```mermaid
+flowchart TD
+    subgraph Flow
+        A["Page 1"]
+        B["Page 2"]
+        C["Page 3"]
+    end
+
+    A -->|"route: yes"| B
+    A -->|"route: no"| C
+```
+
 **Pages can contain these building blocks:**
 1. **Parameters** that are a way of exchanging information between pages. They can be received from environment or other pages.
 2. **Routes** that get triggered when the user **intent** is matched or some logical condition is met.
