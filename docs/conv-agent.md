@@ -49,39 +49,39 @@ flowchart LR
 ```mermaid
 graph TD
     StartPage["Start Page"] --> RefusalPage["Refusal page"]
-    StartPage --> UserMoodCollection["User mood collection"]
-    RefusalPage --> WeaponSpeedCollection["Weapon speed collec..."]
-    WeaponSpeedCollection --> WeaponSpeedSubmission["Weapon speed submi..."]
-    WeaponSpeedSubmission --> WeaponDamageCollection["Weapon damage coll..."]
-    WeaponDamageCollection --> WeaponDamageSubmission["Weapon damage sub..."]
-    WeaponDamageSubmission --> ShamingPage["Shaming page"]
-    ShamingPage --> WeaponAmmoCollection["Weapon ammo collec..."]
-    WeaponAmmoCollection --> WeaponAmmoSubmission["Weapon ammo submi..."]
-    ShamingPage --> WeaponRangeCollection["Weapon range collect..."]
-    WeaponRangeCollection --> WeaponRangeSubmission["Weapon range submi..."]
-    WeaponRangeSubmission --> WeaponRechargeTimeCollection["Weapon recharge tim..."]
-    WeaponRechargeTimeCollection --> WeaponRechargeTimeSubmission["Weapon recharge tim..."]
+    StartPage --> UserMoodCollection["Mood collection"]
+    RefusalPage --> WeaponSpeedCollection["Speed collection"]
+    WeaponSpeedCollection --> WeaponSpeedSubmission["Speed submition"]
+    WeaponSpeedSubmission --> WeaponDamageCollection["Damage collection"]
+    WeaponDamageCollection --> WeaponDamageSubmission["Damage submition"]
+    ShamingPage["Shaming page"] --> WeaponAmmoCollection["Ammo collection"]
+    WeaponAmmoCollection --> WeaponAmmoSubmission["Ammo submition"]
+    ShamingPage --> WeaponRangeCollection["Range collection"]
+    WeaponRangeCollection --> WeaponRangeSubmission["Range submition"]
+    WeaponRangeSubmission --> WeaponRechargeTimeCollection["Recharge time collection"]
+    WeaponRechargeTimeCollection --> WeaponRechargeTimeSubmission["Recharge time submition"]
     WeaponRechargeTimeSubmission --> ThankYouPage["Thank You Page"]
     ThankYouPage --> EndSession["End Session"]
     RefusalPage --> ThankYouPage
 
-    UserMoodCollection --> UserMoodSubmission["User mood submission"]
-    UserMoodSubmission --> WeaponNameCollection["Weapon name collect..."]
-    WeaponNameCollection --> WeaponNameSubmission["Weapon name submi..."]
+    UserMoodCollection --> UserMoodSubmission["Mood submission"]
+    UserMoodSubmission --> WeaponNameCollection["Name collection"]
+    WeaponNameCollection --> WeaponNameSubmission["Name submition"]
 
     RefusalPage --> UserMoodCollection
     WeaponDamageSubmission --> WeaponAmmoCollection
-    WeaponRechargeTimeSubmission --> WeaponNameCollection
 
     WeaponNameSubmission --> ShamingPage
     WeaponSpeedSubmission --> ShamingPage
     WeaponDamageSubmission --> ShamingPage
     WeaponAmmoSubmission --> ShamingPage
+    WeaponRechargeTimeSubmission --> ShamingPage
+    WeaponRangeSubmission --> ShamingPage
 
     ShamingPage --> WeaponNameCollection
     ShamingPage --> WeaponSpeedCollection
     ShamingPage --> WeaponDamageCollection
-    ShamingPage --> WeaponAmmoCollection
+    ShamingPage --> WeaponRechargeTimeCollection
 ```
 
 ### Example confessional flow:
