@@ -116,6 +116,19 @@ Example of failed submition flow, that illustrates the role of a ***shaming page
 
 ***Refusal page*** - displays a transitional message to a user and routes to the following data collection page, until the ending page is reached. Example of refusal flow:
 
+```mermaid
+graph TD
+    CollectionPage["Collection page"]
+    SubmitPage["Submit page"]
+    RefusalPage["Refusal page"]
+    NextCollectionPage["Next collection page"]
+
+    CollectionPage -->|"user input"| SubmitPage
+    CollectionPage -->|"refusal intent"| RefusalPage
+    RefusalPage -->|"came-from: CollectionPage"| NextCollectionPage
+    SubmitPage --> NextCollectionPage
+```
+
 ### Example confessional flow:
 
 1. Dialogflow client, inside a front-end application, sends user message to conversational agent server.
