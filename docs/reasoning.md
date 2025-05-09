@@ -2,7 +2,7 @@
 layout: default
 title: Reasoning
 nav_order: 1
-parent: Deep Lore
+parent: Lore
 permalink: /reasoning/
 ---
 
