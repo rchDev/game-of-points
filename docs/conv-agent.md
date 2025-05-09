@@ -44,12 +44,9 @@ flowchart LR
 6. Various other building blocks...
 
 
-### Confession flow diagram
+### Confession flow pages
 
 ```mermaid
----
-title: Confession flow
----
 graph TD
     StartPage["Start Page"] --> RefusalPage["Refusal page"]
     StartPage --> UserMoodCollection["User mood collection"]
