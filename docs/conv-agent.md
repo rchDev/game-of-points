@@ -59,6 +59,6 @@ flowchart LR
 12. Once the player sends a message to the server, one of the page's conditional routes: *$page.params.weapon-recharge-time.status == UPDATED* - activates.
 13. Once this route runs, it sends a input validation request to the game server and after receiving the response - transitions to ***Weapon recharge time submission*** page.
 14. Inside the submission page, there are two routes based on a session param that was set by the game server validation response. WEAPON_RECHARGE_TIME.
-15. If the recharge time was set by the game server, user is redirected to ***Thank you page***, otherwise: ***Shaming page***.
-16. If the user gets redirected to a ***Shaming page***.
-17. 
+15. If the recharge time was set by the game server, the user is redirected to ***Thank you page***, otherwise parameter: ***came-from*** is set to a value of: *"weapon recharge time"* and the user is sent to the ***Shaming page***.
+16. If the user gets redirected to the ***Shaming page*** from a ***Weapon recharge time page***, message like this: *"I think you lied about the weapon recharge time."* gets sent to the front-end client and route $session.params.came-from == "weapon recharge time" executes, and redirects user back to the ***Weapon recharge time collection page***.
+17. If the user reaches ***Thank you page***, message: *"Thank you for taking the time to answer these questions."* along with the chat session end code gets sent to the front-end. Client then informs the rest of front-end application about the session end, the chat window closes and the game starts.
