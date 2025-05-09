@@ -86,6 +86,9 @@ graph TD
     ShamingPage --> WeaponRechargeTimeCollection
 ```
 
+The diagram looks really messy, but the bread and butter of this flow are collection-submition page combinations.
+Collection pages get user messages and match them against their intents. If the user has expressed the refusal intent, a route transitions to a refusal page, otherwise the message is validated and sent to the corresponding submition page, where
+
 ### Example confessional flow:
 
 1. Dialogflow client, inside a front-end application, sends user message to conversational agent server.
