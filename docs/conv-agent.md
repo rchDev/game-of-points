@@ -53,5 +53,8 @@ flowchart LR
 6. ***Yes*** intent performs a transition to ***User mood collection page***.
 7. ***User mood collection*** page's code gets executed and send the message, - *"What’s your mood going into the match?"* to the front-end.
 8. Once the user response there are only two intents in this page: refusal and user mood status updated. Lets say user refuses to disclose his mood information and ***refuse*** intent gets hit.
-9. Refuse intent sets parameter: ***came-from*** to a value: *"your mood"* and transitions to a ***Refusal page***. 
-10. During the game setup (pre-game), if the player chooses to participate in the questioning, conversational agent gets activated for the particular client.
+9. Refuse intent sets parameter: ***came-from*** to a value: *"your mood"* and transitions to a ***Refusal page***.
+10. Refusal page sends a message to front-end client and based on the parameter's: ***came-from*** value, selects a route which, in this case, transitions from a ***Refusal page*** to a ***Weapon name collection*** page.
+11. Lets say, user refuses to answer almost every question, except for ***Weapon recharge time collection*** page's question.
+12. Once the player sends a message to the server when it's on the previously mentioned page, route that is based on a condition *$page.params.weapon-recharge-time.status == UPDATED* activates.
+13. During the game setup (pre-game), if the player chooses to participate in the questioning, conversational agent gets activated for the particular client.
