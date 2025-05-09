@@ -97,6 +97,10 @@ graph TD
     ShamingPage --> WeaponSpeedCollection
     ShamingPage --> WeaponDamageCollection
     ShamingPage --> WeaponRechargeTimeCollection
+
+    %% --- styles ---
+    style StartPage fill:#90EE90,stroke:#333,stroke-width:2px
+    style EndSession fill:pink,stroke:#333,stroke-width:2px
 ```
 
 The diagram looks really messy, but the bread and butter of this flow are the two following page types: ***collection*** and ***submition***, to be more exact - their combinations.
