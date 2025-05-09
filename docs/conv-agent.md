@@ -88,8 +88,14 @@ graph TD
 
 The diagram looks really messy, but the bread and butter of this flow are the two following page types: ***collection*** and ***submition***, to be more exact - their combinations.
 Collection pages receive user messages and match them against their intents. If the user has expressed the ***refusal intent***, a route transitions to a ***Refusal page***, otherwise the message is sent to the game server to validate and after that, sent to the corresponding ***Submition page***, where one of two routes get triggered:
-1. If the data validation fails - transition to ***Shaming page***
-2. Otherwise, if the data validation succeeds - transition to other ***collection*** page.
+1. If the data validation fails - transition to ***shaming page***.
+2. Otherwise, if the data validation succeeds - transition to other ***collection page***.
+
+***Shaming page*** - is a collection of user shaming messages and routes that transition to submition equivalent collections pages. All submition pages have a route to the same ***shaming page***. 
+The shaming page is imformed about the origin of arrival with the ***comes-from*** parameter, that is set by the route that makes the transition to the ***shaming page***. 
+Example of failed submition flow, that illustrates the role of a ***shaming page***:
+
+***Refusal page*** - displays a transitional message to a user and routes to the following data collection page, until the ending page is reached. Example of refusal flow:
 
 ### Example confessional flow:
 
