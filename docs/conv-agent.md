@@ -17,15 +17,22 @@ This project uses Google's flow conversational agent, formerly Dialogflow CX to 
 Flow based conversational agent is comprised of multiple **flows**, containing varying amount of **pages**. 
 
 ```mermaid
-flowchart TD
-    subgraph Flow
+flowchart LR
+    subgraph Flow 2
         A["Page 1"]
         B["Page 2"]
         C["Page 3"]
     end
 
+    subgraph Flow 1
+        D["Page 1"]
+        E["Page 2"]
+    end
+
     A -->|"route: yes"| B
     A -->|"route: no"| C
+    D -->|"route: 1"| E
+    E -->|"route: Flow 2"|A
 ```
 
 **Pages can contain these building blocks:**
