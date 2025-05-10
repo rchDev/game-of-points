@@ -119,7 +119,7 @@ Example of failed submition flow, that illustrates the role of a ***shaming page
 ```mermaid
 graph TD
     CollectionPage["Collection page"]
-    SubmitPage["Submit page"]
+    SubmitPage{"Submit page"}
     RefusalPage["Refusal page"]
     NextCollectionPage["Next collection page"]
     ShamingPage["Shaming page"]
