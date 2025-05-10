@@ -136,6 +136,9 @@ graph TD
     NextCollectionPage --> MoreCollection
     MoreCollection --> ThankYou
     ThankYou --> SessionEnd
+
+    style CollectionPage fill:#90EE90
+    style SessionEnd fill:pink
 ```
 
 ### Example confessional flow:
