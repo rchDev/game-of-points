@@ -122,11 +122,20 @@ graph TD
     SubmitPage["Submit page"]
     RefusalPage["Refusal page"]
     NextCollectionPage["Next collection page"]
+    ShamingPage["Shaming page"]
+    MoreCollection["More collections..."]
+    ThankYou["Thank you"]
+    SessionEnd["End session"]
 
     CollectionPage -->|"user input"| SubmitPage
     CollectionPage -->|"refusal intent"| RefusalPage
     RefusalPage -->|"came-from: CollectionPage"| NextCollectionPage
-    SubmitPage --> NextCollectionPage
+    SubmitPage -->|"param: null"| NextCollectionPage
+    SubmitPage -->|"param: !null"| ShamingPage
+    ShamingPage --> CollectionPage
+    NextCollectionPage --> MoreCollection
+    MoreCollection --> ThankYou
+    ThankYou --> SessionEnd
 ```
 
 ### Example confessional flow:
