@@ -32,7 +32,7 @@ A Simple game where human user competes against AI agent in a battle to collect 
 {: .no_toc }
 
 {: .info }
-More info can be found in [Deep Lore](/game-of-points/deep-lore/) section of the docs.
+More info can be found in the [Lore](/game-of-points/lore/) section of the docs.
 
 1. [Front-end](https://github.com/rchDev/game-of-points/tree/main/game-of-points-fe) application. A javascript project using vite for bundling p5.js for drawing on canvas. Sends player actions to Game server. Receives authoritative game state from the game server. Also talks with Google's conversational agent.
 2. [Game server](https://github.com/rchDev/game-of-points/tree/main/game-of-points-be). A Java Quarkus server project that's using [Drools](https://www.drools.org/) rule engine as a backbone for its reasoning process. The server acts as a platform to run AI for many game front-ends. It is responsible for processing player actions, reasoning, validating Google's conversational agent's intents.
