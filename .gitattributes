@@ -1,3 +1,4 @@
 game-of-points-be/player_answers.db filter=lfs diff=lfs merge=lfs -text
 player_answers.db filter=lfs diff=lfs merge=lfs -text
 exported_agent_snitch.blob filter=lfs diff=lfs merge=lfs -text
+game-of-points-be/mvnw text eol=lf
