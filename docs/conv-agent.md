@@ -125,7 +125,7 @@ graph TD
     ShamingPage["Shaming page"]
     MoreCollection["More collections..."]
     ThankYou["Thank you"]
-    SessionEnd["End session"]
+    SessionEnd@{ shape: circle, label: "End session" }
 
     CollectionPage -->|"user input"| SubmitPage
     CollectionPage -->|"refusal intent"| RefusalPage
