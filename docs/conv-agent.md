@@ -130,8 +130,8 @@ graph TD
     CollectionPage -->|"user input"| SubmitPage
     CollectionPage -->|"refusal intent"| RefusalPage
     RefusalPage -->|"came-from: CollectionPage"| NextCollectionPage
-    SubmitPage -->|"param: null"| NextCollectionPage
-    SubmitPage -->|"param: !null"| ShamingPage
+    SubmitPage -->|"param: !null"| NextCollectionPage
+    SubmitPage -->|"param: null"| ShamingPage
     ShamingPage --> CollectionPage
     NextCollectionPage --> MoreCollection
     MoreCollection --> ThankYou
