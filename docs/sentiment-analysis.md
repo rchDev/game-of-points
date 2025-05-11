@@ -344,7 +344,7 @@ def prediction_mode():
 Then, before the creation of an agent, on the Java side, inside GameResource controller ([see this](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/resources/GameResource.java#L60-L66)).
 In the case that player has provided his mood description during the questioning, we:
 1. call a method: get_prediction() and pass it a mood description.
-2. [get_prediction()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L130-L132) calls a method: [self.predict_sentiment()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L106-L119), which takes a sentence, and returns a list of classes for each sentence (which is always one) (I know it's weird, don't judge...)
+2. [get_prediction()](https://github.com/rchDev/game-of-points/blob/main/sentiment-classifier/sentiment_classifier.py#L129-L131) calls a method: [self.predict_sentiment()](https://github.com/rchDev/game-of-points/blob/main/sentiment-classifier/sentiment_classifier.py#L105-L118), which takes a sentence, and returns a list of classes for each sentence (which is always one) (I know it's weird, don't judge...)
 3. On Java side we receive the class as a string, convert it into an enum.
 4. Then store this mood enum in player answers store.
 5. Next, store the answer in player answers database, which is then used for creating a Bayesnet.
@@ -361,7 +361,7 @@ if (playerAnswers.isPresent() && playerAnswers.get().getMoodDescription().isPres
 ...
 ```
 
-Inside [predict_sentiment()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L106-L119)
+Inside [predict_sentiment()](https://github.com/rchDev/game-of-points/blob/main/sentiment-classifier/sentiment_classifier.py#L105-L118)
 we:
 1. convert a single string into a numpy array for compatibility with keras stuff...
 2. we use the trained model to give us a prediction array for each sentence. It's an array containing an array that looks something like this: [pessimistic, neutral optimistic] -> [0.2, 0.68, 0.12]
