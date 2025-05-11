@@ -232,7 +232,7 @@ public class PythonGateway {
 }
 ```
 
-An example usage of of a BayesPythonManager:
+An example usage of a BayesPythonManager:
 ```java
 public class DroolsBrain implements AgentsBrain {
     // ...
@@ -331,5 +331,6 @@ This way we get joint probabilities: P(query, evidence). To get the P(query | ev
    At the end of this we get CPD table in a form of matrix, that we, then feed into the **add_cpd** function. Function with the calculations can be found here: [getConditionalProbabilities()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L358-L411).
 5. Once the probability calculations are done, all nodes are added to the network by calling bayesNetwork.add_nodes() and passing it the nodes list.
 6. After adding the nodes, we connect all the nodes by calling bayesNetwork.add_edges() and passing it a list of string arrays, each containing related nodes.
-7. We call an [addMoodNode](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L107-L199) function, which conditionally adds mood node if all the weapon: speed and damage values have showed up at least once.
+7. Once all the nodes are added, a function [addMoodNode](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/DroolsBrain.java#L107-L199) is called, which conditionally adds mood node only if the condition: all the speed and damage values have showed up at least once, is fulfilled.
+8. 
 
