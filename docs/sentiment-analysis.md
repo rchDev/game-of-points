@@ -104,7 +104,7 @@ In the famous bank example, when using traditional embeddings, the word bank wou
 
 The solution is written in python, but is used in Java project. 
 This is enabled by the [py4j](https://www.py4j.org/) library. 
-More info can be found in a write-up about [Agent's reasoning process](/game-of-points/agent-reasoning), 
+More info can be found in a write-up about [Agent's reasoning process](/game-of-points/reasoning), 
 in a Bayesian networks "Used libraries" section.
 
 The script can be launched in three modes: training, testing or prediction mode.
