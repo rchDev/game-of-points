@@ -29,7 +29,7 @@ Known stats are presented as **evidence** and unknown ones are given as **query*
 
 The main use for a Bayes net in my application is to: **get the most probable combination of player stats.**
 
-I'm using the Bayes net inside one of the inference layer Drools rules. What this rule does, is query the Bayes net to get the most probable stat combination and uses received values to update variables inside the AgentKnowledge class.
+I'm using the Bayes net inside one of the inference layer Drools rules. What this rule does, is query the Bayes net to get the most probable stat combination and uses received values to update [KnowledgeItems](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/knowledge/KnowledgeItem.java) inside the [AgentKnowledge](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/knowledge/AgentKnowledge.java) class.
 Each AgentKnowledgeItem inside AgentKnowledge has a value field and and a boolean field, indicating if that value is known or approximated. Items become known, only when they are experienced by the agent during the gameplay.
 Items that have been set by the Bayes net, have their values set, but are not considered unknown. 
 This means that values derived from experience take precedence over values that were derived from the Bayes net.
