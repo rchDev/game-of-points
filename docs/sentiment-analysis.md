@@ -139,8 +139,8 @@ Only csv parsing was implemented...
 In project's root run:
 
 ```shell
-cd game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis
-poetry run python sentiment_classifier.py train --csv <data_file_name.csv>
+cd ./sentiment-classifier
+python sentiment_classifier.py train --csv <data_file_name.csv>
 ```
 
 ### **Data**
@@ -276,8 +276,8 @@ def train_model(self, sentences, labels, epochs=15, batch_size=32):
 In project's root run:
 
 ```shell
-cd game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis
-poetry run python sentiment_classifier.py test "your sentence, describing the mood"
+cd ./sentiment-classifier
+python sentiment_classifier.py test "your sentence, describing the mood"
 ```
 
 ### What's going on
