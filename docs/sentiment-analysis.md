@@ -70,7 +70,7 @@ In the famous bank example, when using traditional embeddings, the word bank wou
 
 **Learning rate** - 0.001 (don't know what is a good learning rate or how it should change during the training process)
 
-### Construction code inside SentimentAnalysisModel constructor [Full Code Here](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L20-L36)
+### Construction code inside SentimentAnalysisModel constructor [Full Code Here](https://github.com/rchDev/game-of-points/blob/main/sentiment-classifier/sentiment_classifier.py#L19-L35)
 ```python
  def __init__(self):
      # Load the pre-trained model and build the classifier
@@ -176,7 +176,7 @@ Simple responses like: "OK," "Good," "I'm feeling great," and "I'm scared" are c
 
 ### The process of training
 
-First the function [train_mode(csv_file, epochs=15, batch_size=32)](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L137-L170) gets called where:
+First the function [train_mode(csv_file, epochs=15, batch_size=32)](https://github.com/rchDev/game-of-points/blob/main/sentiment-classifier/sentiment_classifier.py#L136-L169) gets called where:
 1. CSV file is read into a pandas DataFrame.
 2. Then a map for mapping sentiment names to array labels get created.
 3. Labels in pandas DataFrame get converted to array indexes.
@@ -316,7 +316,7 @@ poetry run python sentiment_classifier.py predict
 ### What's going on
 
 This mode is for running sentiment (mood) prediction py4j server, that can be used by Java game server.
-In this mode, fa unction called: [prediction_mode()](https://github.com/rchDev/game-of-points/blob/main/game-of-points-be/src/main/java/io/rizvan/beans/actors/agent/sentiment-analysis/sentiment_classifier.py#L172-L186) is called, where:
+In this mode, fa unction called: [prediction_mode()](https://github.com/rchDev/game-of-points/blob/main/sentiment-classifier/sentiment_classifier.py#L171-L191) is called, where:
 1. SentimentAnalysis model is initialized.
 2. Pretrained weights are loaded from a file.
 3. py4j gateway server is started.
