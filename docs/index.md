@@ -261,12 +261,12 @@ Inside projects root run:
 ```shell
 cd ./bayes-net && \
 pyenv local && \
-python -m venv venv/
+python -m venv venv
 ```
 **Step 3:** Activate virtual environment and install dependencies that are specified inside the requirements.txt file.
 
 ```shell
-source .venv/bin/activate
+source venv/bin/activate
 pip install requirements.txt
 ```
 
@@ -277,13 +277,13 @@ pip install requirements.txt
 ```shell
 cd ../sentiment-classifier && \
 pyenv local && \
-python -m venv venv/
+python -m venv venv
 ```
 
 **Step 5:** Once again, activate the virtual environment and install dependencies that are specified inside the requirements.txt file, only this time inside /game-of-points/sentiment-classifier directory:
 
 ```shell
-source .venv/bin/activate && \
+source venv/bin/activate && \
 pip install requirements.txt
 ```
 
